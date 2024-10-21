@@ -5,6 +5,7 @@ import 'views/event_list_page.dart';
 import 'views/gift_detail_page.dart';
 import 'views/gift_list_page.dart';
 import 'views/profile_page.dart';
+import 'views/sign_in.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,6 +24,7 @@ class MyApp extends StatelessWidget {
         '/gift_list': (context) => const GiftListPage(),
         'gift_detail': (context) => const GiftDetailPage(),
         '/profile': (context) => const ProfilePage(),
+        '/sign_in': (context) => const SignIn(),
       },
       home: const HomePage(),
     );

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
+
+
 ThemeData lightTheme = ThemeData(
   brightness: Brightness.light,
-  primaryColor: const Color(0xFFA390F5), // Soft Purple
-  scaffoldBackgroundColor: const Color(0xFFE2E2EB),
-  cardColor: const Color(0xFFFFFFFF), // White for card backgrounds
-  textTheme: const TextTheme(
+  primaryColor: Color(0xFFA390F5), // Soft Purple
+  scaffoldBackgroundColor: Color(0xFFE2E2EB),
+  cardColor: Color(0xFFFFFFFF), // White for card backgrounds
+  textTheme: TextTheme(
     headlineLarge: TextStyle(color: Color(0xFF2C2C2C)), // Dark Charcoal for primary text
     bodyMedium: TextStyle(color: Color(0xFF787878)), // Medium Gray for secondary text
   ),
@@ -19,10 +21,24 @@ ThemeData lightTheme = ThemeData(
       iconSize: WidgetStatePropertyAll<double>(34),
     ),
   ),
-  appBarTheme: const AppBarTheme(
-    color: Color(0xFFA390F5), // Soft Purple for the AppBar
-    titleTextStyle: TextStyle(color: Colors.white, fontSize: 25), // AppBar title color
-    shadowColor: Color(0xFF0A0A1B), // Shadow color for the AppBar
+  appBarTheme: AppBarTheme(
+    color: const Color(0xFFA390F5), // Soft Purple for the AppBar
+    titleTextStyle: TextStyle(
+      color: Colors.white,
+      fontSize: 20,
+      fontFamily: "Pacifico",
+    ),
+    // title color
+    shadowColor: const Color(0xFF0A0A1B), // Shadow color for the AppBar
+  ),
+  listTileTheme: const ListTileThemeData(
+    minVerticalPadding: 25,
+  ),
+  drawerTheme: const DrawerThemeData(
+    elevation: 16,
+    shape: RoundedRectangleBorder(
+     borderRadius: BorderRadius.zero,
+    ),
   ),
   iconTheme: const IconThemeData(color: Colors.white), // Icon color in the AppBar
   hoverColor: const Color(0xFFBFAAF8), // Lighter Muted Lavender for hover
@@ -41,9 +57,9 @@ ThemeData lightTheme = ThemeData(
 
 ThemeData darkTheme = ThemeData(
   brightness: Brightness.dark,
-  primaryColor: const Color(0xFF7D5BC5), // Deep Purple
-  scaffoldBackgroundColor: const Color(0xFF1B1B22), // Dark Charcoal
-  cardColor: const Color(0xFF2C2C2C), // Slightly lighter for cards
+  primaryColor: Color(0xFF7D5BC5), // Deep Purple
+  scaffoldBackgroundColor: Color(0xFF1B1B22), // Dark Charcoal
+  cardColor: Color(0xFF2C2C2C), // Slightly lighter for cards
   textTheme: const TextTheme(
     headlineLarge: TextStyle(color: Color(0xFFE5E5E5)), // Light Gray for primary text
     bodyMedium: TextStyle(color: Color(0xFFC1B5F4)), // Soft Lavender for secondary text
@@ -54,7 +70,20 @@ ThemeData darkTheme = ThemeData(
   ),
   appBarTheme: const AppBarTheme(
     color: Color(0xFF7D5BC5), // Deep Purple for the AppBar
-    titleTextStyle: TextStyle(color: Colors.white, fontSize: 20), // AppBar title color
+    titleTextStyle:TextStyle(
+    color: Colors.white,
+    fontSize: 20,
+    fontFamily: "Pacifico",
+    ),
+  ),
+  listTileTheme: const ListTileThemeData(
+    minVerticalPadding: 25,
+  ),
+  drawerTheme: const DrawerThemeData(
+    elevation: 16,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.zero,
+    ),
   ),
   iconTheme: const IconThemeData(color: Color(0xFF6A4DAE)), // Violet Blue for icons
   hoverColor: const Color(0xFF6A4DAE), // Violet Blue for hover
@@ -69,3 +98,4 @@ ThemeData darkTheme = ThemeData(
     onSurface: Color(0xFFE5E5E5), // Soft Lavender for secondary text
   ),
 );
+

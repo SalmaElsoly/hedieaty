@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../shared/components/drawer.dart';
+
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -31,9 +33,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      drawer: const Drawer(
-
-      ),
+      drawer: defaultDrawer('assets/images/avater.png', 'User Name'),
       body: ListView.separated(
           itemBuilder: (BuildContext context, int index) {
             return ListTile(
