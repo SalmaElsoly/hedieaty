@@ -45,9 +45,9 @@ Widget defaultDrawer(String image, String name)=> Builder(
             )
           ),
           ListTile(
-            title: const Text('Home'),
+            title: const Text('Event List'),
             onTap: () {
-              Navigator.pushNamed(context, '/home');
+              Navigator.pushNamed(context, '/event_list');
             },
           ),
           ListTile(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hedieaty/shared/components/buttons.dart';
 
 import '../shared/components/drawer.dart';
 
@@ -65,11 +66,7 @@ class _HomePageState extends State<HomePage> {
           itemCount:20
 
       ),
-      floatingActionButton: FloatingActionButton.extended(
-          onPressed: () {},
-        label: const Text('Add Event'),
-        icon: const Icon(Icons.add),
-      ),
+      floatingActionButton: addEventButton(context)
     );
   }
 }

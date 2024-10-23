@@ -97,6 +97,7 @@ ThemeData darkTheme = ThemeData(
     onPrimary: Color(0xFFFFFFFF), // White text on primary color
     onSecondary: Color(0xFFFFFFFF), // White text on secondary color
     onSurface: Color(0xFFE5E5E5), // Soft Lavender for secondary text
+
   ),
 );
 class ThemeColorData with ChangeNotifier {

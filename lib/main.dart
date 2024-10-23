@@ -40,8 +40,9 @@ class MyApp extends StatelessWidget {
         'gift_detail': (context) => const GiftDetailPage(),
         '/profile': (context) => const ProfilePage(),
         '/sign_in': (context) => const SignIn(),
+        '/home': (context) => const HomePage(),
       },
-      home: const HomePage(),
+      home: const SignIn(),
     );
   }
 }
