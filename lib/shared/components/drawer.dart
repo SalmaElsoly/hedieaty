@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../theme.dart';
 
 Widget defaultDrawer(String image, String name)=> Builder(
   builder: (context) {
@@ -10,22 +13,36 @@ Widget defaultDrawer(String image, String name)=> Builder(
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.secondary,
             ),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: 42,
-                  backgroundImage: AssetImage(image),
-                ),
-                const SizedBox(width: 16),
-                Text(
-                  name,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
+            child: Column(
+              children: [ Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  IconButton(
+                    icon: Provider.of<ThemeColorData>(context).isDark ? const Icon(Icons.wb_sunny_rounded) : const Icon(Icons.nightlight_round_rounded),
+                    onPressed: () {
+                      Provider.of<ThemeColorData>(context, listen: false).toggleTheme();
+                    },
                   ),
+                ],
+              ),
+                Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 42,
+                      backgroundImage: AssetImage(image),
+                    ),
+                    const SizedBox(width: 16),
+                    Text(
+                      name,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                      ),
+                    ),
+                  ],
                 ),
               ],
-            ),
+            )
           ),
           ListTile(
             title: const Text('Home'),

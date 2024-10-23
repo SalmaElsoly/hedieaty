@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      drawer: defaultDrawer('assets/images/avater.png', 'User Name'),
+      drawer: defaultDrawer('assets/images/avater.png', 'User Name', ),
       body: ListView.separated(
           itemBuilder: (BuildContext context, int index) {
             return ListTile(

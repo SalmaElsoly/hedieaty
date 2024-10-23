@@ -12,6 +12,8 @@ dependencies:
   flutter:
     sdk: flutter
   google_fonts: ^6.2.1
+  provider: ^6.0.1
+  shared_preferences: ^2.0.8
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -55,7 +57,7 @@ flutter:
   fonts:
     - family: Pacifico
       fonts:
-        - asset: fonts/Pacifico-Regular.ttf
+        - asset: assets/fonts/Pacifico-Regular.ttf
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
 flutter_icons:

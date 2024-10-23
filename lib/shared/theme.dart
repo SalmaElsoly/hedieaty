@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -85,7 +86,7 @@ ThemeData darkTheme = ThemeData(
       borderRadius: BorderRadius.zero,
     ),
   ),
-  iconTheme: const IconThemeData(color: Color(0xFF6A4DAE)), // Violet Blue for icons
+  iconTheme: const IconThemeData(color: Colors.white), // Violet Blue for icons
   hoverColor: const Color(0xFF6A4DAE), // Violet Blue for hover
   focusColor: const Color(0xFFFFA43A), // Soft Orange for focus
   highlightColor: const Color(0xFFFFA43A), // Soft Orange for highlights
@@ -98,4 +99,35 @@ ThemeData darkTheme = ThemeData(
     onSurface: Color(0xFFE5E5E5), // Soft Lavender for secondary text
   ),
 );
+class ThemeColorData with ChangeNotifier {
+  SharedPreferences _sharedPreferences;
+  bool _isDark;
 
+  ThemeColorData(this._sharedPreferences) : _isDark=false;
+
+  bool get isDark => _isDark;
+
+  ThemeData get themeColor {
+    return _isDark ? darkTheme : lightTheme;
+  }
+
+  Future<void> createSharedPrefObject() async {
+    _sharedPreferences = await SharedPreferences.getInstance();
+  }
+
+  void saveThemeToSharedPref(bool value) {
+    _sharedPreferences.setBool('themeData', value);
+  }
+
+  Future<void> loadThemeFromSharedPref() async {
+    await createSharedPrefObject();
+    _isDark = _sharedPreferences.getBool('themeData') ?? true;
+    notifyListeners();
+  }
+
+  void toggleTheme() {
+    _isDark =!_isDark;
+    saveThemeToSharedPref(_isDark);
+    notifyListeners();
+  }
+}
