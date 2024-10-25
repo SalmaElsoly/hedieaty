@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 
-
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
 
@@ -9,16 +8,39 @@ class SignIn extends StatefulWidget {
   State<SignIn> createState() => _SignInState();
 }
 
-class _SignInState extends State<SignIn>{
+class _SignInState extends State<SignIn> with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _usernameController;
   late TextEditingController _mobileController;
+  late AnimationController _animationController;
+  late Animation<Offset> _animation;
 
   @override
-  void initState(){
+  void initState() {
     super.initState();
     _usernameController = TextEditingController();
     _mobileController = TextEditingController();
+
+    _animationController = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat(reverse: true);
+
+    _animation = Tween<Offset>(
+      begin: Offset.zero,
+      end: const Offset(0, 0.1),
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _mobileController.dispose();
+    _animationController.dispose();
+    super.dispose();
   }
 
   @override
@@ -31,8 +53,23 @@ class _SignInState extends State<SignIn>{
           child: Form(
             key: _formKey,
             child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const SizedBox(height: 16),
+                AnimatedBuilder(
+                  animation: _animation,
+                  builder: (context, child) {
+                    return SlideTransition(
+                      position: _animation,
+                      child: child,
+                    );
+                  },
+                  child: Image.asset(
+                    'assets/images/app_icon.png',
+                    width: 100,
+                    height: 100,
+                  ),
+                ),
+                const SizedBox(height: 20),
                 AnimatedTextKit(
                   animatedTexts: [
                     TyperAnimatedText(
@@ -44,19 +81,29 @@ class _SignInState extends State<SignIn>{
                         color: Theme.of(context).colorScheme.primary,
                       ),
                       speed: const Duration(milliseconds: 300),
-
                     ),
                   ],
-                  totalRepeatCount: 5,
+                  totalRepeatCount: 100,
                   pause: const Duration(milliseconds: 3000),
                   displayFullTextOnTap: true,
                   stopPauseOnTap: true,
                 ),
                 const SizedBox(height: 16),
-               TextFormField(
+                TextFormField(
                   decoration: InputDecoration(
                     labelText: 'Username',
                     hintText: 'Enter your username',
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide(
+                            color: Theme.of(context).colorScheme.secondary)),
+                    filled: true,
+                    fillColor: Theme.of(context)
+                        .colorScheme
+                        .onSecondary
+                        .withOpacity(0.7),
+                    prefixIcon: Icon(Icons.person,
+                        color: Theme.of(context).colorScheme.secondary),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -64,13 +111,25 @@ class _SignInState extends State<SignIn>{
                     }
                     return null;
                   },
-                 controller: _usernameController,
+                  controller: _usernameController,
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   decoration: InputDecoration(
                     labelText: 'Mobile Number',
                     hintText: 'Enter your mobile number',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10.0),
+                      borderSide: BorderSide(
+                          color: Theme.of(context).colorScheme.secondary),
+                    ),
+                    filled: true,
+                    fillColor: Theme.of(context)
+                        .colorScheme
+                        .onSecondary
+                        .withOpacity(0.7),
+                    prefixIcon: Icon(Icons.phone,
+                        color: Theme.of(context).colorScheme.secondary),
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -88,11 +147,15 @@ class _SignInState extends State<SignIn>{
                 FilledButton.tonal(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
-                      Navigator.pushReplacementNamed(context, '/home');
+                      Navigator.pushReplacementNamed(context, '/home',
+                          arguments: {
+                            'userId': 1,
+                          });
                     }
                   },
                   style: ButtonStyle(
-                    minimumSize: WidgetStatePropertyAll(Size(screenWidth * 0.8, 50)),
+                    minimumSize:
+                        WidgetStatePropertyAll(Size(screenWidth * 0.8, 50)),
                   ),
                   child: const Text('Sign In'),
                 ),
