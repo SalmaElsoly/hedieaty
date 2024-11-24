@@ -70,6 +70,37 @@ class _EventListPageState extends State<EventListPage>
     return Scaffold(
       appBar: AppBar(
           title: const Text('My Events List'),
+          actions: [
+            PopupMenuButton<String>(
+              icon: Icon(Icons.sort),
+              onSelected: (String result) {
+                setState(() {
+                  if (result == 'name') {
+                    pastEvents.sort((a, b) =>
+                        (a['name'] as String).compareTo(b['name'] as String));
+                    currentEvents.sort((a, b) =>
+                        (a['name'] as String).compareTo(b['name'] as String));
+                    upcomingEvents.sort((a, b) =>
+                        (a['name'] as String).compareTo(b['name'] as String));
+                  } else if (result == 'time') {
+                    // Assuming you have a 'time' field in your events
+                    pastEvents.sort((a, b) =>
+                        (a['time'] as String).compareTo(b['time'] as String));
+                    currentEvents.sort((a, b) =>
+                        (a['time'] as String).compareTo(b['time'] as String));
+                    upcomingEvents.sort((a, b) =>
+                        (a['time'] as String).compareTo(b['time'] as String));
+                  }
+                });
+              },
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                const PopupMenuItem<String>(
+                  value: 'name',
+                  child: Text('Sort by Name'),
+                ),
+              ],
+            ),
+          ],
           bottom: PreferredSize(
               preferredSize: const Size.fromHeight(160.0),
               child: Column(

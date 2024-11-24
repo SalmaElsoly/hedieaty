@@ -32,6 +32,32 @@ class _FriendGiftListPageState extends State<FriendGiftListPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Gift List'),
+        actions: [
+          PopupMenuButton<String>(
+            icon: Icon(Icons.sort),
+            onSelected: (String result) {
+              setState(() {
+                if (result == 'name') {
+                  gifts.sort((a, b) =>
+                      (a['name'] as String).compareTo(b['name'] as String));
+                } else if (result == 'category') {
+                  gifts.sort((a, b) => (a['category'] as String)
+                      .compareTo(b['category'] as String));
+                }
+              });
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'name',
+                child: Text('Sort by Name'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'category',
+                child: Text('Sort by Category'),
+              ),
+            ],
+          ),
+        ],
         bottom: PreferredSize(
           preferredSize: Size.fromHeight(180.0),
           child: eventDetailCard(context, events[0], false),

@@ -77,6 +77,36 @@ class _GiftListPageState extends State<GiftListPage>
     return Scaffold(
       appBar: AppBar(
         title: Text('My Gift List'),
+        actions: [
+          PopupMenuButton<String>(
+            icon: Icon(Icons.sort),
+            onSelected: (String result) {
+              setState(() {
+                if (result == 'name') {
+                  unpledgedGifts.sort((a, b) =>
+                      (a['name'] as String).compareTo(b['name'] as String));
+                  pledgedGifts.sort((a, b) =>
+                      (a['name'] as String).compareTo(b['name'] as String));
+                } else if (result == 'category') {
+                  unpledgedGifts.sort((a, b) => (a['category'] as String)
+                      .compareTo(b['category'] as String));
+                  pledgedGifts.sort((a, b) => (a['category'] as String)
+                      .compareTo(b['category'] as String));
+                }
+              });
+            },
+            itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+              const PopupMenuItem<String>(
+                value: 'name',
+                child: Text('Sort by Name'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'category',
+                child: Text('Sort by Category'),
+              ),
+            ],
+          ),
+        ],
         bottom: PreferredSize(
             preferredSize: Size.fromHeight(280.0),
             child: Column(
