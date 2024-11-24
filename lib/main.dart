@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hedieaty/views/friend_gift_list_page.dart';
+import 'package:hedieaty/views/pledged_gift_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'shared/theme.dart';
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
         '/my_event_list': (context) => const EventListPage(),
         '/event_create': (context) => const EventCreatePage(),
         '/my_gift_list': (context) => const GiftListPage(),
+        '/my_pledged_gifts': (context) => const PledgedGiftPage(),
         '/gift_detail': (context) => const GiftDetailPage(),
         '/gift_create': (context) => const GiftCreatePage(),
         '/profile': (context) => const ProfilePage(),

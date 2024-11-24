@@ -9,7 +9,6 @@ class PledgedGiftPage extends StatefulWidget {
 }
 
 class _PledgedGiftPageState extends State<PledgedGiftPage> {
-
   final List<Map<String, dynamic>> gifts = [
     {
       'id': 1,
@@ -32,7 +31,7 @@ class _PledgedGiftPageState extends State<PledgedGiftPage> {
       'pledger': 'Alice Johnson',
       'pledger_image': 'https://via.placeholder.com/50',
     }
-    ];
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -56,25 +55,39 @@ class _PledgedGiftPageState extends State<PledgedGiftPage> {
                 title: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Gift ${index + 1}',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+                    Text(
+                      'Gift ${index + 1}',
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     SizedBox(height: 4),
-                    Text('Event: Birthday Party',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    Text(
+                      'Event: Birthday Party',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color:
+                              Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
-                    Text('Friend: John Doe',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    Text(
+                      'Friend: John Doe',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color:
+                              Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
-                    Text('Deadline: 2022-12-31',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    Text(
+                      'Deadline: 2022-12-31',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                          color:
+                              Theme.of(context).colorScheme.onSurfaceVariant),
                     ),
                   ],
                 ),
                 trailing: ElevatedButton(
                   onPressed: () {},
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).highlightColor.withOpacity(0.6),
+                    backgroundColor:
+                        Theme.of(context).highlightColor.withOpacity(0.6),
                     foregroundColor: Theme.of(context).colorScheme.onError,
                   ),
                   child: Text('Cancel'),
@@ -84,7 +97,8 @@ class _PledgedGiftPageState extends State<PledgedGiftPage> {
             separatorBuilder: (context, index) {
               return defaultDivider(context);
             },
-            itemCount: 5),      ),
+            itemCount: 5),
+      ),
     );
   }
 }

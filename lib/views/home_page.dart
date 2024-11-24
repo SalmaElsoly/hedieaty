@@ -13,6 +13,8 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late List _friends;
+  bool _isSearching = false;
+  late TextEditingController _searchController;
 
   Future<List> friendList(int userId) async {
     List myFriends = [];
@@ -39,6 +41,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    _searchController = TextEditingController();
     _friends = [];
   }
 
@@ -60,7 +63,41 @@ class _HomePageState extends State<HomePage> {
     final screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Hedieaty'),
+          title: _isSearching
+              ? TextField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    hintText: 'Search...',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide.none,
+                    ),
+                    fillColor: Theme.of(context)
+                        .scaffoldBackgroundColor
+                        .withOpacity(0.7),
+                    filled: true,
+                    contentPadding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 0),
+                  ),
+                  style:
+                      TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                  onChanged: (value) {
+                    setState(() {
+                      _friends = _friends
+                          .where(
+                              (element) => element['username'].contains(value))
+                          .toList();
+                    });
+                    if (value.isEmpty) {
+                      friendList(1).then((value) {
+                        setState(() {
+                          _friends = value;
+                        });
+                      });
+                    }
+                  },
+                )
+              : const Text('Hedieaty'),
           leading: Builder(
             builder: (BuildContext context) {
               return IconButton(
@@ -76,8 +113,17 @@ class _HomePageState extends State<HomePage> {
           actions: [
             IconButton(
               icon: const Icon(Icons.search),
-              onPressed: () {},
+              onPressed: () {
+                setState(() {
+                  _isSearching = !_isSearching;
+                });
+              },
             ),
+            IconButton(
+                onPressed: () {
+                  // Navigator.push(context, '/notifications');
+                },
+                icon: const Icon(Icons.notifications_active)),
           ],
         ),
         drawer: defaultDrawer(

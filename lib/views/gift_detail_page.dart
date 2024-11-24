@@ -66,24 +66,66 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
                         Center(
                           child: Text(
                             'Gift Details',
-                            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                  color: Theme.of(context).colorScheme.primary.withOpacity(0.8),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(0.8),
                                   fontWeight: FontWeight.bold,
                                 ),
                           ),
                         ),
                         SizedBox(height: 30),
-                        _buildDetailRow(context, 'Gift Name:', 'iPhone 13', Theme.of(context).colorScheme.primary.withOpacity(0.8), Icons.card_giftcard),
-                        _buildDetailRow(context, 'Price:', '\$1000', Theme.of(context).colorScheme.secondary.withOpacity(0.8), Icons.attach_money),
-                        _buildDetailRow(context, 'Category:', 'Electronics', Theme.of(context).colorScheme.tertiary.withOpacity(0.8), Icons.category),
-                        _buildDetailRow(context, 'Description:', 'The latest iPhone', Theme.of(context).colorScheme.primary.withOpacity(0.8), Icons.description),
+                        _buildDetailRow(
+                            context,
+                            'Gift Name:',
+                            'iPhone 13',
+                            Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withOpacity(0.8),
+                            Icons.card_giftcard),
+                        _buildDetailRow(
+                            context,
+                            'Price:',
+                            '\$1000',
+                            Theme.of(context)
+                                .colorScheme
+                                .secondary
+                                .withOpacity(0.8),
+                            Icons.attach_money),
+                        _buildDetailRow(
+                            context,
+                            'Category:',
+                            'Electronics',
+                            Theme.of(context)
+                                .colorScheme
+                                .tertiary
+                                .withOpacity(0.8),
+                            Icons.category),
+                        _buildDetailRow(
+                            context,
+                            'Description:',
+                            'The latest iPhone',
+                            Theme.of(context)
+                                .colorScheme
+                                .primary
+                                .withOpacity(0.8),
+                            Icons.description),
                         SizedBox(height: 20),
                         Container(
                           padding: EdgeInsets.all(15),
                           decoration: BoxDecoration(
                             color: Theme.of(context).colorScheme.surface,
                             borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Theme.of(context).colorScheme.primary.withOpacity(0.3)),
+                            border: Border.all(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .primary
+                                    .withOpacity(0.3)),
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -92,14 +134,23 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
                                 children: [
                                   Icon(
                                     Icons.check_circle_outline,
-                                    color: Theme.of(context).colorScheme.primary.withOpacity(0.8),
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primary
+                                        .withOpacity(0.8),
                                   ),
                                   SizedBox(width: 8),
                                   Text(
                                     'Pledged:',
-                                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyLarge
+                                        ?.copyWith(
                                           fontWeight: FontWeight.w600,
-                                          color: Theme.of(context).colorScheme.primary.withOpacity(0.8),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                              .withOpacity(0.8),
                                         ),
                                   ),
                                 ],
@@ -111,7 +162,8 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
                                     isPledged = value;
                                   });
                                 },
-                                activeColor: Theme.of(context).colorScheme.primary,
+                                activeColor:
+                                    Theme.of(context).colorScheme.primary,
                                 inactiveThumbColor: Colors.grey,
                                 inactiveTrackColor: Colors.grey.shade300,
                               ),
@@ -121,10 +173,18 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
                         SizedBox(height: 10),
                         Center(
                           child: Text(
-                            isPledged ? 'Gift has been pledged!' : 'Gift not pledged',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            isPledged
+                                ? 'Gift has been pledged!'
+                                : 'Gift not pledged',
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
                                   color: isPledged
-                                      ? Theme.of(context).colorScheme.primary.withOpacity(0.8)
+                                      ? Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withOpacity(0.8)
                                       : Colors.grey,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -142,7 +202,8 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
     );
   }
 
-  Widget _buildDetailRow(BuildContext context, String label, String value, Color color, IconData icon) {
+  Widget _buildDetailRow(BuildContext context, String label, String value,
+      Color color, IconData icon) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Container(

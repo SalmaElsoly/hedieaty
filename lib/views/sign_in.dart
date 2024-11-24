@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:hedieaty/shared/components/form.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({super.key});
@@ -28,7 +29,7 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin {
 
     _animation = Tween<Offset>(
       begin: Offset.zero,
-      end: const Offset(0, 0.1),
+      end: const Offset(0, 0.2),
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
@@ -69,7 +70,7 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin {
                     height: 100,
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 30),
                 AnimatedTextKit(
                   animatedTexts: [
                     TyperAnimatedText(
@@ -89,49 +90,29 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin {
                   stopPauseOnTap: true,
                 ),
                 const SizedBox(height: 16),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Username',
-                    hintText: 'Enter your username',
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.secondary)),
-                    filled: true,
-                    fillColor: Theme.of(context)
-                        .colorScheme
-                        .onSecondary
-                        .withOpacity(0.7),
-                    prefixIcon: Icon(Icons.person,
-                        color: Theme.of(context).colorScheme.secondary),
-                  ),
-                  validator: (value) {
+                defaultFormField(
+                  controller: _usernameController,
+                  type: TextInputType.text,
+                  label: 'Username',
+                  hintText: 'Enter your username',
+                  prefix: Icons.person,
+                  suffix: null,
+                  validate: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your username';
                     }
                     return null;
                   },
-                  controller: _usernameController,
                 ),
                 const SizedBox(height: 16),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Mobile Number',
-                    hintText: 'Enter your mobile number',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(
-                          color: Theme.of(context).colorScheme.secondary),
-                    ),
-                    filled: true,
-                    fillColor: Theme.of(context)
-                        .colorScheme
-                        .onSecondary
-                        .withOpacity(0.7),
-                    prefixIcon: Icon(Icons.phone,
-                        color: Theme.of(context).colorScheme.secondary),
-                  ),
-                  validator: (value) {
+                defaultFormField(
+                  controller: _mobileController,
+                  type: TextInputType.number,
+                  label: 'Mobile Number',
+                  hintText: 'Enter your mobile number',
+                  prefix: Icons.phone,
+                  suffix: null,
+                  validate: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your mobile number';
                     }
@@ -141,10 +122,9 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin {
                     }
                     return null;
                   },
-                  controller: _mobileController,
                 ),
                 const SizedBox(height: 16),
-                FilledButton.tonal(
+                defaultFormButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       Navigator.pushReplacementNamed(context, '/home',
@@ -153,10 +133,7 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin {
                           });
                     }
                   },
-                  style: ButtonStyle(
-                    minimumSize:
-                        WidgetStatePropertyAll(Size(screenWidth * 0.8, 50)),
-                  ),
+                  screenWidth: screenWidth,
                   child: const Text('Sign In'),
                 ),
               ],

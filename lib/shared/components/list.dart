@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 Widget eventAndGiftList(BuildContext context, List<Map<String, dynamic>> list,
     Function onTap, bool trailing, dynamic onDelete, dynamic onEdit) {
-  return ListView.builder(
+  return ListView.separated(
     itemCount: list.length,
+    separatorBuilder: (context, index) => defaultDivider(context),
     itemBuilder: (context, index) {
       return ListTile(
         title: Text(list[index]['name'].toString()),
@@ -41,5 +42,16 @@ Widget eventAndGiftList(BuildContext context, List<Map<String, dynamic>> list,
         },
       );
     },
+  );
+}
+
+Widget defaultDivider(BuildContext context) {
+  return Padding(
+    padding: EdgeInsets.symmetric(
+        horizontal: MediaQuery.of(context).size.width * 0.1),
+    child: Divider(
+      height: 3,
+      color: Theme.of(context).colorScheme.secondary,
+    ),
   );
 }
