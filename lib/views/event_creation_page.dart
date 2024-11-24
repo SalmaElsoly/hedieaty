@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../shared/components/form.dart';
+
 class EventCreatePage extends StatefulWidget {
   final Map<String, dynamic>? event;
 
@@ -76,44 +78,31 @@ class _EventCreatePageState extends State<EventCreatePage> {
           key: _formKey,
           child: Column(
             children: [
-              TextFormField(
+              defaultFormField(
                 controller: _eventNameController,
-                decoration: InputDecoration(
-                  labelText: 'Event Name',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(
-                          color: Theme.of(context).colorScheme.secondary)),
-                  filled: true,
-                  fillColor: Theme.of(context)
-                      .colorScheme
-                      .onSecondary
-                      .withOpacity(0.7),
-                ),
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Please enter a name';
+                label: 'Event Name',
+                hintText: 'Enter Event Name',
+                validate: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter event name';
                   }
                   return null;
                 },
+                prefix: Icons.event,
+                type: TextInputType.name,
               ),
               SizedBox(height: 20),
-              TextField(
+              defaultFormField(
                 controller: _eventDateController,
-                decoration: InputDecoration(
-                    //icon of text field
-                    labelText: "Enter Date", //label text of field
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.secondary)),
-                    filled: true,
-                    fillColor: Theme.of(context)
-                        .colorScheme
-                        .onSecondary
-                        .withOpacity(0.7),
-                    prefixIcon: Icon(Icons.calendar_today,
-                        color: Theme.of(context).colorScheme.secondary)),
+                label: 'Enter Date',
+                validate: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter date';
+                  }
+                  return null;
+                },
+                prefix: Icons.calendar_today,
+                type: TextInputType.datetime,
                 readOnly: true,
                 onTap: () async {
                   final DateTime? date = await showDatePicker(
@@ -132,24 +121,18 @@ class _EventCreatePageState extends State<EventCreatePage> {
                 },
               ),
               SizedBox(height: 20),
-              TextField(
+              defaultFormField(
                 controller: _eventTimeController,
-                decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.access_time,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .secondary), //icon of text field
-                    labelText: "Enter Time", //label text of field
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide(
-                            color: Theme.of(context).colorScheme.secondary)),
-                    filled: true,
-                    fillColor: Theme.of(context)
-                        .colorScheme
-                        .onSecondary
-                        .withOpacity(0.7)),
+                label: 'Enter Time',
+                prefix: Icons.access_time,
+                type: TextInputType.datetime,
                 readOnly: true,
+                validate: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter time';
+                  }
+                  return null;
+                },
                 onTap: () async {
                   final TimeOfDay? time = await showTimePicker(
                     context: context,
@@ -164,61 +147,36 @@ class _EventCreatePageState extends State<EventCreatePage> {
                 },
               ),
               SizedBox(height: 20),
-              TextFormField(
+              defaultFormField(
                 controller: _eventLocationController,
-                decoration: InputDecoration(
-                  labelText: 'Event Location',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(
-                          color: Theme.of(context).colorScheme.secondary)),
-                  filled: true,
-                  fillColor: Theme.of(context)
-                      .colorScheme
-                      .onSecondary
-                      .withOpacity(0.7),
-                  prefixIcon: Icon(Icons.location_on,
-                      color: Theme.of(context).colorScheme.secondary),
-                ),
-                validator: (value) {
-                  if (value!.isEmpty) {
+                label: 'Event Location',
+                prefix: Icons.location_on,
+                validate: (value) {
+                  if (value == null || value.isEmpty) {
                     return 'Please enter a location';
                   }
                   return null;
                 },
+                type: TextInputType.text,
               ),
               SizedBox(height: 20),
-              TextFormField(
+              defaultFormField(
                 controller: _eventDescriptionController,
-                decoration: InputDecoration(
-                  labelText: 'Event Description',
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                      borderSide: BorderSide(
-                          color: Theme.of(context).colorScheme.secondary)),
-                  filled: true,
-                  fillColor: Theme.of(context)
-                      .colorScheme
-                      .onSecondary
-                      .withOpacity(0.7),
-                  prefixIcon: Icon(Icons.description,
-                      color: Theme.of(context).colorScheme.secondary),
-                ),
-                validator: (value) {
-                  if (value!.isEmpty) {
+                label: 'Event Description',
+                prefix: Icons.description,
+                validate: (value) {
+                  if (value == null || value.isEmpty) {
                     return 'Please enter a description';
                   }
                   return null;
                 },
+                type: TextInputType.text,
               ),
               SizedBox(height: 20),
-              FilledButton.tonal(
+              defaultFormButton(
                 onPressed: isEditing ? _saveEvent : _createEvent,
-                style: ButtonStyle(
-                  minimumSize:
-                      WidgetStatePropertyAll(Size(screenWidth * 0.8, 50)),
-                ),
                 child: Text(isEditing ? 'Save Changes' : 'Create Event'),
+                screenWidth: screenWidth,
               ),
             ],
           ),
