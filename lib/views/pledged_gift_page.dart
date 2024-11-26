@@ -41,56 +41,88 @@ class _PledgedGiftPageState extends State<PledgedGiftPage> {
       body: Center(
         child: ListView.separated(
             itemBuilder: (context, index) {
-              return ListTile(
-                leading: Container(
-                  width: 60,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage('assets/images/app_icon.png'),
-                      fit: BoxFit.fitHeight,
-                    ),
-                  ),
-                ),
-                title: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              return Container(
+                margin: EdgeInsets.symmetric(vertical: 8.0),
+                child: Column(
                   children: [
-                    Text(
-                      'Gift ${index + 1}',
-                      style: Theme.of(context)
-                          .textTheme
-                          .titleMedium
-                          ?.copyWith(fontWeight: FontWeight.bold),
+                    ListTile(
+                      leading: Container(
+                        width: 80,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/images/app_icon.png'),
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ),
+                      title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Gift ${index + 1}',
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleMedium
+                                ?.copyWith(fontWeight: FontWeight.bold),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            'Event: Birthday Party',
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color:
+                                    Theme.of(context).colorScheme.onSurfaceVariant),
+                          ),
+                          Text(
+                            'Friend: John Doe',
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color:
+                                    Theme.of(context).colorScheme.onSurfaceVariant),
+                          ),
+                          Text(
+                            'Deadline: 2022-12-31',
+                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color:
+                                    Theme.of(context).colorScheme.onSurfaceVariant),
+                          ),
+                        ],
+                      ),
                     ),
-                    SizedBox(height: 4),
-                    Text(
-                      'Event: Birthday Party',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color:
-                              Theme.of(context).colorScheme.onSurfaceVariant),
-                    ),
-                    Text(
-                      'Friend: John Doe',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color:
-                              Theme.of(context).colorScheme.onSurfaceVariant),
-                    ),
-                    Text(
-                      'Deadline: 2022-12-31',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color:
-                              Theme.of(context).colorScheme.onSurfaceVariant),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          SizedBox(
+                            width: 120,
+                            height: 40,
+                            child: ElevatedButton(
+                              onPressed: () {},
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Theme.of(context).colorScheme.primary,
+                                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                              ),
+                              child: Text('Purchased'),
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          SizedBox(
+                            width: 120,
+                            height: 40,
+                            child: ElevatedButton(
+                              onPressed: () {},
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    Theme.of(context).highlightColor.withOpacity(0.6),
+                                foregroundColor: Theme.of(context).colorScheme.onError,
+                              ),
+                              child: Text('Cancel'),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
-                ),
-                trailing: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:
-                        Theme.of(context).highlightColor.withOpacity(0.6),
-                    foregroundColor: Theme.of(context).colorScheme.onError,
-                  ),
-                  child: Text('Cancel'),
                 ),
               );
             },
