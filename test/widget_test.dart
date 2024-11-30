@@ -1,30 +1,101 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hedieaty/shared/theme.dart';
+import 'package:mockito/mockito.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 
-import 'package:hedieaty/main.dart';
+// Mock class for SharedPreferences
+class MockSharedPreferences extends Mock implements SharedPreferences {}
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  group('ThemeColorData Tests', () {
+    late MockSharedPreferences mockSharedPreferences;
+    late ThemeColorData themeColorData;
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    setUp(() {
+      // Initialize mock SharedPreferences
+      mockSharedPreferences = MockSharedPreferences();
+      themeColorData = ThemeColorData(mockSharedPreferences);
+    });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    test('should load theme from SharedPreferences', () async {
+      // Arrange: Mock the theme data to be true (dark theme)
+      SharedPreferences.setMockInitialValues({'themeData': true});
+      final prefs = await SharedPreferences.getInstance();
+      themeColorData = ThemeColorData(prefs);
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+      // Act: Load the theme from SharedPreferences
+      await themeColorData.loadThemeFromSharedPref();
+
+      // Assert: Verify that the theme is dark
+      expect(themeColorData.isDark, isTrue);
+    });
+
+    test('should default to dark theme if no theme is saved', () async {
+      // Arrange: Mock that no theme is saved (returns null)
+      SharedPreferences.setMockInitialValues({}); // Initialize empty mock values
+      when(mockSharedPreferences.getBool('themeData')).thenReturn(null);
+
+      // Act: Load the theme from SharedPreferences
+      await themeColorData.loadThemeFromSharedPref();
+
+      // Assert: Verify that the default theme is dark
+      expect(themeColorData.isDark, isTrue);
+    });
+
+    test('should toggle theme correctly', () async {
+      // Arrange: Mock the initial theme state to be light (false)
+      SharedPreferences.setMockInitialValues({'themeData': false}); // Initialize mock values
+      final prefs = await SharedPreferences.getInstance();
+      themeColorData = ThemeColorData(prefs);
+      await themeColorData.loadThemeFromSharedPref();
+
+      // Act: Toggle the theme
+      themeColorData.toggleTheme();
+
+      // Assert: Verify that the theme state is now dark (true)
+      expect(themeColorData.isDark, isTrue);
+
+      // Act: Toggle again
+      themeColorData.toggleTheme();
+
+      // Assert: Verify that the theme state is now light again (false)
+      expect(themeColorData.isDark, isFalse);
+    });
+    testWidgets('should notify listeners when theme changes',
+        (WidgetTester tester) async {
+      // Arrange: Set up mock SharedPreferences
+      SharedPreferences.setMockInitialValues({'themeData': false}); // Initialize mock values
+      final prefs = await SharedPreferences.getInstance();
+      themeColorData = ThemeColorData(prefs);
+      await themeColorData.loadThemeFromSharedPref();
+
+      // Act: Build the widget with ChangeNotifierProvider
+      await tester.pumpWidget(
+        ChangeNotifierProvider<ThemeColorData>(
+          create: (_) => themeColorData,
+          child: MaterialApp(
+            home: Scaffold(
+              body: Consumer<ThemeColorData>(
+                builder: (context, theme, child) {
+                  return Text(theme.isDark ? 'Dark Theme' : 'Light Theme');
+                },
+              ),
+            ),
+          ),
+        ),
+      );
+
+      // Assert: Verify that the theme text is correct (Light Theme)
+      expect(find.text('Light Theme'), findsOneWidget);
+
+      // Act: Toggle the theme
+      themeColorData.toggleTheme();
+      await tester.pump(); // Trigger a rebuild
+
+      // Assert: Verify that the theme text is now correct (Dark Theme)
+      expect(find.text('Dark Theme'), findsOneWidget);
+    });
   });
 }
