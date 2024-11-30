@@ -13,9 +13,14 @@ import 'views/gift_detail_page.dart';
 import 'views/gift_list_page.dart';
 import 'views/profile_page.dart';
 import 'views/sign_in.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   final sharedPreferences = await SharedPreferences.getInstance();
   final themeData = ThemeColorData(sharedPreferences);
   await themeData.loadThemeFromSharedPref();

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "799910076420",
+    "project_id": "hedieaty-sola03",
+    "storage_bucket": "hedieaty-sola03.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:799910076420:android:f341ef34966c0879925551",
+        "android_client_info": {
+          "package_name": "com.example.hedieaty"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCywUe4nAV3tIZfo-EVi9Ko4qxsv9jXPOg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
