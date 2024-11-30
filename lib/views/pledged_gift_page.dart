@@ -69,21 +69,33 @@ class _PledgedGiftPageState extends State<PledgedGiftPage> {
                           SizedBox(height: 4),
                           Text(
                             'Event: Birthday Party',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color:
-                                    Theme.of(context).colorScheme.onSurfaceVariant),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant),
                           ),
                           Text(
                             'Friend: John Doe',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color:
-                                    Theme.of(context).colorScheme.onSurfaceVariant),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant),
                           ),
                           Text(
                             'Deadline: 2022-12-31',
-                            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color:
-                                    Theme.of(context).colorScheme.onSurfaceVariant),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant),
                           ),
                         ],
                       ),
@@ -99,8 +111,10 @@ class _PledgedGiftPageState extends State<PledgedGiftPage> {
                             child: ElevatedButton(
                               onPressed: () {},
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context).colorScheme.primary,
-                                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                                backgroundColor:
+                                    Theme.of(context).colorScheme.primary,
+                                foregroundColor:
+                                    Theme.of(context).colorScheme.onPrimary,
                               ),
                               child: Text('Purchased'),
                             ),
@@ -112,9 +126,11 @@ class _PledgedGiftPageState extends State<PledgedGiftPage> {
                             child: ElevatedButton(
                               onPressed: () {},
                               style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    Theme.of(context).highlightColor.withOpacity(0.6),
-                                foregroundColor: Theme.of(context).colorScheme.onError,
+                                backgroundColor: Theme.of(context)
+                                    .highlightColor
+                                    .withOpacity(0.6),
+                                foregroundColor:
+                                    Theme.of(context).colorScheme.onError,
                               ),
                               child: Text('Cancel'),
                             ),

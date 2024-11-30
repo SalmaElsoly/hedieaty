@@ -22,40 +22,40 @@ class ImagePickerHelper {
     showDialog(
         context: context,
         builder: (context) => AlertDialog(
-          title: Text('Select Image'),
-          content: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  pickImage(ImageSource.gallery);
-                },
-                icon: Icon(Icons.photo),
-                label: Text('Gallery'),
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
+              title: Text('Select Image'),
+              content: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      pickImage(ImageSource.gallery);
+                    },
+                    icon: Icon(Icons.photo),
+                    label: Text('Gallery'),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      elevation: 0.0,
+                    ),
                   ),
-                  elevation: 0.0,
-                ),
-              ),
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                  pickImage(ImageSource.camera);
-                },
-                icon: Icon(Icons.camera),
-                label: Text('Camera'),
-                style: ElevatedButton.styleFrom(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8.0),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      pickImage(ImageSource.camera);
+                    },
+                    icon: Icon(Icons.camera),
+                    label: Text('Camera'),
+                    style: ElevatedButton.styleFrom(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      elevation: 0.0,
+                    ),
                   ),
-                  elevation: 0.0,
-                ),
+                ],
               ),
-            ],
-          ),
-        ));
+            ));
   }
 }

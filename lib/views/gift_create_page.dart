@@ -81,8 +81,6 @@ class _GiftCreatePageState extends State<GiftCreatePage> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.gift != null;
@@ -102,12 +100,13 @@ class _GiftCreatePageState extends State<GiftCreatePage> {
                 radius: 60.0,
                 child: IconButton(
                     onPressed: () {
-                      ImagePickerHelper(context: context,
-                      onImageSelected: (imagePath) {
-                        setState(() {
-                          _imagePath = imagePath;
-                        });
-                      }).showImagePickerDialog();
+                      ImagePickerHelper(
+                          context: context,
+                          onImageSelected: (imagePath) {
+                            setState(() {
+                              _imagePath = imagePath;
+                            });
+                          }).showImagePickerDialog();
                     },
                     icon: Icon(Icons.image)),
                 backgroundImage:
@@ -125,7 +124,8 @@ class _GiftCreatePageState extends State<GiftCreatePage> {
                   return null;
                 },
                 type: TextInputType.name,
-              ),              SizedBox(height: 30),
+              ),
+              SizedBox(height: 30),
               Row(
                 children: [
                   Expanded(
@@ -143,7 +143,8 @@ class _GiftCreatePageState extends State<GiftCreatePage> {
                         return null;
                       },
                       type: TextInputType.number,
-                    ),                  ),
+                    ),
+                  ),
                   SizedBox(width: 30),
                   DropdownMenu<String>(
                     inputDecorationTheme: InputDecorationTheme(
@@ -172,8 +173,11 @@ class _GiftCreatePageState extends State<GiftCreatePage> {
                         _category = value!;
                       });
                     },
-                    errorText: _category == 'Category' ? 'Please select a category' : null,
-                  ),                ],
+                    errorText: _category == 'Category'
+                        ? 'Please select a category'
+                        : null,
+                  ),
+                ],
               ),
               SizedBox(height: 30),
               defaultFormField(
@@ -187,12 +191,14 @@ class _GiftCreatePageState extends State<GiftCreatePage> {
                   }
                   return null;
                 },
-              ),              SizedBox(height: 30),
+              ),
+              SizedBox(height: 30),
               defaultFormButton(
                 onPressed: isEditing ? _saveGift : _createGift,
                 child: Text(isEditing ? 'Save Gift' : 'Create Gift'),
                 screenWidth: MediaQuery.of(context).size.width,
-              ),            ],
+              ),
+            ],
           ),
         ),
       ),
