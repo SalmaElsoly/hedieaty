@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Gift {
+class GiftModel {
   final int? id;
   final int eventId;
   final String? firestoreId;
@@ -13,7 +13,7 @@ class Gift {
   final int? pledgedBy;
   final DateTime lastModified;
 
-  Gift({
+  GiftModel({
     this.id,
     required this.eventId,
     this.firestoreId,
@@ -46,8 +46,8 @@ class Gift {
     };
   }
 
-  factory Gift.fromMap(Map<String, dynamic> map) {
-    return Gift(
+  factory GiftModel.fromMap(Map<String, dynamic> map) {
+    return GiftModel(
       id: map['id'],
       eventId: map['eventId'],
       firestoreId: map['firestoreId'],
@@ -62,9 +62,9 @@ class Gift {
     );
   }
 
-  factory Gift.fromFirestore(DocumentSnapshot doc) {
+  factory GiftModel.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    return Gift(
+    return GiftModel(
       id: data['id'],
       eventId: data['eventId'],
       firestoreId: doc.id,

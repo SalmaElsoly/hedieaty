@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Event {
+class EventModel {
   final int? id;
   final int userId;
   final String? firestoreId;
@@ -12,7 +12,7 @@ class Event {
   final String status;
   final DateTime lastModified;
 
-  Event({
+  EventModel({
     this.id,
     required this.userId,
     this.firestoreId,
@@ -23,8 +23,8 @@ class Event {
     required this.description,
     this.status = 'upcoming',
     DateTime? lastModified,
-  }) : lastModified = lastModified ?? DateTime.now(),
-       assert(status == 'upcoming' || status == 'current' || status == 'past');
+  })  : lastModified = lastModified ?? DateTime.now(),
+        assert(status == 'upcoming' || status == 'current' || status == 'past');
 
   Map<String, dynamic> toMap() {
     return {
@@ -41,8 +41,8 @@ class Event {
     };
   }
 
-  factory Event.fromMap(Map<String, dynamic> map) {
-    return Event(
+  factory EventModel.fromMap(Map<String, dynamic> map) {
+    return EventModel(
       id: map['id'],
       userId: map['userId'],
       firestoreId: map['firestoreId'],
@@ -56,9 +56,9 @@ class Event {
     );
   }
 
-  factory Event.fromFirestore(DocumentSnapshot doc) {
+  factory EventModel.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    return Event(
+    return EventModel(
       userId: data['userId'],
       firestoreId: doc.id,
       name: data['name'],
