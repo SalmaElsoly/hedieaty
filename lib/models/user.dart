@@ -1,18 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class User {
+class UserModel {
   final int? id;
   final String? firestoreId;
-  final String mobileNumber;
+  final String email;
   final String username;
   final String? profileImage;
+  final int eventsCount;
   final DateTime lastModified;
-  User({
+
+  UserModel({
     this.id,
     this.firestoreId,
-    required this.mobileNumber,
+    required this.email,
     required this.username,
     this.profileImage,
+    this.eventsCount = 0,
     DateTime? lastModified,
   }) : lastModified = lastModified ?? DateTime.now();
 
@@ -20,40 +23,44 @@ class User {
     return {
       'id': id,
       'firestoreId': firestoreId,
-      'mobileNumber': mobileNumber,
+      'email': email,
       'username': username,
       'profileImage': profileImage,
+      'eventsCount': eventsCount,
       'lastModified': lastModified.toIso8601String(),
     };
   }
 
-  factory User.fromMap(Map<String, dynamic> map) {
-    return User(
+  factory UserModel.fromMap(Map<String, dynamic> map) {
+    return UserModel(
       id: map['id'] as int,
       firestoreId: map['firestoreId'] as String,
-      mobileNumber: map['mobileNumber'] as String,
+      email: map['email'] as String,
       username: map['username'] as String,
       profileImage: map['profileImage'] as String?,
+      eventsCount: map['eventsCount'] as int? ?? 0,
       lastModified: DateTime.parse(map['lastModified'] as String),
     );
   }
 
-  factory User.fromFirestore(DocumentSnapshot doc) {
+  factory UserModel.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    return User(
+    return UserModel(
       firestoreId: doc.id,
-      mobileNumber: data['mobile'] ?? '',
+      email: data['email'] ?? '',
       username: data['username'] ?? '',
       profileImage: data['photoUrl'],
+      eventsCount: data['eventsCount'] ?? 0,
       lastModified: (data['lastModified'] as Timestamp).toDate(),
     );
   }
 
   Map<String, dynamic> toFirestore() {
     return {
-      'mobile': mobileNumber,
+      'email': email,
       'username': username,
       'photoUrl': profileImage,
+      'eventsCount': eventsCount,
       'lastModified': Timestamp.fromDate(lastModified),
     };
   }

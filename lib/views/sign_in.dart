@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:hedieaty/controllers/user.dart';
 import 'package:hedieaty/shared/components/form.dart';
 
 class SignIn extends StatefulWidget {
@@ -12,15 +13,25 @@ class SignIn extends StatefulWidget {
 class _SignInState extends State<SignIn> with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _usernameController;
-  late TextEditingController _mobileController;
+  late TextEditingController _emailController;
+  late TextEditingController _passwordController;
+  late TextEditingController _confirmPasswordController;
   late AnimationController _animationController;
   late Animation<Offset> _animation;
+  bool _isSignUp = false;
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
+  bool _isLoading = false;
+
+  final UserController _userController = UserController.instance;
 
   @override
   void initState() {
     super.initState();
     _usernameController = TextEditingController();
-    _mobileController = TextEditingController();
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+    _confirmPasswordController = TextEditingController();
 
     _animationController = AnimationController(
       duration: const Duration(seconds: 2),
@@ -39,7 +50,9 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin {
   @override
   void dispose() {
     _usernameController.dispose();
-    _mobileController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
     _animationController.dispose();
     super.dispose();
   }
@@ -49,94 +62,201 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin {
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                AnimatedBuilder(
-                  animation: _animation,
-                  builder: (context, child) {
-                    return SlideTransition(
-                      position: _animation,
-                      child: child,
-                    );
-                  },
-                  child: Image.asset(
-                    'assets/images/app_icon.png',
-                    width: 100,
-                    height: 100,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  AnimatedBuilder(
+                    animation: _animation,
+                    builder: (context, child) {
+                      return SlideTransition(
+                        position: _animation,
+                        child: child,
+                      );
+                    },
+                    child: Image.asset(
+                      'assets/images/app_icon.png',
+                      width: 100,
+                      height: 100,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 30),
-                AnimatedTextKit(
-                  animatedTexts: [
-                    TyperAnimatedText(
-                      'Hedieaty',
-                      textStyle: TextStyle(
-                        fontSize: 32,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: "Pacifico",
-                        color: Theme.of(context).colorScheme.primary,
+                  const SizedBox(height: 30),
+                  AnimatedTextKit(
+                    animatedTexts: [
+                      TyperAnimatedText(
+                        'Hedieaty',
+                        textStyle: TextStyle(
+                          fontSize: 32,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: "Pacifico",
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        speed: const Duration(milliseconds: 300),
                       ),
-                      speed: const Duration(milliseconds: 300),
+                    ],
+                    totalRepeatCount: 100,
+                    pause: const Duration(milliseconds: 3000),
+                    displayFullTextOnTap: true,
+                    stopPauseOnTap: true,
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    _isSignUp ? 'Create Account' : 'Welcome Back',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  defaultFormField(
+                    controller: _emailController,
+                    type: TextInputType.emailAddress,
+                    label: 'Email',
+                    hintText: 'Enter your email',
+                    prefix: Icons.email,
+                    suffix: null,
+                    validate: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your email';
+                      }
+                      final emailRegex = RegExp(
+                          r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
+                      if (!emailRegex.hasMatch(value)) {
+                        return 'Please enter a valid email';
+                      }
+                      return null;
+                    },
+                  ),
+                  if (_isSignUp) ...[
+                    const SizedBox(height: 16),
+                    defaultFormField(
+                      controller: _usernameController,
+                      type: TextInputType.text,
+                      label: 'Username',
+                      hintText: 'Enter your username',
+                      prefix: Icons.person,
+                      suffix: null,
+                      validate: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your username';
+                        }
+                        return null;
+                      },
                     ),
                   ],
-                  totalRepeatCount: 100,
-                  pause: const Duration(milliseconds: 3000),
-                  displayFullTextOnTap: true,
-                  stopPauseOnTap: true,
-                ),
-                const SizedBox(height: 16),
-                defaultFormField(
-                  controller: _usernameController,
-                  type: TextInputType.text,
-                  label: 'Username',
-                  hintText: 'Enter your username',
-                  prefix: Icons.person,
-                  suffix: null,
-                  validate: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your username';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                defaultFormField(
-                  controller: _mobileController,
-                  type: TextInputType.number,
-                  label: 'Mobile Number',
-                  hintText: 'Enter your mobile number',
-                  prefix: Icons.phone,
-                  suffix: null,
-                  validate: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter your mobile number';
-                    }
-                    final regex = RegExp(r'^(015|011|012|010)\d{8}$');
-                    if (value.length != 11 || !regex.hasMatch(value)) {
-                      return 'Please enter a valid mobile number';
-                    }
-                    return null;
-                  },
-                ),
-                const SizedBox(height: 16),
-                defaultFormButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      Navigator.pushReplacementNamed(context, '/home',
-                          arguments: {
-                            'userId': 1,
-                          });
-                    }
-                  },
-                  screenWidth: screenWidth,
-                  child: const Text('Sign In'),
-                ),
-              ],
+                  const SizedBox(height: 16),
+                  defaultFormField(
+                    controller: _passwordController,
+                    type: TextInputType.visiblePassword,
+                    label: 'Password',
+                    hintText: 'Enter your password',
+                    prefix: Icons.lock,
+                    suffix: _isPasswordVisible
+                        ? Icons.visibility
+                        : Icons.visibility_off,
+                    isPassword: !_isPasswordVisible,
+                    suffixPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+                    validate: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter your password';
+                      }
+                      return null;
+                    },
+                  ),
+                  if (_isSignUp) ...[
+                    const SizedBox(height: 16),
+                    defaultFormField(
+                      controller: _confirmPasswordController,
+                      type: TextInputType.visiblePassword,
+                      label: 'Confirm Password',
+                      hintText: 'Confirm your password',
+                      prefix: Icons.lock,
+                      suffix: _isConfirmPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      isPassword: !_isConfirmPasswordVisible,
+                      suffixPressed: () {
+                        setState(() {
+                          _isConfirmPasswordVisible =
+                              !_isConfirmPasswordVisible;
+                        });
+                      },
+                      validate: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please confirm your password';
+                        }
+                        if (value != _passwordController.text) {
+                          return 'Passwords do not match';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                  const SizedBox(height: 16),
+                  defaultFormButton(
+                    onPressed: () async {
+                            if (_formKey.currentState!.validate() && !_isLoading) {
+                              setState(() {
+                                _isLoading = true;
+                              });
+                              try {
+                                if (_isSignUp) {
+                                  await _userController.signUp(
+                                    _emailController.text,
+                                    _passwordController.text,
+                                    _usernameController.text,
+                                    context,
+                                  );
+                                } else {
+                                  await _userController.signIn(
+                                    _emailController.text,
+                                    _passwordController.text,
+                                    context,
+                                  );
+                                }
+                              } finally {
+                                setState(() {
+                                  _isLoading = false;
+                                });
+                              }
+                            }
+                          },
+                    screenWidth: screenWidth,
+                    child: _isLoading
+                        ? const SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : Text(_isSignUp ? 'Sign Up' : 'Sign In'),
+                  ),
+                  const SizedBox(height: 20),
+                  GestureDetector(
+                    onTap: () => setState(() => _isSignUp = !_isSignUp),
+                    child: Text(
+                      _isSignUp
+                          ? 'Already have an account? Sign In'
+                          : 'Don\'t have an account? Sign Up',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

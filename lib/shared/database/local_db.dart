@@ -1,3 +1,6 @@
+import 'package:hedieaty/models/event.dart';
+import 'package:hedieaty/models/gift.dart';
+import 'package:hedieaty/models/user.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -20,16 +23,19 @@ class LocalDB {
 
   Future _onCreate(Database db, int version) async {
     await db.execute('''
-      CREATE TABLE users(
+    CREATE TABLE users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       firestoreId TEXT UNIQUE,
-      username TEXT NOT NULL,
-      mobileNumber TEXT NOT NULL,
-      profileImage TEXT
-      lastModified DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      ''');
+      username TEXT NOT NULL UNIQUE,
+      email TEXT NOT NULL UNIQUE,
+      profileImage TEXT,
+      eventsCount INTEGER NOT NULL DEFAULT 0,
+      lastModified DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+  ''');
+
     await db.execute('''
-      CREATE TABLE events(
+    CREATE TABLE events (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       userId INTEGER NOT NULL,
       firestoreId TEXT UNIQUE,
@@ -38,12 +44,13 @@ class LocalDB {
       time TEXT NOT NULL,
       location TEXT NOT NULL,
       description TEXT NOT NULL,
-      status TEXT CHECK(eventStatus IN ('upcoming', 'current', 'past')) NOT NULL DEFAULT 'upcoming',
+      status TEXT CHECK(status IN ('upcoming', 'current', 'past')) NOT NULL DEFAULT 'upcoming',
       lastModified DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (userId) REFERENCES users(id)
-      ''');
+    );
+  ''');
     await db.execute('''
-      CREATE TABLE gifts(
+    CREATE TABLE gifts (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       eventId INTEGER NOT NULL,
       firestoreId TEXT UNIQUE,
@@ -52,30 +59,32 @@ class LocalDB {
       description TEXT NOT NULL,
       category TEXT NOT NULL,
       giftImageUrl TEXT,
-      status TEXT CHECK(giftStatus IN ('unpledged', 'purchased', 'pledged')) NOT NULL DEFAULT 'unpledged',
+      status TEXT CHECK(status IN ('unpledged', 'purchased', 'pledged')) NOT NULL DEFAULT 'unpledged',
       pledgedBy INTEGER,
       lastModified DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (eventId) REFERENCES events(id),
       FOREIGN KEY (pledgedBy) REFERENCES users(id)
-      ''');
+    );
+  ''');
   }
 
-  Future<int> insertUser(Map<String, dynamic> user) async {
+
+  Future<int> insertUser(UserModel user) async {
     Database db = await database;
     return await db.insert(
       'users',
-      user,
+      user.toMap(),
       conflictAlgorithm: ConflictAlgorithm.abort,
     );
   }
 
-  Future<int> updateUser(Map<String, dynamic> user) async {
+  Future<int> updateUser(UserModel user) async {
     Database db = await database;
     return await db.update(
       'users',
-      user,
+      user.toMap(),
       where: 'id = ?',
-      whereArgs: [user['id']],
+      whereArgs: [user.id],
     );
   }
 
@@ -99,14 +108,25 @@ class LocalDB {
     return results.isNotEmpty ? results.first : null;
   }
 
-  Future<List<Map<String, dynamic>>> getAllUsers() async {
-    Database db = await database;
-    return await db.query('users');
-  }
+  Future<List<Map<String, dynamic>>> getFriendOfUser(String id) async {
+      Database db = await database;
+      return await db.query(
+        'users',
+        where: 'firestoreId != ?',
+        whereArgs: [id],
+      );  }
 
-  Future<int> insertEvent(Map<String, dynamic> event) async {
+  Future<int> deleteFriendsOfUser(String id) async {
     Database db = await database;
-    return await db.insert('events', event,
+    return await db.delete(
+      'users',
+      where: 'firestoreId != ?',
+      whereArgs: [id],
+    );
+  }
+  Future<int> insertEvent(EventModel event) async {
+    Database db = await database;
+    return await db.insert('events', event.toMap(),
         conflictAlgorithm: ConflictAlgorithm.abort);
   }
 
@@ -120,28 +140,28 @@ class LocalDB {
     );
   }
 
-  Future<int> updateEvent(Map<String, dynamic> event) async {
+  Future<int> updateEvent(EventModel event) async {
     Database db = await database;
     return await db.update(
       'events',
-      event,
+      event.toMap(),
       where: 'id = ?',
-      whereArgs: [event['id']],
+      whereArgs: [event.id],
     );
   }
 
-  Future<int> deleteEvent(Map<String, dynamic> event) async {
+  Future<int> deleteEvent(EventModel event) async {
     Database db = await database;
     return await db.delete(
       'events',
       where: 'id = ?',
-      whereArgs: [event['id']],
+      whereArgs: [event.id],
     );
   }
 
-  Future<int> insertGift(Map<String, dynamic> gift) async {
+  Future<int> insertGift(GiftModel gift) async {
     Database db = await database;
-    return await db.insert('gifts', gift,
+    return await db.insert('gifts', gift.toMap(),
         conflictAlgorithm: ConflictAlgorithm.abort);
   }
 
@@ -155,22 +175,22 @@ class LocalDB {
     );
   }
 
-  Future<int> updateGift(Map<String, dynamic> gift) async {
+  Future<int> updateGift(GiftModel gift) async {
     Database db = await database;
     return await db.update(
       'gifts',
-      gift,
+      gift.toMap(),
       where: 'id = ?',
-      whereArgs: [gift['id']],
+      whereArgs: [gift.id],
     );
   }
 
-  Future<int> deleteGift(Map<String, dynamic> gift) async {
+  Future<int> deleteGift(GiftModel gift) async {
     Database db = await database;
     return await db.delete(
       'gifts',
       where: 'id = ?',
-      whereArgs: [gift['id']],
+      whereArgs: [gift.id],
     );
   }
 }
