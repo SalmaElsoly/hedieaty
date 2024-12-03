@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hedieaty/services/auth.dart';
 import 'package:hedieaty/views/friend_gift_list_page.dart';
 import 'package:hedieaty/views/pledged_gift_page.dart';
 import 'package:provider/provider.dart';
@@ -33,7 +34,9 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  final AuthService _auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +60,7 @@ class MyApp extends StatelessWidget {
         '/sign_in': (context) => const SignIn(),
         '/home': (context) => const HomePage(),
       },
-      home: const SignIn(),
+      home: _auth.currentUser != null ? const HomePage() : const SignIn(),
     );
   }
 }

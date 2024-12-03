@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Gift {
+class GiftModel {
   final int? id;
-  final int eventId;
+  final int? eventId;
   final String? firestoreId;
   final String name;
   final double price;
@@ -12,10 +12,11 @@ class Gift {
   final String status;
   final int? pledgedBy;
   final DateTime lastModified;
+  final bool isDeleted;
 
-  Gift({
+  GiftModel({
     this.id,
-    required this.eventId,
+    this.eventId,
     this.firestoreId,
     required this.name,
     required this.price,
@@ -25,6 +26,7 @@ class Gift {
     this.status = 'unpledged',
     this.pledgedBy,
     DateTime? lastModified,
+    this.isDeleted = false,
   })  : lastModified = lastModified ?? DateTime.now(),
         assert(status == 'unpledged' ||
             status == 'purchased' ||
@@ -46,8 +48,8 @@ class Gift {
     };
   }
 
-  factory Gift.fromMap(Map<String, dynamic> map) {
-    return Gift(
+  factory GiftModel.fromMap(Map<String, dynamic> map) {
+    return GiftModel(
       id: map['id'],
       eventId: map['eventId'],
       firestoreId: map['firestoreId'],
@@ -59,14 +61,13 @@ class Gift {
       status: map['status'],
       pledgedBy: map['pledgedBy'],
       lastModified: DateTime.parse(map['lastModified']),
+      isDeleted: map['isDeleted'] ?? false,
     );
   }
 
-  factory Gift.fromFirestore(DocumentSnapshot doc) {
+  factory GiftModel.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    return Gift(
-      id: data['id'],
-      eventId: data['eventId'],
+    return GiftModel(
       firestoreId: doc.id,
       name: data['name'],
       price: data['price'],
@@ -77,5 +78,18 @@ class Gift {
       pledgedBy: data['pledgedBy'],
       lastModified: DateTime.parse(data['lastModified']),
     );
+  }
+
+  Map<String,dynamic> toFirestore(GiftModel gift) {
+    return {
+      'name': gift.name,
+      'price': gift.price,
+      'description': gift.description,
+      'category': gift.category,
+      'giftImageUrl': gift.giftImageUrl,
+      'status': gift.status,
+      'pledgedBy': gift.pledgedBy,
+      'lastModified': gift.lastModified.toIso8601String(),
+    };
   }
 }

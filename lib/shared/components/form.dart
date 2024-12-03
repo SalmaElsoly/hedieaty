@@ -14,6 +14,7 @@ Widget defaultFormField({
   IconData? suffix,
   String? hintText,
   bool readOnly = false,
+  ValueKey<String>? key,
 }) =>
     Builder(builder: (context) {
       return TextFormField(
@@ -21,6 +22,7 @@ Widget defaultFormField({
         keyboardType: type,
         readOnly: readOnly,
         obscureText: isPassword,
+        key: key,
         onFieldSubmitted: (value) {
           if (onSubmit != null) onSubmit(value);
         },
@@ -32,9 +34,11 @@ Widget defaultFormField({
         },
         validator: (value) => validate(value),
         decoration: InputDecoration(
-          labelText: label,
           hintText: hintText ?? 'Enter your $label',
           border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10.0),
+              borderSide: BorderSide.none),
+          focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10.0),
               borderSide:
                   BorderSide(color: Theme.of(context).colorScheme.secondary)),
@@ -47,13 +51,15 @@ Widget defaultFormField({
                   onPressed: () {
                     if (suffixPressed != null) suffixPressed();
                   },
-                  icon: Icon(suffix),
+                  icon: Icon(
+                    suffix,
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
                 )
               : null,
         ),
       );
     });
-
 Widget defaultFormButton({
   required VoidCallback onPressed,
   required Widget child,

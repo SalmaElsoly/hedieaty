@@ -98,6 +98,8 @@ class _GiftCreatePageState extends State<GiftCreatePage> {
             children: [
               CircleAvatar(
                 radius: 60.0,
+                backgroundImage:
+                    _imagePath.isNotEmpty ? FileImage(File(_imagePath)) : null,
                 child: IconButton(
                     onPressed: () {
                       ImagePickerHelper(
@@ -109,8 +111,6 @@ class _GiftCreatePageState extends State<GiftCreatePage> {
                           }).showImagePickerDialog();
                     },
                     icon: Icon(Icons.image)),
-                backgroundImage:
-                    _imagePath.isNotEmpty ? FileImage(File(_imagePath)) : null,
               ),
               SizedBox(height: 30),
               defaultFormField(

@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Event {
+class EventModel {
   final int? id;
-  final int userId;
+  final int? userId;
   final String? firestoreId;
   final String name;
   final String date;
@@ -11,10 +11,11 @@ class Event {
   final String description;
   final String status;
   final DateTime lastModified;
+  final bool isDeleted;
 
-  Event({
+  EventModel({
     this.id,
-    required this.userId,
+    this.userId,
     this.firestoreId,
     required this.name,
     required this.date,
@@ -23,8 +24,9 @@ class Event {
     required this.description,
     this.status = 'upcoming',
     DateTime? lastModified,
-  }) : lastModified = lastModified ?? DateTime.now(),
-       assert(status == 'upcoming' || status == 'current' || status == 'past');
+    this.isDeleted = false,
+  })  : lastModified = lastModified ?? DateTime.now(),
+        assert(status == 'upcoming' || status == 'current' || status == 'past');
 
   Map<String, dynamic> toMap() {
     return {
@@ -41,8 +43,8 @@ class Event {
     };
   }
 
-  factory Event.fromMap(Map<String, dynamic> map) {
-    return Event(
+  factory EventModel.fromMap(Map<String, dynamic> map) {
+    return EventModel(
       id: map['id'],
       userId: map['userId'],
       firestoreId: map['firestoreId'],
@@ -53,13 +55,13 @@ class Event {
       description: map['description'],
       status: map['status'],
       lastModified: DateTime.parse(map['lastModified']),
+      isDeleted: map['isDeleted'] ?? false,
     );
   }
 
-  factory Event.fromFirestore(DocumentSnapshot doc) {
+  factory EventModel.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    return Event(
-      userId: data['userId'],
+    return EventModel(
       firestoreId: doc.id,
       name: data['name'],
       date: data['date'],
@@ -69,5 +71,17 @@ class Event {
       status: data['status'],
       lastModified: DateTime.parse(data['lastModified']),
     );
+  }
+
+  Map<String,dynamic> toFirestore(EventModel event){
+    return {
+      'name': event.name,
+      'date': event.date,
+      'time': event.time,
+      'location': event.location,
+      'description': event.description,
+      'status': event.status,
+      'lastModified': event.lastModified.toIso8601String(),
+    };
   }
 }

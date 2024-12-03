@@ -34,7 +34,8 @@ void main() {
 
     test('should default to dark theme if no theme is saved', () async {
       // Arrange: Mock that no theme is saved (returns null)
-      SharedPreferences.setMockInitialValues({}); // Initialize empty mock values
+      SharedPreferences.setMockInitialValues(
+          {}); // Initialize empty mock values
       when(mockSharedPreferences.getBool('themeData')).thenReturn(null);
 
       // Act: Load the theme from SharedPreferences
@@ -46,7 +47,8 @@ void main() {
 
     test('should toggle theme correctly', () async {
       // Arrange: Mock the initial theme state to be light (false)
-      SharedPreferences.setMockInitialValues({'themeData': false}); // Initialize mock values
+      SharedPreferences.setMockInitialValues(
+          {'themeData': false}); // Initialize mock values
       final prefs = await SharedPreferences.getInstance();
       themeColorData = ThemeColorData(prefs);
       await themeColorData.loadThemeFromSharedPref();
@@ -66,7 +68,8 @@ void main() {
     testWidgets('should notify listeners when theme changes',
         (WidgetTester tester) async {
       // Arrange: Set up mock SharedPreferences
-      SharedPreferences.setMockInitialValues({'themeData': false}); // Initialize mock values
+      SharedPreferences.setMockInitialValues(
+          {'themeData': false}); // Initialize mock values
       final prefs = await SharedPreferences.getInstance();
       themeColorData = ThemeColorData(prefs);
       await themeColorData.loadThemeFromSharedPref();

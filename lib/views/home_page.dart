@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:hedieaty/dummy_data.dart';
+import 'package:hedieaty/models/user.dart';
 import 'package:hedieaty/shared/components/buttons.dart';
+import 'package:hedieaty/controllers/user.dart';
 
 import '../shared/components/drawer.dart';
 
@@ -12,50 +13,15 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late List _friends;
+  late List<UserModel> _friends;
   bool _isSearching = false;
   late TextEditingController _searchController;
-
-  Future<List> friendList(int userId) async {
-    List myFriends = [];
-    for (var row in friends) {
-      if (row['userId'] == userId) {
-        for (var value in users) {
-          if (value['id'] == row['friendId']) {
-            value['events'] = 0;
-            myFriends.add(value);
-          }
-        }
-      }
-    }
-    for (var row in myFriends) {
-      for (var event in events) {
-        if (row['id'] == event['userId']) {
-          row['events'] += 1;
-        }
-      }
-    }
-    return myFriends;
-  }
+  final UserController _userController = UserController();
 
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
-    _friends = [];
-  }
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final args =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
-    final userId = args['userId'];
-    friendList(1).then((value) {
-      setState(() {
-        _friends = value;
-      });
-    });
   }
 
   @override
@@ -84,12 +50,11 @@ class _HomePageState extends State<HomePage> {
                   onChanged: (value) {
                     setState(() {
                       _friends = _friends
-                          .where(
-                              (element) => element['username'].contains(value))
+                          .where((element) => element.username.contains(value))
                           .toList();
                     });
                     if (value.isEmpty) {
-                      friendList(1).then((value) {
+                      _userController.getFriends(context).then((value) {
                         setState(() {
                           _friends = value;
                         });
@@ -126,43 +91,79 @@ class _HomePageState extends State<HomePage> {
                 icon: const Icon(Icons.notifications_active)),
           ],
         ),
-        drawer: defaultDrawer(
-          'assets/images/avater.png',
-          '${users[1]['username']}',
+        drawer: FutureBuilder<UserModel>(
+          future: _userController.getCurrentUser(context),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+            if (!snapshot.hasData) {
+              return const Center(child: Text('No user data found'));
+            }
+            return defaultDrawer(
+              snapshot.data!.profileImage ?? 'assets/images/avater.png',
+              snapshot.data!.username,
+            );
+          },
         ),
-        body: ListView.separated(
-            itemBuilder: (BuildContext context, int index) {
-              return ListTile(
-                leading: const CircleAvatar(
-                  radius: 24,
-                  backgroundImage: AssetImage('assets/images/avater.png'),
-                ),
-                title: Text('${_friends[index]['username']}'),
-                onTap: () {
-                  Navigator.pushNamed(context, '/friend_event_list',
-                      arguments: {'userId': _friends[index]['id']});
-                },
-                hoverColor: Theme.of(context).hoverColor,
-                enabled: true,
-                trailing: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Theme.of(context).colorScheme.secondary,
+        body: FutureBuilder<List<UserModel>>(
+          future: _userController.getFriends(context),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
+            if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return const Center(child: Text('No friends found'));
+            }
+
+            _friends = snapshot.data!;
+            return ListView.separated(
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    leading: CircleAvatar(
+                      radius: 24,
+                      backgroundImage: _friends[index].profileImage != null
+                          ? NetworkImage(_friends[index].profileImage!)
+                          : const AssetImage('assets/images/avater.png')
+                              as ImageProvider,
                     ),
-                    child: Text('${_friends[index]['events']}',
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSecondary))),
-              );
-            },
-            separatorBuilder: (BuildContext context, int index) => Padding(
-                  padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
-                  child: Divider(
-                    height: 3,
-                    color: Theme.of(context).colorScheme.secondary,
-                  ),
-                ),
-            itemCount: _friends.length),
+                    title: Text(_friends[index].username),
+                    onTap: () {
+                      Navigator.pushNamed(context, '/friend_event_list',
+                          arguments: {'userId': _friends[index].id});
+                    },
+                    hoverColor: Theme.of(context).hoverColor,
+                    enabled: true,
+                    trailing: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                        child: Text('${_friends[index].eventsCount}',
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSecondary))),
+                  );
+                },
+                separatorBuilder: (BuildContext context, int index) => Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
+                      child: Divider(
+                        height: 3,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                    ),
+                itemCount: _friends.length);
+          },
+        ),
         floatingActionButton: addEventButton(context));
   }
 }
