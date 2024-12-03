@@ -46,7 +46,6 @@ class AuthService {
   // sign out
   Future<void> signOut() async {
     try {
-      //TODO: sync local data with remote data
       await _auth.signOut();
     } catch (e) {
       print('Error signing out: $e');

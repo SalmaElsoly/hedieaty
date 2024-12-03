@@ -45,6 +45,7 @@ class LocalDB {
       location TEXT NOT NULL,
       description TEXT NOT NULL,
       status TEXT CHECK(status IN ('upcoming', 'current', 'past')) NOT NULL DEFAULT 'upcoming',
+      isDeleted BOOLEAN NOT NULL DEFAULT FALSE,
       lastModified DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (userId) REFERENCES users(id)
     );
@@ -61,6 +62,7 @@ class LocalDB {
       giftImageUrl TEXT,
       status TEXT CHECK(status IN ('unpledged', 'purchased', 'pledged')) NOT NULL DEFAULT 'unpledged',
       pledgedBy INTEGER,
+      isDeleted BOOLEAN NOT NULL DEFAULT FALSE,
       lastModified DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (eventId) REFERENCES events(id),
       FOREIGN KEY (pledgedBy) REFERENCES users(id)
@@ -110,15 +112,6 @@ class LocalDB {
   Future<List<Map<String, dynamic>>> getFriendOfUser(String id) async {
     Database db = await database;
     return await db.query(
-      'users',
-      where: 'firestoreId != ?',
-      whereArgs: [id],
-    );
-  }
-
-  Future<int> deleteFriendsOfUser(String id) async {
-    Database db = await database;
-    return await db.delete(
       'users',
       where: 'firestoreId != ?',
       whereArgs: [id],

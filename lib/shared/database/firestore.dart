@@ -79,4 +79,5 @@ class FirestoreService {
       rethrow;
     }
   }
+
 }

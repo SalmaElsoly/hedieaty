@@ -2,10 +2,12 @@ import 'package:hedieaty/shared/database/local_db.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../models/user.dart';
 import '../shared/database/firestore.dart';
-
+import './sync_helper.dart';
 class UserRepository {
   final FirestoreService _firestore = FirestoreService();
   final LocalDB _localDB = LocalDB();
+
+  late SyncHelper _syncHelper= SyncHelper(_firestore, _localDB);
 
   Future<void> createUser(UserModel user) async {
     try {
@@ -38,7 +40,7 @@ class UserRepository {
         final remoteFriends = await _firestore.getFriendsOfUser(userId);
 
 
-        await _syncFriends(userId, remoteFriends);
+        await _syncHelper.syncFriends(userId, remoteFriends);
 
 
         friends = remoteFriends;
@@ -47,26 +49,6 @@ class UserRepository {
       return friends;
     } catch (e) {
       rethrow;
-    }
-  }
-  Future<void> _syncFriends(String userId, List<UserModel> remoteFriends) async {
-    final localFriends = await _localDB.getFriendOfUser(userId);
-
-    final localMap = {for (var friend in localFriends) friend['firestoreId']: friend};
-
-    // Determine which friends to add or update
-    for (var remoteFriend in remoteFriends) {
-      final localFriend = localMap[remoteFriend.firestoreId];
-      if (localFriend == null) {
-        // Add new friend to local DB
-        await _localDB.insertUser(remoteFriend);
-      } else {
-        // Update friend if remote data is newer
-        if (DateTime.parse(remoteFriend.lastModified.toString()).isAfter(
-            DateTime.parse(localFriend['lastModified']))) {
-          await _localDB.updateUser(remoteFriend);
-        }
-      }
     }
   }
 
@@ -81,4 +63,8 @@ class UserRepository {
       rethrow;
     }
   }
+
+  // Future<void>syncAndDelete(String id)async{
+  //
+  // }
 }
