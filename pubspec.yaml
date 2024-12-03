@@ -28,6 +28,7 @@ dependencies:
   firebase_auth: ^5.3.3
   connectivity_plus: ^4.0.0
 
+  path: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

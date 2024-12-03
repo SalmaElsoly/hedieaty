@@ -132,7 +132,7 @@ class _HomePageState extends State<HomePage> {
                     radius: 24,
                     backgroundImage: _friends[index].profileImage != null ? NetworkImage(_friends[index].profileImage!) : const AssetImage('assets/images/avater.png') as ImageProvider,
                   ),
-                  title: Text('${_friends[index].username}'),
+                  title: Text(_friends[index].username),
                   onTap: () {
                     Navigator.pushNamed(context, '/friend_event_list',
                         arguments: {'userId': _friends[index].id});

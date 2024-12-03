@@ -98,7 +98,7 @@ Widget defaultDrawer(String image, String name) => Builder(builder: (context) {
                                           SimpleDialog(
                                             title: Text('Add Friend'),
                                             children: [
-                                              Container(
+                                              SizedBox(
                                                 width: MediaQuery.of(context)
                                                         .size
                                                         .width *
@@ -119,7 +119,6 @@ Widget defaultDrawer(String image, String name) => Builder(builder: (context) {
                                                 onPressed: () {
                                                   Navigator.of(context).pop();
                                                 },
-                                                child: Text('Add'),
                                                 style: ElevatedButton.styleFrom(
                                                     shape:
                                                         RoundedRectangleBorder(
@@ -128,6 +127,7 @@ Widget defaultDrawer(String image, String name) => Builder(builder: (context) {
                                                               8.0),
                                                     ),
                                                     elevation: 0.0),
+                                                child: Text('Add'),
                                               ),
                                             ],
                                           ));
