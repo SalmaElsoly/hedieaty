@@ -14,6 +14,7 @@ Widget defaultFormField({
   IconData? suffix,
   String? hintText,
   bool readOnly = false,
+  ValueKey<String>? key,
 }) =>
     Builder(builder: (context) {
       return TextFormField(
@@ -21,6 +22,7 @@ Widget defaultFormField({
         keyboardType: type,
         readOnly: readOnly,
         obscureText: isPassword,
+        key: key,
         onFieldSubmitted: (value) {
           if (onSubmit != null) onSubmit(value);
         },

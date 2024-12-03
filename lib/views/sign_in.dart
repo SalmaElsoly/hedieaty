@@ -102,6 +102,7 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin {
                     pause: const Duration(milliseconds: 3000),
                     displayFullTextOnTap: true,
                     stopPauseOnTap: true,
+                    key: const ValueKey('animated_text'),
                   ),
                   const SizedBox(height: 20),
                   Text(
@@ -131,6 +132,7 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin {
                       }
                       return null;
                     },
+                    key: const ValueKey('email_field'),
                   ),
                   if (_isSignUp) ...[
                     const SizedBox(height: 16),
@@ -141,6 +143,7 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin {
                       hintText: 'Enter your username',
                       prefix: Icons.person,
                       suffix: null,
+                      key: const ValueKey('username_field'),
                       validate: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please enter your username';
@@ -171,6 +174,7 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin {
                       }
                       return null;
                     },
+                    key: const ValueKey('password_field'),
                   ),
                   if (_isSignUp) ...[
                     const SizedBox(height: 16),
@@ -180,6 +184,7 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin {
                       label: 'Confirm Password',
                       hintText: 'Confirm your password',
                       prefix: Icons.lock,
+                      key: const ValueKey('confirm_password_field'),
                       suffix: _isConfirmPasswordVisible
                           ? Icons.visibility
                           : Icons.visibility_off,
