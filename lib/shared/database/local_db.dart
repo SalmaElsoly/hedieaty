@@ -68,7 +68,6 @@ class LocalDB {
   ''');
   }
 
-
   Future<int> insertUser(UserModel user) async {
     Database db = await database;
     return await db.insert(
@@ -109,12 +108,13 @@ class LocalDB {
   }
 
   Future<List<Map<String, dynamic>>> getFriendOfUser(String id) async {
-      Database db = await database;
-      return await db.query(
-        'users',
-        where: 'firestoreId != ?',
-        whereArgs: [id],
-      );  }
+    Database db = await database;
+    return await db.query(
+      'users',
+      where: 'firestoreId != ?',
+      whereArgs: [id],
+    );
+  }
 
   Future<int> deleteFriendsOfUser(String id) async {
     Database db = await database;
@@ -124,6 +124,7 @@ class LocalDB {
       whereArgs: [id],
     );
   }
+
   Future<int> insertEvent(EventModel event) async {
     Database db = await database;
     return await db.insert('events', event.toMap(),

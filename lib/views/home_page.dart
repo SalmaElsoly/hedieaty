@@ -18,7 +18,6 @@ class _HomePageState extends State<HomePage> {
   late TextEditingController _searchController;
   final UserController _userController = UserController();
 
-
   @override
   void initState() {
     super.initState();
@@ -51,8 +50,7 @@ class _HomePageState extends State<HomePage> {
                   onChanged: (value) {
                     setState(() {
                       _friends = _friends
-                          .where(
-                              (element) => element.username.contains(value))
+                          .where((element) => element.username.contains(value))
                           .toList();
                     });
                     if (value.isEmpty) {
@@ -106,7 +104,7 @@ class _HomePageState extends State<HomePage> {
               return const Center(child: Text('No user data found'));
             }
             return defaultDrawer(
-              snapshot.data!.profileImage?? 'assets/images/avater.png',
+              snapshot.data!.profileImage ?? 'assets/images/avater.png',
               snapshot.data!.username,
             );
           },
@@ -126,42 +124,44 @@ class _HomePageState extends State<HomePage> {
 
             _friends = snapshot.data!;
             return ListView.separated(
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  leading: CircleAvatar(
-                    radius: 24,
-                    backgroundImage: _friends[index].profileImage != null ? NetworkImage(_friends[index].profileImage!) : const AssetImage('assets/images/avater.png') as ImageProvider,
-                  ),
-                  title: Text(_friends[index].username),
-                  onTap: () {
-                    Navigator.pushNamed(context, '/friend_event_list',
-                        arguments: {'userId': _friends[index].id});
-                  },
-                  hoverColor: Theme.of(context).hoverColor,
-                  enabled: true,
-                  trailing: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Theme.of(context).colorScheme.secondary,
+                itemBuilder: (BuildContext context, int index) {
+                  return ListTile(
+                    leading: CircleAvatar(
+                      radius: 24,
+                      backgroundImage: _friends[index].profileImage != null
+                          ? NetworkImage(_friends[index].profileImage!)
+                          : const AssetImage('assets/images/avater.png')
+                              as ImageProvider,
                     ),
-                    child: Text('${_friends[index].eventsCount}',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSecondary
-                      )
-                    )
-                  ),
-                );
-              },
-              separatorBuilder: (BuildContext context, int index) => Padding(
-                padding: EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
-                child: Divider(
-                  height: 3,
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
-              ),
-              itemCount: _friends.length
-            );
+                    title: Text(_friends[index].username),
+                    onTap: () {
+                      Navigator.pushNamed(context, '/friend_event_list',
+                          arguments: {'userId': _friends[index].id});
+                    },
+                    hoverColor: Theme.of(context).hoverColor,
+                    enabled: true,
+                    trailing: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                        child: Text('${_friends[index].eventsCount}',
+                            style: TextStyle(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSecondary))),
+                  );
+                },
+                separatorBuilder: (BuildContext context, int index) => Padding(
+                      padding:
+                          EdgeInsets.symmetric(horizontal: screenWidth * 0.1),
+                      child: Divider(
+                        height: 3,
+                        color: Theme.of(context).colorScheme.secondary,
+                      ),
+                    ),
+                itemCount: _friends.length);
           },
         ),
         floatingActionButton: addEventButton(context));

@@ -209,39 +209,40 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin {
                   const SizedBox(height: 16),
                   defaultFormButton(
                     onPressed: () async {
-                            if (_formKey.currentState!.validate() && !_isLoading) {
-                              setState(() {
-                                _isLoading = true;
-                              });
-                              try {
-                                if (_isSignUp) {
-                                  await _userController.signUp(
-                                    _emailController.text,
-                                    _passwordController.text,
-                                    _usernameController.text,
-                                    context,
-                                  );
-                                } else {
-                                  await _userController.signIn(
-                                    _emailController.text,
-                                    _passwordController.text,
-                                    context,
-                                  );
-                                }
-                              } finally {
-                                setState(() {
-                                  _isLoading = false;
-                                });
-                              }
-                            }
-                          },
+                      if (_formKey.currentState!.validate() && !_isLoading) {
+                        setState(() {
+                          _isLoading = true;
+                        });
+                        try {
+                          if (_isSignUp) {
+                            await _userController.signUp(
+                              _emailController.text,
+                              _passwordController.text,
+                              _usernameController.text,
+                              context,
+                            );
+                          } else {
+                            await _userController.signIn(
+                              _emailController.text,
+                              _passwordController.text,
+                              context,
+                            );
+                          }
+                        } finally {
+                          setState(() {
+                            _isLoading = false;
+                          });
+                        }
+                      }
+                    },
                     screenWidth: screenWidth,
                     child: _isLoading
                         ? const SizedBox(
                             width: 20,
                             height: 20,
                             child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
                               strokeWidth: 2,
                             ),
                           )

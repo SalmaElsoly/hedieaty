@@ -14,11 +14,9 @@ class UserController {
     return _instance!;
   }
 
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirestoreService _firestore = FirestoreService();
   final UserRepository _userRepository = UserRepository();
-
 
   User? firebaseUser;
   bool isLoggedIn = false;
@@ -38,9 +36,11 @@ class UserController {
     }
   }
 
-  Future<void> signIn(String email, String password, BuildContext context) async {
+  Future<void> signIn(
+      String email, String password, BuildContext context) async {
     try {
-      final res = await _auth.signInWithEmailAndPassword(email: email, password: password);
+      final res = await _auth.signInWithEmailAndPassword(
+          email: email, password: password);
       await _userRepository.loginUser(res.user!.uid);
       if (firebaseUser != null) {
         isLoggedIn = true;
@@ -53,7 +53,8 @@ class UserController {
     }
   }
 
-  Future<void> signUp(String email, String password, String name, BuildContext context) async {
+  Future<void> signUp(
+      String email, String password, String name, BuildContext context) async {
     try {
       final isUnique = await _firestore.isUsernameUnique(name);
       if (!isUnique) {
@@ -99,10 +100,12 @@ class UserController {
     try {
       return await _userRepository.getFriends(_auth.currentUser!.uid);
     } on FirebaseAuthException catch (e) {
-      showError('Authentication Error', e.message ?? 'Failed to get friends', context);
+      showError('Authentication Error', e.message ?? 'Failed to get friends',
+          context);
       return [];
     } on FirebaseException catch (e) {
-      showError('Database Error', e.message ?? 'Database operation failed', context);
+      showError(
+          'Database Error', e.message ?? 'Database operation failed', context);
       return [];
     } catch (e) {
       showError('Error', e.toString(), context);
@@ -114,14 +117,16 @@ class UserController {
     try {
       return await _userRepository.getUser(_auth.currentUser!.uid);
     } on FirebaseAuthException catch (e) {
-      showError('Authentication Error', e.message ?? 'Failed to get user', context);
+      showError(
+          'Authentication Error', e.message ?? 'Failed to get user', context);
       return UserModel(
         firestoreId: _auth.currentUser!.uid,
         username: _auth.currentUser?.displayName ?? 'Unknown User',
         email: _auth.currentUser?.email ?? '',
       );
     } on FirebaseException catch (e) {
-      showError('Database Error', e.message ?? 'Database operation failed', context);
+      showError(
+          'Database Error', e.message ?? 'Database operation failed', context);
       return UserModel(
         firestoreId: _auth.currentUser!.uid,
         username: _auth.currentUser?.displayName ?? 'Unknown User',

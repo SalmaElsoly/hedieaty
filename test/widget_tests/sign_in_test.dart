@@ -63,7 +63,7 @@ void main() {
        'test@example.com',
         'password123',
     tester.element(find.byType(SignIn)),
-      )).thenAnswer(Future<void> (_) async => {});
+      )).thenAnswer((_) async => {});
 
       // Verify validation messages
       expect(find.text('Please enter your email'), findsOneWidget);
