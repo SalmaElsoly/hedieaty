@@ -60,9 +60,9 @@ void main() {
       await tester.pump();
 
       when(mockUserController.signIn(
-       'test@example.com',
+        'test@example.com',
         'password123',
-    tester.element(find.byType(SignIn)),
+        tester.element(find.byType(SignIn)),
       )).thenAnswer((_) async => {});
 
       // Verify validation messages

@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EventModel {
   final int? id;
-  final int? userId;
-  final String? firestoreId;
+  late final int? userId;
+  late final String? firestoreId;
   final String name;
   final String date;
   final String time;
@@ -73,7 +73,7 @@ class EventModel {
     );
   }
 
-  Map<String,dynamic> toFirestore(){
+  Map<String, dynamic> toFirestore() {
     return {
       'name': this.name,
       'date': this.date,

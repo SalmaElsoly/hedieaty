@@ -72,11 +72,12 @@ class LocalDB {
 
   Future<int> insertUser(UserModel user) async {
     Database db = await database;
-    return await db.insert(
+    int id = await db.insert(
       'users',
       user.toMap(),
       conflictAlgorithm: ConflictAlgorithm.abort,
     );
+    return id;
   }
 
   Future<int> updateUser(UserModel user) async {
@@ -89,33 +90,34 @@ class LocalDB {
     );
   }
 
-  Future<Map<String, dynamic>?> getUser(int id) async {
+  Future<UserModel?> getUser(int id) async {
     Database db = await database;
     List<Map<String, dynamic>> results = await db.query(
       'users',
       where: 'id = ?',
       whereArgs: [id],
     );
-    return results.isNotEmpty ? results.first : null;
+    return results.isNotEmpty ? UserModel.fromMap(results.first) : null;
   }
 
-  Future<Map<String, dynamic>?> getUserByFirestoreId(String firestoreId) async {
+  Future<UserModel?> getUserByFirestoreId(String firestoreId) async {
     Database db = await database;
     List<Map<String, dynamic>> results = await db.query(
       'users',
       where: 'firestoreId = ?',
       whereArgs: [firestoreId],
     );
-    return results.isNotEmpty ? results.first : null;
+    return results.isNotEmpty ? UserModel.fromMap(results.first) : null;
   }
 
-  Future<List<Map<String, dynamic>>> getFriendOfUser(String id) async {
+  Future<List<UserModel>> getFriendOfUser(String id) async {
     Database db = await database;
-    return await db.query(
+    final List<Map<String, dynamic>> results = await db.query(
       'users',
       where: 'firestoreId != ?',
       whereArgs: [id],
     );
+    return List.generate(results.length, (i) => UserModel.fromMap(results[i]));
   }
 
   Future<int> insertEvent(EventModel event) async {
@@ -124,14 +126,15 @@ class LocalDB {
         conflictAlgorithm: ConflictAlgorithm.abort);
   }
 
-  Future<List<Map<String, dynamic>>> getEventsByUserIdAndStatus(
+  Future<List<EventModel>> getEventsByUserIdAndStatus(
       int userId, String status) async {
     Database db = await database;
-    return await db.query(
+    final List<Map<String, dynamic>> results = await db.query(
       'events',
       where: 'userId = ? AND status = ?',
       whereArgs: [userId, status],
     );
+    return List.generate(results.length, (i) => EventModel.fromMap(results[i]));
   }
 
   Future<int> updateEvent(EventModel event) async {
@@ -159,14 +162,15 @@ class LocalDB {
         conflictAlgorithm: ConflictAlgorithm.abort);
   }
 
-  Future<List<Map<String, dynamic>>> getGiftsByEventIdAndStatus(
+  Future<List<GiftModel>> getGiftsByEventIdAndStatus(
       int eventId, String status) async {
     Database db = await database;
-    return await db.query(
+    final List<Map<String, dynamic>> results = await db.query(
       'gifts',
       where: 'eventId = ? AND status = ?',
       whereArgs: [eventId, status],
     );
+    return List.generate(results.length, (i) => GiftModel.fromMap(results[i]));
   }
 
   Future<int> updateGift(GiftModel gift) async {
@@ -190,7 +194,8 @@ class LocalDB {
 
   Future<List<EventModel>> getEventsByUserId(int userId) async {
     Database db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('events', where: 'userId = ?', whereArgs: [userId]);
+    final List<Map<String, dynamic>> maps =
+        await db.query('events', where: 'userId = ?', whereArgs: [userId]);
     return List.generate(maps.length, (i) {
       return EventModel.fromMap(maps[i]);
     });
@@ -206,15 +211,15 @@ class LocalDB {
   }
 
   Future<void> clearAll() async {
-      Database db = await database;
-      try {
-        await db.transaction((txn) async {
-          await txn.delete('users');
-          await txn.delete('events');
-          await txn.delete('gifts');
-        });
-      } catch (e) {
-        rethrow;
-      }
+    Database db = await database;
+    try {
+      await db.transaction((txn) async {
+        await txn.delete('users');
+        await txn.delete('events');
+        await txn.delete('gifts');
+      });
+    } catch (e) {
+      throw e;
+    }
   }
 }
