@@ -3,25 +3,30 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import '../models/user.dart';
 import '../shared/database/firestore.dart';
 import './sync_helper.dart';
+
 class UserRepository {
   final FirestoreService _firestore = FirestoreService();
   final LocalDB _localDB = LocalDB();
 
-  late SyncHelper _syncHelper= SyncHelper(_firestore, _localDB);
+  late SyncHelper _syncHelper = SyncHelper(_firestore, _localDB);
 
-  Future<void> createUser(UserModel user) async {
+  Future<int> createUser(UserModel user) async {
     try {
+      final res = await _firestore.isUsernameUnique(user.username);
+      if(res){
+        throw Exception("enter a unique username, this name is used");
+      }
       await _firestore.createUser(user);
-      await loginUser(user.firestoreId!);
+     return await loginUser(user.firestoreId!);
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<void> loginUser(String firestoreId) async {
+  Future<int> loginUser(String firestoreId) async {
     try {
       UserModel loggedIn = await _firestore.getUser(firestoreId);
-      await _localDB.insertUser(loggedIn);
+      return await _localDB.insertUser(loggedIn);
     } catch (e) {
       rethrow;
     }
@@ -30,8 +35,7 @@ class UserRepository {
   Future<List<UserModel>> getFriends(String userId) async {
     try {
       final localFriends = await _localDB.getFriendOfUser(userId);
-      var friends = localFriends.map((friend) => UserModel.fromMap(friend)).toList();
-
+      var friends = localFriends.map((friend) => friend).toList();
       // Check internet connection
       final connectivityResult = await Connectivity().checkConnectivity();
       final isConnected = connectivityResult != ConnectivityResult.none;
@@ -39,9 +43,7 @@ class UserRepository {
       if (isConnected) {
         final remoteFriends = await _firestore.getFriendsOfUser(userId);
 
-
         await _syncHelper.syncFriends(userId, remoteFriends);
-
 
         friends = remoteFriends;
       }
@@ -54,9 +56,9 @@ class UserRepository {
 
   Future<UserModel> getUser(String id) async {
     try {
-      final userMap = await _localDB.getUserByFirestoreId(id);
-      if (userMap != null) {
-        return UserModel.fromMap(userMap);
+      final user = await _localDB.getUserByFirestoreId(id);
+      if (user != null) {
+        return user;
       }
       throw Exception('No user found or saved');
     } catch (e) {
@@ -64,7 +66,7 @@ class UserRepository {
     }
   }
 
-  Future<void>logoutUser() async {
+  Future<void> logoutUser() async {
     try {
       await _localDB.clearAll();
     } catch (e) {

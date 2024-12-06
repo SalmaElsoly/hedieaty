@@ -92,7 +92,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         drawer: FutureBuilder<UserModel>(
-          future: _userController.getCurrentUser(context),
+          future: _userController.getCurrentUser(context) as Future<UserModel>,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());

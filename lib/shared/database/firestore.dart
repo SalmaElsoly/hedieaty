@@ -81,10 +81,13 @@ class FirestoreService {
       rethrow;
     }
   }
-  Future<List<String>>getEventsIdsOfUser(String userId) async {
+
+  Future<List<String>> getEventsIdsOfUser(String userId) async {
     try {
       QuerySnapshot userEventIdsSnapshot = await _firestore
-          .collection('users').doc(userId).collection('events')
+          .collection('users')
+          .doc(userId)
+          .collection('events')
           .get();
       return userEventIdsSnapshot.docs.map((doc) => doc.id).toList();
     } catch (e) {
@@ -103,36 +106,36 @@ class FirestoreService {
       return eventDetailsSnapshot.docs
           .map((doc) => EventModel.fromFirestore(doc))
           .toList();
-
     } catch (e) {
       rethrow;
     }
   }
 
-   Future<List<String>> getGiftsIdsByEventId(String eventId) async {
-     try {
-       QuerySnapshot giftsSnapshot = await _firestore
-           .collection('events')
-           .doc(eventId)
-           .collection('gifts')
-           .get();
-       return giftsSnapshot.docs.map((doc) => doc.id).toList();
-     }
-     catch (e) {
-       rethrow;
-     }
-   }
+  Future<List<String>> getGiftsIdsByEventId(String eventId) async {
+    try {
+      QuerySnapshot giftsSnapshot = await _firestore
+          .collection('events')
+          .doc(eventId)
+          .collection('gifts')
+          .get();
+      return giftsSnapshot.docs.map((doc) => doc.id).toList();
+    } catch (e) {
+      rethrow;
+    }
+  }
 
   Future<List<GiftModel>> getGiftsByEventId(String eventId) async {
     try {
       List<String> giftIds = await getGiftsIdsByEventId(eventId);
-      QuerySnapshot giftDetailsSnapshot = await _firestore.collection('gifts')
+      QuerySnapshot giftDetailsSnapshot = await _firestore
+          .collection('gifts')
           .where(FieldPath.documentId, whereIn: giftIds)
           .get();
 
-      return giftDetailsSnapshot.docs.map((doc) => GiftModel.fromFirestore(doc))
+      return giftDetailsSnapshot.docs
+          .map((doc) => GiftModel.fromFirestore(doc))
           .toList();
-    } catch(e){
+    } catch (e) {
       rethrow;
     }
   }
@@ -152,26 +155,27 @@ class FirestoreService {
       rethrow;
     }
   }
-  Future<void> createEvent(EventModel event) async {
+
+  Future<String> createEvent(EventModel event) async {
     try {
-      await _firestore
-          .collection('events')
-          .doc(event.firestoreId)
-          .set(event.toFirestore());
+      final eventReference =
+          await _firestore.collection('events').add(event.toFirestore());
+      return eventReference.id;
     } catch (e) {
       rethrow;
     }
   }
-  Future<void> createGift(GiftModel gift) async {
+
+  Future<String> createGift(GiftModel gift) async {
     try {
-      await _firestore
-          .collection('gifts')
-          .doc(gift.firestoreId)
-          .set(gift.toFirestore());
+      final giftRef =
+          await _firestore.collection('gifts').add(gift.toFirestore());
+      return giftRef.id;
     } catch (e) {
       rethrow;
     }
   }
+
   Future<void> updateEvent(EventModel event) async {
     try {
       await _firestore
@@ -182,6 +186,7 @@ class FirestoreService {
       rethrow;
     }
   }
+
   Future<void> updateGift(GiftModel gift) async {
     try {
       await _firestore
@@ -199,7 +204,8 @@ class FirestoreService {
           .collection('events')
           .doc(eventId)
           .collection('gifts')
-          .doc(gift.firestoreId).set(gift.toFirestore());
+          .doc(gift.firestoreId)
+          .set(gift.toFirestore());
     } catch (e) {
       rethrow;
     }
@@ -218,6 +224,38 @@ class FirestoreService {
     }
   }
 
+  Future<void> updateGiftStatus(String giftId, String newStatus) async {
+    try {
+      await _firestore
+          .collection('gifts')
+          .doc(giftId)
+          .update({'status': newStatus});
+    } catch (e) {
+      rethrow;
+    }
+  }
 
+  Future<void> updateEventStatus(String eventId, String newStatus) async {
+    try {
+      await _firestore
+          .collection('events')
+          .doc(eventId)
+          .update({'status': newStatus});
+    } catch (e) {
+      rethrow;
+    }
+  }
 
+  Future<void> addEventToUser(String userId, String eventId) async {
+    try {
+      await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('events')
+          .doc(eventId)
+          .set({});
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

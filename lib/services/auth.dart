@@ -1,7 +1,12 @@
 import 'package:firebase_auth/firebase_auth.dart';
 
+import '../models/user.dart';
+import '../repositories/user.dart';
+
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final UserRepository _userRepository = UserRepository();
+  late final int localUserId;
 
   // auth change user stream
   Stream<User?> get authStateChanges => _auth.authStateChanges();
@@ -12,43 +17,35 @@ class AuthService {
   // sign in with email & password
   Future<UserCredential?> signInWithEmailAndPassword(
       String email, String password) async {
-    try {
-      UserCredential result = await _auth.signInWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
-      return result;
-    } catch (e) {
-      print('Error signing in with email and password: $e');
-      return null;
-    }
+    UserCredential result = await _auth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    localUserId= await _userRepository.loginUser(result.user!.uid);
+    return result;
   }
 
   // register with email & password
   Future<UserCredential?> registerWithEmailAndPassword(
       String email, String password, String username) async {
-    try {
-      UserCredential result = await _auth.createUserWithEmailAndPassword(
-        email: email,
-        password: password,
-      );
 
-      // Update display name
-      await result.user?.updateDisplayName(username);
+    UserCredential result = await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
 
-      return result;
-    } catch (e) {
-      print('Error registering with email and password: $e');
-      return null;
-    }
+    localUserId = await _userRepository.createUser(UserModel(
+      firestoreId: result.user!.uid,
+      username: username,
+      email: email,
+    ));
+    // Update display name
+    await result.user?.updateDisplayName(username);
+    return result;
   }
 
   // sign out
   Future<void> signOut() async {
-    try {
-      await _auth.signOut();
-    } catch (e) {
-      print('Error signing out: $e');
-    }
+    await _auth.signOut();
   }
 }

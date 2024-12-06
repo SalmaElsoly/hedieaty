@@ -80,7 +80,7 @@ class GiftModel {
     );
   }
 
-  Map<String,dynamic> toFirestore() {
+  Map<String, dynamic> toFirestore() {
     return {
       'name': this.name,
       'price': this.price,
