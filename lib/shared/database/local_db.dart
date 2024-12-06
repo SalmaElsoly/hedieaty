@@ -187,4 +187,34 @@ class LocalDB {
       whereArgs: [gift.id],
     );
   }
+
+  Future<List<EventModel>> getEventsByUserId(int userId) async {
+    Database db = await database;
+    final List<Map<String, dynamic>> maps = await db.query('events', where: 'userId = ?', whereArgs: [userId]);
+    return List.generate(maps.length, (i) {
+      return EventModel.fromMap(maps[i]);
+    });
+  }
+
+  Future<int> deleteGiftsByEventId(int eventId) async {
+    Database db = await database;
+    return await db.delete(
+      'gifts',
+      where: 'eventId = ?',
+      whereArgs: [eventId],
+    );
+  }
+
+  Future<void> clearAll() async {
+      Database db = await database;
+      try {
+        await db.transaction((txn) async {
+          await txn.delete('users');
+          await txn.delete('events');
+          await txn.delete('gifts');
+        });
+      } catch (e) {
+        rethrow;
+      }
+  }
 }

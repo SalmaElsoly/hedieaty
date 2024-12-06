@@ -64,7 +64,11 @@ class UserRepository {
     }
   }
 
-  // Future<void>syncAndDelete(String id)async{
-  //
-  // }
+  Future<void>logoutUser() async {
+    try {
+      await _localDB.clearAll();
+    } catch (e) {
+      rethrow;
+    }
+  }
 }

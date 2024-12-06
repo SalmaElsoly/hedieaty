@@ -87,7 +87,7 @@ class UserController {
 
   Future<void> signOut(BuildContext context) async {
     try {
-
+      await _userRepository.logoutUser();
       await _auth.signOut();
       isLoggedIn = false;
     } on FirebaseAuthException catch (e) {

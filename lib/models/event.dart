@@ -73,15 +73,15 @@ class EventModel {
     );
   }
 
-  Map<String,dynamic> toFirestore(EventModel event){
+  Map<String,dynamic> toFirestore(){
     return {
-      'name': event.name,
-      'date': event.date,
-      'time': event.time,
-      'location': event.location,
-      'description': event.description,
-      'status': event.status,
-      'lastModified': event.lastModified.toIso8601String(),
+      'name': this.name,
+      'date': this.date,
+      'time': this.time,
+      'location': this.location,
+      'description': this.description,
+      'status': this.status,
+      'lastModified': this.lastModified.toIso8601String(),
     };
   }
 }

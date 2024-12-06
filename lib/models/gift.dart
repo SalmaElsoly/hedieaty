@@ -80,16 +80,16 @@ class GiftModel {
     );
   }
 
-  Map<String,dynamic> toFirestore(GiftModel gift) {
+  Map<String,dynamic> toFirestore() {
     return {
-      'name': gift.name,
-      'price': gift.price,
-      'description': gift.description,
-      'category': gift.category,
-      'giftImageUrl': gift.giftImageUrl,
-      'status': gift.status,
-      'pledgedBy': gift.pledgedBy,
-      'lastModified': gift.lastModified.toIso8601String(),
+      'name': this.name,
+      'price': this.price,
+      'description': this.description,
+      'category': this.category,
+      'giftImageUrl': this.giftImageUrl,
+      'status': this.status,
+      'pledgedBy': this.pledgedBy,
+      'lastModified': this.lastModified.toIso8601String(),
     };
   }
 }
