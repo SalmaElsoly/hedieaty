@@ -140,9 +140,21 @@ class FirestoreService {
     }
   }
 
-  Future<void> deleteEvent(String eventId) async {
+  Future<void> deleteEvent(String eventId, String userId) async {
     try {
       await _firestore.collection('events').doc(eventId).delete();
+
+      await _firestore
+          .collection('users')
+          .doc(userId)
+          .collection('events')
+          .doc(eventId)
+          .delete();
+
+      await _firestore
+          .collection('users')
+          .doc(userId)
+          .update({'eventCount': FieldValue.increment(-1)});
     } catch (e) {
       rethrow;
     }
@@ -246,16 +258,23 @@ class FirestoreService {
     }
   }
 
-  Future<void> addEventToUser(String userId, String eventId) async {
-    try {
-      await _firestore
-          .collection('users')
-          .doc(userId)
-          .collection('events')
-          .doc(eventId)
-          .set({});
-    } catch (e) {
-      rethrow;
-    }
+Future<void> addEventToUser(String userId, String eventId) async {
+  try {
+    await _firestore
+        .collection('users')
+        .doc(userId)
+        .collection('events')
+        .doc(eventId)
+        .set({});
+
+    await _firestore
+        .collection('users')
+        .doc(userId)
+        .update({
+      'eventCount': FieldValue.increment(1),
+    });
+  } catch (e) {
+    rethrow;
   }
+}
 }

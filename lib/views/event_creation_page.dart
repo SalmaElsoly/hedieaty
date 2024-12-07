@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
+import '../models/event.dart';
 import '../shared/components/form.dart';
+import '../controllers/event.dart';
 
 class EventCreatePage extends StatefulWidget {
-  final Map<String, dynamic>? event;
+  final EventModel? event;
 
   const EventCreatePage({super.key, this.event});
 
@@ -19,19 +21,22 @@ class _EventCreatePageState extends State<EventCreatePage> {
   late TextEditingController _eventTimeController;
   late TextEditingController _eventDescriptionController;
 
+  late EventController _eventController = EventController.instance;
+  final ValueNotifier<bool> _isLoading = ValueNotifier<bool>(false);
+
   @override
   void initState() {
     super.initState();
     _eventDateController =
-        TextEditingController(text: widget.event?['date'] ?? '');
+        TextEditingController(text: widget.event?.date ?? '');
     _eventNameController =
-        TextEditingController(text: widget.event?['name'] ?? '');
+        TextEditingController(text: widget.event?.name ?? '');
     _eventLocationController =
-        TextEditingController(text: widget.event?['location'] ?? '');
+        TextEditingController(text: widget.event?.location ?? '');
     _eventTimeController =
-        TextEditingController(text: widget.event?['time'] ?? '');
+        TextEditingController(text: widget.event?.time?? '');
     _eventDescriptionController =
-        TextEditingController(text: widget.event?['description'] ?? '');
+        TextEditingController(text: widget.event?.description ?? '');
   }
 
   @override
@@ -41,26 +46,40 @@ class _EventCreatePageState extends State<EventCreatePage> {
     _eventLocationController.dispose();
     _eventTimeController.dispose();
     _eventDescriptionController.dispose();
+    _isLoading.dispose();
     super.dispose();
   }
 
   void _createEvent() {
     if (_formKey.currentState!.validate()) {
+      _isLoading.value = true;
+      final newEvent = EventModel(
+        date: _eventDateController.text,
+        name: _eventNameController.text,
+        location: _eventLocationController.text,
+        time: _eventTimeController.text,
+        description: _eventDescriptionController.text,
+      );
+      _eventController.createEvent(newEvent).then((value) {
+        _isLoading.value = false;
+        Navigator.of(context).pop();
+      });
       Navigator.of(context).pop();
     }
   }
 
   void _saveEvent() {
     if (_formKey.currentState!.validate()) {
-      final newEvent = {
-        'id': widget.event?['id'] ?? DateTime.now().millisecondsSinceEpoch,
-        'date': _eventDateController.text,
-        'name': _eventNameController.text,
-        'location': _eventLocationController.text,
-        'time': _eventTimeController.text,
-        'description': _eventDescriptionController.text,
-      };
-      Navigator.of(context).pop(newEvent);
+      _isLoading.value = true;
+      final updatedEvent = EventModel(
+        date: _eventDateController.text,
+        name: _eventNameController.text,
+        location: _eventLocationController.text,
+        time: _eventTimeController.text,
+        description: _eventDescriptionController.text,
+      );
+      _isLoading.value = false;
+      Navigator.of(context).pop();
     }
   }
 
@@ -173,10 +192,24 @@ class _EventCreatePageState extends State<EventCreatePage> {
                 type: TextInputType.text,
               ),
               SizedBox(height: 20),
-              defaultFormButton(
-                onPressed: isEditing ? _saveEvent : _createEvent,
-                child: Text(isEditing ? 'Save Changes' : 'Create Event'),
-                screenWidth: screenWidth,
+              ValueListenableBuilder<bool>(
+                valueListenable: _isLoading,
+                builder: (context, isLoading, child) {
+                  return defaultFormButton(
+                    onPressed: isLoading ? (){} : (isEditing ? _saveEvent : _createEvent),
+                    child: isLoading
+                      ? SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : Text(isEditing ? 'Save Changes' : 'Create Event'),
+                    screenWidth: screenWidth,
+                  );
+                },
               ),
             ],
           ),

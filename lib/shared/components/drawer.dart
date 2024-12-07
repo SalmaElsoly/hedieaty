@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:hedieaty/models/user.dart';
 import 'package:hedieaty/shared/components/list.dart';
 import 'package:provider/provider.dart';
 
 import '../theme.dart';
 
-Widget defaultDrawer(String image, String name) => Builder(builder: (context) {
+Widget defaultDrawer(UserModel user) => Builder(builder: (context) {
       return Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
@@ -33,11 +34,13 @@ Widget defaultDrawer(String image, String name) => Builder(builder: (context) {
                       children: [
                         CircleAvatar(
                           radius: 42,
-                          backgroundImage: AssetImage(image),
+                          backgroundImage: user.profileImage != null
+                              ? NetworkImage(user.profileImage!)
+                              : const AssetImage('assets/images/avatar.png') as ImageProvider,
                         ),
                         const SizedBox(width: 16),
                         Text(
-                          name,
+                          user.username,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 24,
@@ -57,7 +60,7 @@ Widget defaultDrawer(String image, String name) => Builder(builder: (context) {
             ListTile(
               title: const Text('My Event List'),
               onTap: () {
-                Navigator.pushNamed(context, '/my_event_list');
+               Navigator.pushNamed(context, '/my_event_list');
               },
               leading: const Icon(Icons.event),
             ),

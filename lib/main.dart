@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hedieaty/models/user.dart';
 import 'package:hedieaty/services/auth.dart';
 import 'package:hedieaty/views/friend_gift_list_page.dart';
 import 'package:hedieaty/views/pledged_gift_page.dart';
@@ -16,6 +17,7 @@ import 'views/profile_page.dart';
 import 'views/sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
+import 'shared/database/local_db.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,6 +39,7 @@ class MyApp extends StatelessWidget {
   MyApp({super.key});
 
   final AuthService _auth = AuthService();
+  final LocalDB _localDb = LocalDB();
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +53,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/friend_gift_list': (context) => const FriendGiftListPage(),
         '/friend_event_list': (context) => const FriendEventListPage(),
-        '/my_event_list': (context) => const EventListPage(),
+        '/my_event_list': (context) => EventListPage(user: _localDb.getUser(_auth.localUserId) as UserModel),
         '/event_create': (context) => const EventCreatePage(),
         '/my_gift_list': (context) => const GiftListPage(),
         '/my_pledged_gifts': (context) => const PledgedGiftPage(),

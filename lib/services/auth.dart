@@ -8,10 +8,8 @@ class AuthService {
   final UserRepository _userRepository = UserRepository();
   late final int localUserId;
 
-  // auth change user stream
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
-  // get current user
   User? get currentUser => _auth.currentUser;
 
   // sign in with email & password

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:hedieaty/controllers/event.dart';
+import 'package:hedieaty/models/user.dart';
 import 'package:hedieaty/shared/components/buttons.dart';
-
+import '../models/event.dart';
 import '../shared/components/list.dart';
 import '../shared/components/tabs.dart';
 import 'event_creation_page.dart';
-
 class EventListPage extends StatefulWidget {
-  const EventListPage({super.key});
+  final UserModel user;
+  const EventListPage({super.key, required this.user});
 
   @override
   State<EventListPage> createState() => _EventListPageState();
@@ -19,50 +21,35 @@ class _EventListPageState extends State<EventListPage>
     Tab(text: 'Current'),
     Tab(text: 'Upcoming'),
   ];
-
+  EventController _eventController = EventController.instance;
   late TabController _tabController;
-
-  final pastEvents = [
-    {"id": 1, "name": "Alice's Birthday"},
-    {"id": 2, "name": "Tech Conference"},
-  ];
-  final currentEvents = [
-    {"id": 3, "name": "Cooking Workshop"},
-  ];
-  final upcomingEvents = [
-    {"id": 4, "name": "Football Match"},
-    {"id": 5, "name": "Music Festival"},
-  ];
+  late Future<List<EventModel>> _eventsFuture;
+  
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(vsync: this, length: myTabs.length);
+    _eventsFuture = _eventController.getMyEvents();
   }
 
-  void deleteEvent(int index, List events) {
+  void deleteEvent(int index, List<EventModel> events) {
     setState(() {
       events.removeAt(index);
     });
   }
 
-  void editEvent(int index, List<Map<String, dynamic>> eventList) async {
-    final result = await Navigator.of(context).push(
+  void editEvent(int index, List<EventModel> eventList) async {
+  Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => EventCreatePage(event: eventList[index]),
       ),
     );
-
-    if (result != null) {
-      setState(() {
-        eventList[index] = result;
-      });
-    }
   }
 
-  void onTab(int index, List eventList) {
+  void onTab(int index, List<EventModel> eventList) {
     Navigator.of(context).pushNamed('/my_gift_list',
-        arguments: {'eventId': eventList[index]['id']});
+        arguments: {'event': eventList[index]});
   }
 
   @override
@@ -76,20 +63,9 @@ class _EventListPageState extends State<EventListPage>
               onSelected: (String result) {
                 setState(() {
                   if (result == 'name') {
-                    pastEvents.sort((a, b) =>
-                        (a['name'] as String).compareTo(b['name'] as String));
-                    currentEvents.sort((a, b) =>
-                        (a['name'] as String).compareTo(b['name'] as String));
-                    upcomingEvents.sort((a, b) =>
-                        (a['name'] as String).compareTo(b['name'] as String));
-                  } else if (result == 'time') {
-                    // Assuming you have a 'time' field in your events
-                    pastEvents.sort((a, b) =>
-                        (a['time'] as String).compareTo(b['time'] as String));
-                    currentEvents.sort((a, b) =>
-                        (a['time'] as String).compareTo(b['time'] as String));
-                    upcomingEvents.sort((a, b) =>
-                        (a['time'] as String).compareTo(b['time'] as String));
+                    _eventsFuture.then((events) {
+                      events.sort((a, b) => a.name.compareTo(b.name));
+                    });
                   }
                 });
               },
@@ -115,30 +91,62 @@ class _EventListPageState extends State<EventListPage>
                     ),
                     child: CircleAvatar(
                       radius: 35,
-                      backgroundImage:
-                          const AssetImage('assets/images/avater.png'),
+                      backgroundImage: widget.user.profileImage!=null?
+                      NetworkImage(
+                          'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+                        ):
+                      AssetImage(
+                          'assets/images/avatar.png',
+                        ),
                     ),
                   ),
                   Text(
-                    'User Name',
+                    widget.user.username,
                     style: TextStyle(
-                      fontSize: 24, // Increase the font size as needed
+                      fontSize: 24,
+                      color: Theme.of(context).highlightColor,
+                    ),
+                  ),
+                  Text(
+                    widget.user.username,
+                    style: TextStyle(
+                      fontSize: 24,
                       color: Theme.of(context).highlightColor,
                     ),
                   ),
                   defaultTabBar(context, myTabs, _tabController),
                 ],
               ))),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          eventAndGiftList(
-              context, pastEvents, onTab, true, deleteEvent, editEvent),
-          eventAndGiftList(
-              context, currentEvents, onTab, true, deleteEvent, editEvent),
-          eventAndGiftList(
-              context, upcomingEvents, onTab, true, deleteEvent, editEvent),
-        ],
+      body: FutureBuilder<List<EventModel>>(
+        future: _eventsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          }
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No events found'));
+          }
+
+          final events = snapshot.data!;
+          final pastEvents = events.where((event) => event.isPast).toList();
+          final currentEvents = events.where((event) => event.isCurrent).toList();
+          final upcomingEvents = events.where((event) => event.isUpcoming).toList();
+
+          return TabBarView(
+            controller: _tabController,
+            children: [
+              eventAndGiftList(
+                  context, pastEvents, onTab, true, deleteEvent, editEvent),
+              eventAndGiftList(
+                  context, currentEvents, onTab, true, deleteEvent, editEvent),
+              eventAndGiftList(
+                  context, upcomingEvents, onTab, true, deleteEvent, editEvent),
+            ],
+          );
+        },
       ),
       floatingActionButton: addEventButton(context),
     );

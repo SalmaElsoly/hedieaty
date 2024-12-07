@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-Widget eventAndGiftList(BuildContext context, List<Map<String, dynamic>> list,
+Widget eventAndGiftList(BuildContext context, List<dynamic> list,
     Function onTap, bool trailing, dynamic onDelete, dynamic onEdit) {
   return ListView.separated(
     itemCount: list.length,

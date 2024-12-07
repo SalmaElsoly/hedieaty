@@ -84,4 +84,8 @@ class EventModel {
       'lastModified': this.lastModified.toIso8601String(),
     };
   }
+
+  bool get isUpcoming => this.status == 'upcoming';
+  bool get isCurrent => this.status == 'current';
+  bool get isPast => this.status == 'past';
 }

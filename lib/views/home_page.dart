@@ -104,8 +104,7 @@ class _HomePageState extends State<HomePage> {
               return const Center(child: Text('No user data found'));
             }
             return defaultDrawer(
-              snapshot.data!.profileImage ?? 'assets/images/avater.png',
-              snapshot.data!.username,
+              snapshot.data!,
             );
           },
         ),
