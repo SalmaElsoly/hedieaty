@@ -7,8 +7,8 @@ import '../shared/components/list.dart';
 import '../shared/components/tabs.dart';
 import 'event_creation_page.dart';
 class EventListPage extends StatefulWidget {
-  final UserModel user;
-  const EventListPage({super.key, required this.user});
+  UserModel? user;
+  EventListPage({super.key, this.user});
 
   @override
   State<EventListPage> createState() => _EventListPageState();
@@ -30,7 +30,7 @@ class _EventListPageState extends State<EventListPage>
   void initState() {
     super.initState();
     _tabController = TabController(vsync: this, length: myTabs.length);
-    _eventsFuture = _eventController.getMyEvents();
+    _eventsFuture = _eventController.getMyEvents(context);
   }
 
   void deleteEvent(int index, List<EventModel> events) {
@@ -91,9 +91,9 @@ class _EventListPageState extends State<EventListPage>
                     ),
                     child: CircleAvatar(
                       radius: 35,
-                      backgroundImage: widget.user.profileImage!=null?
+                      backgroundImage: widget.user?.profileImage!=null?
                       NetworkImage(
-                          'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+                        widget.user?.profileImage as String,
                         ):
                       AssetImage(
                           'assets/images/avatar.png',
@@ -101,14 +101,7 @@ class _EventListPageState extends State<EventListPage>
                     ),
                   ),
                   Text(
-                    widget.user.username,
-                    style: TextStyle(
-                      fontSize: 24,
-                      color: Theme.of(context).highlightColor,
-                    ),
-                  ),
-                  Text(
-                    widget.user.username,
+                    widget.user!.username,
                     style: TextStyle(
                       fontSize: 24,
                       color: Theme.of(context).highlightColor,

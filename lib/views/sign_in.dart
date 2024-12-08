@@ -22,6 +22,7 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin {
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
   bool _isLoading = false;
+  bool _mounted = true;
 
   final UserController _userController = UserController.instance;
 
@@ -49,12 +50,45 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    _mounted = false;
     _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     _animationController.dispose();
     super.dispose();
+  }
+
+  void _setLoading(bool value) {
+    if (_mounted) {
+      setState(() {
+        _isLoading = value;
+      });
+    }
+  }
+
+  void _toggleSignUp() {
+    if (_mounted) {
+      setState(() {
+        _isSignUp = !_isSignUp;
+      });
+    }
+  }
+
+  void _togglePasswordVisibility() {
+    if (_mounted) {
+      setState(() {
+        _isPasswordVisible = !_isPasswordVisible;
+      });
+    }
+  }
+
+  void _toggleConfirmPasswordVisibility() {
+    if (_mounted) {
+      setState(() {
+        _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+      });
+    }
   }
 
   @override
@@ -163,11 +197,7 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin {
                         ? Icons.visibility
                         : Icons.visibility_off,
                     isPassword: !_isPasswordVisible,
-                    suffixPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
-                    },
+                    suffixPressed: _togglePasswordVisibility,
                     validate: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Please enter your password';
@@ -189,12 +219,7 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin {
                           ? Icons.visibility
                           : Icons.visibility_off,
                       isPassword: !_isConfirmPasswordVisible,
-                      suffixPressed: () {
-                        setState(() {
-                          _isConfirmPasswordVisible =
-                              !_isConfirmPasswordVisible;
-                        });
-                      },
+                      suffixPressed: _toggleConfirmPasswordVisibility,
                       validate: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Please confirm your password';
@@ -210,9 +235,7 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin {
                   defaultFormButton(
                     onPressed: () async {
                       if (_formKey.currentState!.validate() && !_isLoading) {
-                        setState(() {
-                          _isLoading = true;
-                        });
+                        _setLoading(true);
                         try {
                           if (_isSignUp) {
                             await _userController.signUp(
@@ -229,9 +252,7 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin {
                             );
                           }
                         } finally {
-                          setState(() {
-                            _isLoading = false;
-                          });
+                          _setLoading(false);
                         }
                       }
                     },
@@ -250,7 +271,7 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin {
                   ),
                   const SizedBox(height: 20),
                   GestureDetector(
-                    onTap: () => setState(() => _isSignUp = !_isSignUp),
+                    onTap: _toggleSignUp,
                     child: Text(
                       _isSignUp
                           ? 'Already have an account? Sign In'

@@ -107,7 +107,7 @@ class LocalDB {
       where: 'firestoreId = ?',
       whereArgs: [firestoreId],
     );
-    return results.isNotEmpty ? UserModel.fromMap(results.first) : null;
+    return results.isNotEmpty ? UserModel.fromMap(results[0]) : null;
   }
 
   Future<List<UserModel>> getFriendOfUser(String id) async {
@@ -196,10 +196,14 @@ class LocalDB {
     Database db = await database;
     final List<Map<String, dynamic>> maps =
         await db.query('events', where: 'userId = ?', whereArgs: [userId]);
+    if (maps.isEmpty) {
+      return [];
+    }
     return List.generate(maps.length, (i) {
       return EventModel.fromMap(maps[i]);
     });
   }
+
 
   Future<int> deleteGiftsByEventId(int eventId) async {
     Database db = await database;
@@ -214,9 +218,9 @@ class LocalDB {
     Database db = await database;
     try {
       await db.transaction((txn) async {
-        await txn.delete('users');
-        await txn.delete('events');
-        await txn.delete('gifts');
+        await txn.rawDelete('DELETE FROM users');
+        await txn.rawDelete('DELETE FROM events');
+        await txn.rawDelete('DELETE FROM gifts');
       });
     } catch (e) {
       throw e;

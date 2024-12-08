@@ -16,7 +16,6 @@ class UserController {
   }
 
   final AuthService _authService = AuthService();
-  final FirestoreService _firestore = FirestoreService();
   final UserRepository _userRepository = UserRepository();
 
   User? firebaseUser;

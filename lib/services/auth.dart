@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/user.dart';
 import '../repositories/user.dart';
@@ -6,8 +7,18 @@ import '../repositories/user.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final UserRepository _userRepository = UserRepository();
-  late final int localUserId;
+  late int localUserId=1;
 
+   Future<void> _saveLocalUserId(int id) async {
+     final prefs = await SharedPreferences.getInstance();
+     await prefs.setInt('localUserId', id);
+     localUserId = id;
+   }
+
+   Future<int> loadLocalUserId() async {
+     final prefs = await SharedPreferences.getInstance();
+     return localUserId = prefs.getInt('localUserId') ?? 0;
+   }
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
   User? get currentUser => _auth.currentUser;
@@ -20,6 +31,7 @@ class AuthService {
       password: password,
     );
     localUserId= await _userRepository.loginUser(result.user!.uid);
+    await _saveLocalUserId(localUserId);
     return result;
   }
 
@@ -37,6 +49,7 @@ class AuthService {
       username: username,
       email: email,
     ));
+    await _saveLocalUserId(localUserId);
     // Update display name
     await result.user?.updateDisplayName(username);
     return result;
@@ -44,6 +57,7 @@ class AuthService {
 
   // sign out
   Future<void> signOut() async {
+    await _userRepository.logoutUser();
     await _auth.signOut();
   }
 }

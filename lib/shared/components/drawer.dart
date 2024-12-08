@@ -3,6 +3,7 @@ import 'package:hedieaty/models/user.dart';
 import 'package:hedieaty/shared/components/list.dart';
 import 'package:provider/provider.dart';
 
+import '../../views/event_list_page.dart';
 import '../theme.dart';
 
 Widget defaultDrawer(UserModel user) => Builder(builder: (context) {
@@ -60,7 +61,11 @@ Widget defaultDrawer(UserModel user) => Builder(builder: (context) {
             ListTile(
               title: const Text('My Event List'),
               onTap: () {
-               Navigator.pushNamed(context, '/my_event_list');
+               Navigator.of(context).push(
+                 MaterialPageRoute(
+                    builder: (context) => EventListPage(user: user,),
+                  ),
+               );
               },
               leading: const Icon(Icons.event),
             ),

@@ -87,8 +87,7 @@ class FirestoreService {
       QuerySnapshot userEventIdsSnapshot = await _firestore
           .collection('users')
           .doc(userId)
-          .collection('events')
-          .get();
+          .collection('events').get();
       return userEventIdsSnapshot.docs.map((doc) => doc.id).toList();
     } catch (e) {
       rethrow;
@@ -107,6 +106,7 @@ class FirestoreService {
           .map((doc) => EventModel.fromFirestore(doc))
           .toList();
     } catch (e) {
+      print('error is in get EventsOfUser func');
       rethrow;
     }
   }

@@ -50,7 +50,7 @@ class _EventCreatePageState extends State<EventCreatePage> {
     super.dispose();
   }
 
-  void _createEvent() {
+  void _createEvent()async {
     if (_formKey.currentState!.validate()) {
       _isLoading.value = true;
       final newEvent = EventModel(
@@ -60,11 +60,10 @@ class _EventCreatePageState extends State<EventCreatePage> {
         time: _eventTimeController.text,
         description: _eventDescriptionController.text,
       );
-      _eventController.createEvent(newEvent).then((value) {
+      await _eventController.createEvent(newEvent, context).then((value) {
         _isLoading.value = false;
         Navigator.of(context).pop();
       });
-      Navigator.of(context).pop();
     }
   }
 

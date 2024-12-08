@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EventModel {
   final int? id;
-  late final int? userId;
-  late final String? firestoreId;
+  late  int? userId;
+  late  String? firestoreId;
   final String name;
   final String date;
   final String time;
@@ -55,7 +55,7 @@ class EventModel {
       description: map['description'],
       status: map['status'],
       lastModified: DateTime.parse(map['lastModified']),
-      isDeleted: map['isDeleted'] ?? false,
+      isDeleted: map['isDeleted'] == 0 ? false : true,
     );
   }
 

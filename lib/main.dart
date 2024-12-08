@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/friend_gift_list': (context) => const FriendGiftListPage(),
         '/friend_event_list': (context) => const FriendEventListPage(),
-        '/my_event_list': (context) => EventListPage(user: _localDb.getUser(_auth.localUserId) as UserModel),
+        '/my_event_list': (context) => EventListPage(),
         '/event_create': (context) => const EventCreatePage(),
         '/my_gift_list': (context) => const GiftListPage(),
         '/my_pledged_gifts': (context) => const PledgedGiftPage(),

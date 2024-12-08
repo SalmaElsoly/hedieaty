@@ -91,8 +91,8 @@ class _HomePageState extends State<HomePage> {
                 icon: const Icon(Icons.notifications_active)),
           ],
         ),
-        drawer: FutureBuilder<UserModel>(
-          future: _userController.getCurrentUser(context) as Future<UserModel>,
+        drawer: FutureBuilder<UserModel?>(
+          future: _userController.getCurrentUser(context),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
