@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../theme.dart';
 
 Widget defaultFormField({
   required TextEditingController controller,
@@ -43,7 +46,7 @@ Widget defaultFormField({
               borderSide:
                   BorderSide(color: Theme.of(context).colorScheme.secondary)),
           filled: true,
-          fillColor: Theme.of(context).colorScheme.onSecondary.withOpacity(0.7),
+          fillColor: Provider.of<ThemeColorData>(context, listen: false).isDark?Colors.black38:Theme.of(context).colorScheme.onSecondary.withOpacity(0.7),
           prefixIcon:
               Icon(prefix, color: Theme.of(context).colorScheme.secondary),
           suffixIcon: suffix != null
