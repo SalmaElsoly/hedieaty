@@ -17,14 +17,13 @@ class EventListPage extends StatefulWidget {
 class _EventListPageState extends State<EventListPage>
     with SingleTickerProviderStateMixin {
   static const List<Tab> myTabs = <Tab>[
-    Tab(text: 'Past'),
-    Tab(text: 'Current'),
-    Tab(text: 'Upcoming'),
-  ];
+    Tab(text: 'Past', icon: Icon(Icons.history)),
+    Tab(text: 'Current', icon: Icon(Icons.event)),
+    Tab(text: 'Upcoming', icon: Icon(Icons.event_available)),  ];
   EventController _eventController = EventController.instance;
   late TabController _tabController;
   late Future<List<EventModel>> _eventsFuture;
-  
+
 
   @override
   void initState() {
@@ -56,8 +55,7 @@ class _EventListPageState extends State<EventListPage>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Text('My Events List'),
-          actions: [
+          title: const Text('My Events List 🎉'),          actions: [
             PopupMenuButton<String>(
               icon: Icon(Icons.sort),
               onSelected: (String result) {
@@ -78,7 +76,7 @@ class _EventListPageState extends State<EventListPage>
             ),
           ],
           bottom: PreferredSize(
-              preferredSize: const Size.fromHeight(160.0),
+              preferredSize: const Size.fromHeight(180.0),
               child: Column(
                 children: [
                   Container(
@@ -88,6 +86,14 @@ class _EventListPageState extends State<EventListPage>
                         color: Theme.of(context).colorScheme.secondary,
                         width: 3,
                       ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: CircleAvatar(
                       radius: 35,
@@ -96,18 +102,25 @@ class _EventListPageState extends State<EventListPage>
                         widget.user?.profileImage as String,
                         ):
                       AssetImage(
-                          'assets/images/avatar.png',
-                        ),
+                          'assets/images/avater.png',
+                        ) as ImageProvider,
                     ),
                   ),
                   Text(
                     widget.user!.username,
                     style: TextStyle(
                       fontSize: 24,
+                      fontWeight: FontWeight.w500,
                       color: Theme.of(context).highlightColor,
+                      shadows: [
+                        Shadow(
+                          blurRadius: 3,
+                          color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                          offset: const Offset(2, 2),
+                        ),
+                      ],
                     ),
-                  ),
-                  defaultTabBar(context, myTabs, _tabController),
+                  ),                  defaultTabBar(context, myTabs, _tabController),
                 ],
               ))),
       body: FutureBuilder<List<EventModel>>(

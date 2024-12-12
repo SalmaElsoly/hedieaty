@@ -37,7 +37,7 @@ Widget defaultDrawer(UserModel user) => Builder(builder: (context) {
                           radius: 42,
                           backgroundImage: user.profileImage != null
                               ? NetworkImage(user.profileImage!)
-                              : const AssetImage('assets/images/avatar.png') as ImageProvider,
+                              : const AssetImage('assets/images/avater.png') as ImageProvider,
                         ),
                         const SizedBox(width: 16),
                         Text(

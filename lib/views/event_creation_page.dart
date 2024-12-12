@@ -86,131 +86,176 @@ class _EventCreatePageState extends State<EventCreatePage> {
   Widget build(BuildContext context) {
     final isEditing = widget.event != null;
     double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditing ? 'Edit Event' : 'Create Event'),
+        elevation: 2,
+        backgroundColor: Theme.of(context).primaryColor,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              defaultFormField(
-                controller: _eventNameController,
-                label: 'Event Name',
-                hintText: 'Enter Event Name',
-                validate: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter event name';
-                  }
-                  return null;
-                },
-                prefix: Icons.event,
-                type: TextInputType.name,
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Theme.of(context).primaryColor.withOpacity(0.4), Colors.white],          ),
+        ),
+        height: screenHeight,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Card(
+              elevation: 5,
+              color: Theme.of(context).colorScheme.onPrimary.withOpacity(0.8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
               ),
-              SizedBox(height: 20),
-              defaultFormField(
-                controller: _eventDateController,
-                label: 'Enter Date',
-                validate: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter date';
-                  }
-                  return null;
-                },
-                prefix: Icons.calendar_today,
-                type: TextInputType.datetime,
-                readOnly: true,
-                onTap: () async {
-                  final DateTime? date = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime.now(),
-                    lastDate: DateTime(2100),
-                  );
-                  if (date != null) {
-                    String formattedDate =
-                        "${date.day}-${date.month}-${date.year}";
-                    setState(() {
-                      _eventDateController.text = formattedDate;
-                    });
-                  }
-                },
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.event_available,
+                        size: 80,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        isEditing ? 'Edit Your Event' : 'Plan Your Event',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                      const SizedBox(height: 30),
+                      defaultFormField(
+                        controller: _eventNameController,
+                        label: 'Event Name',
+                        hintText: 'Enter Event Name',
+                        validate: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter event name';
+                          }
+                          return null;
+                        },
+                        prefix: Icons.event,
+                        type: TextInputType.name,
+                      ),
+                      SizedBox(height: 20),
+                      defaultFormField(
+                        controller: _eventDateController,
+                        label: 'Date',
+                        validate: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Required';
+                          }
+                          return null;
+                        },
+                        prefix: Icons.calendar_today,
+                        type: TextInputType.datetime,
+                        readOnly: true,
+                        onTap: () async {
+                          final DateTime? date = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime.now(),
+                            lastDate: DateTime(2100),
+                          );
+                          if (date != null) {
+                            String formattedDate =
+                                "${date.day}-${date.month}-${date.year}";
+                            setState(() {
+                              _eventDateController.text = formattedDate;
+                            });
+                          }
+                        },
+                      ),
+                      SizedBox(height: 20),
+                      defaultFormField(
+                        controller: _eventTimeController,
+                        label: 'Time',
+                        prefix: Icons.access_time,
+                        type: TextInputType.datetime,
+                        readOnly: true,
+                        validate: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Required';
+                          }
+                          return null;
+                        },
+                        onTap: () async {
+                          final TimeOfDay? time = await showTimePicker(
+                            context: context,
+                            initialTime: TimeOfDay(hour: 12, minute: 0),
+                          );
+                          if (time != null) {
+                            String formattedTime = "${time.hour}:${time.minute}";
+                            setState(() {
+                              _eventTimeController.text = formattedTime;
+                            });
+                          }
+                        },
+                      ),
+                      SizedBox(height: 20),
+                      defaultFormField(
+                        controller: _eventLocationController,
+                        label: 'Event Location',
+                        prefix: Icons.location_on,
+                        validate: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a location';
+                          }
+                          return null;
+                        },
+                        type: TextInputType.text,
+                      ),
+                      SizedBox(height: 20),
+                      defaultFormField(
+                        controller: _eventDescriptionController,
+                        label: 'Event Description',
+                        prefix: Icons.description,
+                        validate: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a description';
+                          }
+                          return null;
+                        },
+                        type: TextInputType.text,
+                      ),
+                      SizedBox(height: 30),
+                      ValueListenableBuilder<bool>(
+                        valueListenable: _isLoading,
+                        builder: (context, isLoading, child) {
+                          return defaultFormButton(
+                            onPressed: isLoading ? (){} : (isEditing ? _saveEvent : _createEvent),
+                            child: isLoading
+                              ? SizedBox(
+                                  width: 20,
+                                  height: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                  ),
+                                )
+                              : Text(
+                                  isEditing ? 'Save Changes' : 'Create Event',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                            screenWidth: screenWidth,
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
               ),
-              SizedBox(height: 20),
-              defaultFormField(
-                controller: _eventTimeController,
-                label: 'Enter Time',
-                prefix: Icons.access_time,
-                type: TextInputType.datetime,
-                readOnly: true,
-                validate: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter time';
-                  }
-                  return null;
-                },
-                onTap: () async {
-                  final TimeOfDay? time = await showTimePicker(
-                    context: context,
-                    initialTime: TimeOfDay(hour: 12, minute: 0),
-                  );
-                  if (time != null) {
-                    String formattedTime = "${time.hour}:${time.minute}";
-                    setState(() {
-                      _eventTimeController.text = formattedTime;
-                    });
-                  }
-                },
-              ),
-              SizedBox(height: 20),
-              defaultFormField(
-                controller: _eventLocationController,
-                label: 'Event Location',
-                prefix: Icons.location_on,
-                validate: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a location';
-                  }
-                  return null;
-                },
-                type: TextInputType.text,
-              ),
-              SizedBox(height: 20),
-              defaultFormField(
-                controller: _eventDescriptionController,
-                label: 'Event Description',
-                prefix: Icons.description,
-                validate: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a description';
-                  }
-                  return null;
-                },
-                type: TextInputType.text,
-              ),
-              SizedBox(height: 20),
-              ValueListenableBuilder<bool>(
-                valueListenable: _isLoading,
-                builder: (context, isLoading, child) {
-                  return defaultFormButton(
-                    onPressed: isLoading ? (){} : (isEditing ? _saveEvent : _createEvent),
-                    child: isLoading
-                      ? SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                          ),
-                        )
-                      : Text(isEditing ? 'Save Changes' : 'Create Event'),
-                    screenWidth: screenWidth,
-                  );
-                },
-              ),
-            ],
+            ),
           ),
         ),
       ),
