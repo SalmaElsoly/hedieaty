@@ -80,7 +80,7 @@ class GiftModel {
     );
   }
 
-  Map<String, dynamic> toFirestore() {
+  Map<String, dynamic> toFirestore(String userId) {
     return {
       'name': this.name,
       'price': this.price,
@@ -90,6 +90,7 @@ class GiftModel {
       'status': this.status,
       'pledgedBy': this.pledgedBy,
       'lastModified': this.lastModified.toIso8601String(),
+      'ownerId': userId == '' ? null : userId,
     };
   }
 }

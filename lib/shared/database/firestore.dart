@@ -6,6 +6,7 @@ import 'package:hedieaty/models/user.dart';
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+
   Future<void> createUser(UserModel user) async {
     try {
       await _firestore
@@ -178,10 +179,10 @@ class FirestoreService {
     }
   }
 
-  Future<String> createGift(GiftModel gift) async {
+  Future<String> createGift(GiftModel gift, String userId) async {
     try {
       final giftRef =
-          await _firestore.collection('gifts').add(gift.toFirestore());
+          await _firestore.collection('gifts').add(gift.toFirestore(userId));
       return giftRef.id;
     } catch (e) {
       rethrow;
@@ -204,7 +205,7 @@ class FirestoreService {
       await _firestore
           .collection('gifts')
           .doc(gift.firestoreId)
-          .update(gift.toFirestore());
+          .update(gift.toFirestore(''));
     } catch (e) {
       rethrow;
     }
@@ -217,7 +218,7 @@ class FirestoreService {
           .doc(eventId)
           .collection('gifts')
           .doc(gift.firestoreId)
-          .set(gift.toFirestore());
+          .set({});
     } catch (e) {
       rethrow;
     }
