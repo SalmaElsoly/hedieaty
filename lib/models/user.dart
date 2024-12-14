@@ -6,7 +6,7 @@ class UserModel {
   final String email;
   final String username;
   final String? profileImage;
-  final int eventsCount;
+  int eventsCount;
   final DateTime lastModified;
 
   UserModel({

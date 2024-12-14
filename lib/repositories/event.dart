@@ -28,6 +28,8 @@ class EventRepository {
           await _localDB.insertEvent(event);
           final user = await _localDB.getUser(userId);
           await _firestore.addEventToUser(user!.firestoreId!,event.firestoreId!);
+          user.eventsCount += 1;
+          await _localDB.updateUser(user);
         } catch (e) {
           rethrow;
         }
@@ -43,20 +45,45 @@ class EventRepository {
       // final isConnected = connectivityResult == ConnectivityResult.none;
 
       if (connectivityResult != ConnectivityResult.none) {
-        // Fetch remote events
         final user = await _localDB.getUser(userId);
         final remoteEvents =
             await _firestore.getEventsOfUser(user!.firestoreId!);
 
-        //await _syncHelper.syncEvents(userId, remoteEvents);
+        await _syncHelper.syncEvents(userId, remoteEvents);
         return remoteEvents;
       } else {
-        // If offline, return local events
         return localEvents;
       }
     } catch (e) {
-      print(e.toString());
-      print('event reposiotry returns error');
+      rethrow;
+    }
+  }
+
+  Future<void> updateEvent(EventModel event) async {
+    try {
+      final checkConnectivity = await Connectivity().checkConnectivity();
+      if (checkConnectivity == ConnectivityResult.none) {
+        throw Exception("No internet connection. Cannot update event.");
+      }
+      await _firestore.updateEvent(event);
+      await _localDB.updateEvent(event);
+    } catch (e) {
+      rethrow;
+    }
+  }
+  Future<void> deleteEvent(EventModel event, String userId) async {
+    try {
+      final checkConnectivity = await Connectivity().checkConnectivity();
+      if (checkConnectivity == ConnectivityResult.none) {
+        throw Exception("No internet connection. Cannot delete event.");
+      }
+      await _firestore.deleteEvent(event.firestoreId!, userId);
+      await _localDB.deleteEvent(event);
+
+      final user = await _localDB.getUserByFirestoreId(userId);
+      user?.eventsCount -= 1;
+      await _localDB.updateUser(user!);
+    } catch (e) {
       rethrow;
     }
   }

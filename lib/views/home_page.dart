@@ -163,6 +163,8 @@ class _HomePageState extends State<HomePage> {
                 itemCount: _friends.length);
           },
         ),
-        floatingActionButton: addEventButton(context));
+        floatingActionButton: addEventButton((){
+          Navigator.pushNamed(context, '/event_create');
+        },context));
   }
 }

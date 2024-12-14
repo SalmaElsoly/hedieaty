@@ -54,4 +54,24 @@ class EventController {
       showError('Error', e.toString(), context);
       return [];
     }
-  }}
+  }
+  Future<void> updateEvent(EventModel event, BuildContext context) async {
+    try {
+      await _eventRepository.updateEvent(event);
+    } on FirebaseException catch (e) {
+      showError('Database Error', e.message ?? 'An error occurred while updating event', context);
+    } catch (e) {
+      showError('Error', e.toString(), context);
+    }
+  }
+
+  Future<void> deleteEvent(EventModel event, BuildContext context) async {
+    try {
+      await _eventRepository.deleteEvent(event, _authService.currentUser!.uid);
+    } on FirebaseException catch (e) {
+      showError('Database Error', e.message ?? 'An error occurred while deleting event', context);
+    } catch (e) {
+      showError('Error', e.toString(), context);
+    }
+  }
+}

@@ -10,7 +10,7 @@ class GiftModel {
   final String category;
   final String? giftImageUrl;
   final String status;
-  final int? pledgedBy;
+  final String? pledgedBy;
   final DateTime lastModified;
   final bool isDeleted;
 

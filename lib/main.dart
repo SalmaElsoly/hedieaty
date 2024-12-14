@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:hedieaty/models/user.dart';
 import 'package:hedieaty/services/auth.dart';
 import 'package:hedieaty/views/friend_gift_list_page.dart';
 import 'package:hedieaty/views/pledged_gift_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'models/user.dart';
+import 'shared/database/firestore.dart';
 import 'shared/theme.dart';
 import 'views/event_creation_page.dart';
 import 'views/friend_event_list_page.dart';
@@ -17,7 +18,7 @@ import 'views/profile_page.dart';
 import 'views/sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'shared/database/local_db.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
   MyApp({super.key});
 
   final AuthService _auth = AuthService();
-  final LocalDB _localDb = LocalDB();
+
 
   @override
   Widget build(BuildContext context) {

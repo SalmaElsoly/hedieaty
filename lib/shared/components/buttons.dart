@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 
-Widget addEventButton(BuildContext context) {
+Widget addEventButton(VoidCallback onPressed, BuildContext context) {
   return FloatingActionButton.extended(
-    onPressed: () {
-      Navigator.pushNamed(context, '/event_create');
-    },
+    onPressed: onPressed,
     label: const Text('Add Event'),
     icon: const Icon(Icons.add),
   );

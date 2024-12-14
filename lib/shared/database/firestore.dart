@@ -98,6 +98,8 @@ class FirestoreService {
   Future<List<EventModel>> getEventsOfUser(String userId) async {
     try {
       List<String> eventIds = await getEventsIdsOfUser(userId);
+      if (eventIds.isEmpty) return [];
+
       QuerySnapshot eventDetailsSnapshot = await _firestore
           .collection('events')
           .where(FieldPath.documentId, whereIn: eventIds)
@@ -107,7 +109,6 @@ class FirestoreService {
           .map((doc) => EventModel.fromFirestore(doc))
           .toList();
     } catch (e) {
-      print('error is in get EventsOfUser func');
       rethrow;
     }
   }
@@ -155,7 +156,7 @@ class FirestoreService {
       await _firestore
           .collection('users')
           .doc(userId)
-          .update({'eventCount': FieldValue.increment(-1)});
+          .update({'eventsCount': FieldValue.increment(-1)});
     } catch (e) {
       rethrow;
     }
@@ -272,7 +273,7 @@ Future<void> addEventToUser(String userId, String eventId) async {
         .collection('users')
         .doc(userId)
         .update({
-      'eventCount': FieldValue.increment(1),
+      'eventsCount': FieldValue.increment(1),
     });
   } catch (e) {
     rethrow;

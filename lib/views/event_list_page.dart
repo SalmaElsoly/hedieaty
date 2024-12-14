@@ -32,23 +32,30 @@ class _EventListPageState extends State<EventListPage>
     _eventsFuture = _eventController.getMyEvents(context);
   }
 
-  void deleteEvent(int index, List<EventModel> events) {
+  void deleteEvent(int index, List<EventModel> events) async {
+    await _eventController.deleteEvent(events[index], context);
     setState(() {
-      events.removeAt(index);
+      _eventsFuture = _eventController.getMyEvents(context);
     });
   }
 
   void editEvent(int index, List<EventModel> eventList) async {
-  Navigator.of(context).push(
+    final result = await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) => EventCreatePage(event: eventList[index]),
       ),
     );
+    if (result != null) {
+      setState(() {
+        _eventsFuture = _eventController.getMyEvents(context);
+      });
+    }
   }
 
-  void onTab(int index, List<EventModel> eventList) {
-    Navigator.of(context).pushNamed('/my_gift_list',
+  void onTab(int index, List<EventModel> eventList) async {
+     Navigator.of(context).pushNamed('/my_gift_list',
         arguments: {'event': eventList[index]});
+
   }
 
   @override
@@ -154,7 +161,18 @@ class _EventListPageState extends State<EventListPage>
           );
         },
       ),
-      floatingActionButton: addEventButton(context),
+      floatingActionButton: addEventButton(()async{
+        final result = await Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => EventCreatePage(),
+          ),
+        );
+        if (result != null) {
+          setState(() {
+            _eventsFuture = _eventController.getMyEvents(context);
+          });
+        }
+      },context),
     );
   }
 }

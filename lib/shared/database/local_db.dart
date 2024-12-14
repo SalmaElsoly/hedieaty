@@ -9,6 +9,7 @@ class LocalDB {
   static const String _databaseName = 'hedieaty.db';
   static const int _databaseVersion = 1;
 
+  // Database initialization
   Future<Database> get database async {
     if (_database != null) return _database!;
     _database = await _initDatabase();
@@ -61,15 +62,15 @@ class LocalDB {
       category TEXT NOT NULL,
       giftImageUrl TEXT,
       status TEXT CHECK(status IN ('unpledged', 'purchased', 'pledged')) NOT NULL DEFAULT 'unpledged',
-      pledgedBy INTEGER,
+      pledgedBy TEXT,
       isDeleted BOOLEAN NOT NULL DEFAULT FALSE,
       lastModified DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (eventId) REFERENCES events(id),
-      FOREIGN KEY (pledgedBy) REFERENCES users(id)
+      FOREIGN KEY (eventId) REFERENCES events(id)
     );
   ''');
   }
 
+  // User operations
   Future<int> insertUser(UserModel user) async {
     Database db = await database;
     int id = await db.insert(
@@ -120,21 +121,16 @@ class LocalDB {
     return List.generate(results.length, (i) => UserModel.fromMap(results[i]));
   }
 
+  Future<void> deleteAllUsers() async {
+    Database db = await database;
+    await db.rawDelete('DELETE FROM users');
+  }
+
+  // Event operations
   Future<int> insertEvent(EventModel event) async {
     Database db = await database;
     return await db.insert('events', event.toMap(),
         conflictAlgorithm: ConflictAlgorithm.abort);
-  }
-
-  Future<List<EventModel>> getEventsByUserIdAndStatus(
-      int userId, String status) async {
-    Database db = await database;
-    final List<Map<String, dynamic>> results = await db.query(
-      'events',
-      where: 'userId = ? AND status = ?',
-      whereArgs: [userId, status],
-    );
-    return List.generate(results.length, (i) => EventModel.fromMap(results[i]));
   }
 
   Future<int> updateEvent(EventModel event) async {
@@ -156,21 +152,56 @@ class LocalDB {
     );
   }
 
+  Future<int> deleteEventByFirestoreId(String firestoreId) async {
+    Database db = await database;
+    return await db.delete(
+      'events',
+      where: 'firestoreId = ?',
+      whereArgs: [firestoreId],
+    );
+  }
+  Future<int> deleteEventsByUserId(int userId) async {
+    Database db = await database;
+    return await db.delete(
+      'events',
+      where: 'userId = ?',
+      whereArgs: [userId],
+    );
+  }
+
+  Future<List<EventModel>> getEventsByUserId(int userId) async {
+    Database db = await database;
+    final List<Map<String, dynamic>> maps =
+        await db.query('events', where: 'userId = ?', whereArgs: [userId]);
+    if (maps.isEmpty) {
+      return [];
+    }
+    return List.generate(maps.length, (i) {
+      return EventModel.fromMap(maps[i]);
+    });
+  }
+
+  Future<List<EventModel>> getEventsByUserIdAndStatus(
+      int userId, String status) async {
+    Database db = await database;
+    final List<Map<String, dynamic>> results = await db.query(
+      'events',
+      where: 'userId = ? AND status = ?',
+      whereArgs: [userId, status],
+    );
+    return List.generate(results.length, (i) => EventModel.fromMap(results[i]));
+  }
+
+  Future<void> deleteAllEvents() async {
+    Database db = await database;
+    await db.rawDelete('DELETE FROM events');
+  }
+
+  // Gift operations
   Future<int> insertGift(GiftModel gift) async {
     Database db = await database;
     return await db.insert('gifts', gift.toMap(),
         conflictAlgorithm: ConflictAlgorithm.abort);
-  }
-
-  Future<List<GiftModel>> getGiftsByEventIdAndStatus(
-      int eventId, String status) async {
-    Database db = await database;
-    final List<Map<String, dynamic>> results = await db.query(
-      'gifts',
-      where: 'eventId = ? AND status = ?',
-      whereArgs: [eventId, status],
-    );
-    return List.generate(results.length, (i) => GiftModel.fromMap(results[i]));
   }
 
   Future<int> updateGift(GiftModel gift) async {
@@ -192,18 +223,16 @@ class LocalDB {
     );
   }
 
-  Future<List<EventModel>> getEventsByUserId(int userId) async {
+  Future<List<GiftModel>> getGiftsByEventIdAndStatus(
+      int eventId, String status) async {
     Database db = await database;
-    final List<Map<String, dynamic>> maps =
-        await db.query('events', where: 'userId = ?', whereArgs: [userId]);
-    if (maps.isEmpty) {
-      return [];
-    }
-    return List.generate(maps.length, (i) {
-      return EventModel.fromMap(maps[i]);
-    });
+    final List<Map<String, dynamic>> results = await db.query(
+      'gifts',
+      where: 'eventId = ? AND status = ?',
+      whereArgs: [eventId, status],
+    );
+    return List.generate(results.length, (i) => GiftModel.fromMap(results[i]));
   }
-
 
   Future<int> deleteGiftsByEventId(int eventId) async {
     Database db = await database;
@@ -214,16 +243,8 @@ class LocalDB {
     );
   }
 
-  Future<void> clearAll() async {
+  Future<void> deleteAllGifts() async {
     Database db = await database;
-    try {
-      await db.transaction((txn) async {
-        await txn.rawDelete('DELETE FROM users');
-        await txn.rawDelete('DELETE FROM events');
-        await txn.rawDelete('DELETE FROM gifts');
-      });
-    } catch (e) {
-      throw e;
-    }
+    await db.rawDelete('DELETE FROM gifts');
   }
 }

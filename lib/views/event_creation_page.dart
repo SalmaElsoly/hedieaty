@@ -62,12 +62,12 @@ class _EventCreatePageState extends State<EventCreatePage> {
       );
       await _eventController.createEvent(newEvent, context).then((value) {
         _isLoading.value = false;
-        Navigator.of(context).pop();
+        Navigator.of(context).pop(newEvent);
       });
     }
   }
 
-  void _saveEvent() {
+  void _saveEvent() async {
     if (_formKey.currentState!.validate()) {
       _isLoading.value = true;
       final updatedEvent = EventModel(
@@ -76,12 +76,15 @@ class _EventCreatePageState extends State<EventCreatePage> {
         location: _eventLocationController.text,
         time: _eventTimeController.text,
         description: _eventDescriptionController.text,
+        firestoreId: widget.event?.firestoreId,
+        status: widget.event!.status,
       );
-      _isLoading.value = false;
-      Navigator.of(context).pop();
+      await _eventController.updateEvent(updatedEvent, context).then((value) {
+        _isLoading.value = false;
+        Navigator.of(context).pop(updatedEvent);
+      });
     }
   }
-
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.event != null;
