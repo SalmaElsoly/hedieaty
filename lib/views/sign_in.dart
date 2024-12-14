@@ -251,7 +251,9 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin {
                               context,
                             );
                           }
+                          if (!mounted) return;
                         } finally {
+                          if (!mounted) return;
                           _setLoading(false);
                         }
                       }
