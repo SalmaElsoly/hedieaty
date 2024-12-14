@@ -3,6 +3,7 @@ import 'package:hedieaty/shared/database/local_db.dart';
 import 'package:hedieaty/models/user.dart';
 
 import '../models/event.dart';
+import '../models/gift.dart';
 
 class SyncHelper {
   final FirestoreService _firestore;
@@ -39,6 +40,18 @@ class SyncHelper {
     for (var remoteEvent in remoteEvents) {
       remoteEvent.userId = userId;
       await _localDB.insertEvent(remoteEvent);
+    }
+    final user = await _localDB.getUser(userId);
+    user?.eventsCount = remoteEvents.length;
+    await _localDB.updateUser(user!);
+  }
+
+  Future<void> syncGifts(int eventId, List<GiftModel> remoteGifts) async {
+    //delete gifts and save the new ones
+    await _localDB.deleteGiftsByEventId(eventId);
+    for (var remoteGift in remoteGifts) {
+      remoteGift.eventId = eventId;
+      await _localDB.insertGift(remoteGift);
     }
   }
 }

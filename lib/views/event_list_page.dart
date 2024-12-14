@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hedieaty/controllers/event.dart';
 import 'package:hedieaty/models/user.dart';
 import 'package:hedieaty/shared/components/buttons.dart';
+import 'package:hedieaty/views/gift_list_page.dart';
 import '../models/event.dart';
 import '../shared/components/list.dart';
 import '../shared/components/tabs.dart';
@@ -53,9 +54,11 @@ class _EventListPageState extends State<EventListPage>
   }
 
   void onTab(int index, List<EventModel> eventList) async {
-     Navigator.of(context).pushNamed('/my_gift_list',
-        arguments: {'event': eventList[index]});
-
+     Navigator.of(context).push(
+       MaterialPageRoute(
+        builder: (context) => GiftListPage(event: eventList[index])
+      )
+     );
   }
 
   @override

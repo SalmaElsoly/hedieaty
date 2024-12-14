@@ -37,9 +37,7 @@ class EventRepository {
 
   Future<List<EventModel>> getEvents(int userId) async {
     try {
-      // Fetch local events for immediate use
       final localEvents = await _localDB.getEventsByUserId(userId);
-
       // Check internet connectivity
       final connectivityResult = await Connectivity().checkConnectivity();
       // final isConnected = connectivityResult == ConnectivityResult.none;
@@ -50,7 +48,9 @@ class EventRepository {
             await _firestore.getEventsOfUser(user!.firestoreId!);
 
         await _syncHelper.syncEvents(userId, remoteEvents);
-        return remoteEvents;
+        final updatedLocalEvents = await _localDB.getEventsByUserId(userId);
+
+        return updatedLocalEvents;
       } else {
         return localEvents;
       }

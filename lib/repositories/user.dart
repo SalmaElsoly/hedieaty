@@ -26,8 +26,9 @@ class UserRepository {
   Future<int> loginUser(String firestoreId) async {
     try {
       UserModel loggedIn = await _firestore.getUser(firestoreId);
+      print('========insert user in db===========');
       final id = await _localDB.insertUser(loggedIn);
-      await Future.delayed(const Duration(seconds: 1));
+      print('=========user inserted in db===========');
       return id;
     } catch (e) {
       rethrow;

@@ -133,6 +133,16 @@ class LocalDB {
         conflictAlgorithm: ConflictAlgorithm.abort);
   }
 
+  Future<EventModel> getEvent(int eventId)async{
+    Database db = await database;
+    final List<Map<String, dynamic>> results = await db.query(
+      'events',
+      where: 'id = ?',
+      whereArgs: [eventId],
+    );
+    return EventModel.fromMap(results[0]);
+  }
+
   Future<int> updateEvent(EventModel event) async {
     Database db = await database;
     return await db.update(
@@ -223,13 +233,13 @@ class LocalDB {
     );
   }
 
-  Future<List<GiftModel>> getGiftsByEventIdAndStatus(
-      int eventId, String status) async {
+  Future<List<GiftModel>> getGiftsByEventId(
+      int eventId) async {
     Database db = await database;
     final List<Map<String, dynamic>> results = await db.query(
       'gifts',
-      where: 'eventId = ? AND status = ?',
-      whereArgs: [eventId, status],
+      where: 'eventId = ?',
+      whereArgs: [eventId],
     );
     return List.generate(results.length, (i) => GiftModel.fromMap(results[i]));
   }
