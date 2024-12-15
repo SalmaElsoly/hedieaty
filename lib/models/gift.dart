@@ -1,15 +1,34 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+enum GiftStatus { unpledged, purchased, pledged }
+
+enum GiftCategory {
+  electronics,
+  clothing,
+  home,
+  toys,
+  books,
+  games,
+  sports,
+  automotive,
+  jewelry,
+  beauty,
+  health,
+  food,
+  trips,
+  other
+}
+
 class GiftModel {
   final int? id;
-  final int? eventId;
-  final String? firestoreId;
+  int? eventId;
+  String? firestoreId;
   final String name;
   final double price;
   final String description;
-  final String category;
-  final String? giftImageUrl;
-  final String status;
+  final GiftCategory category;
+  String? giftImageUrl;
+  final GiftStatus status;
   final String? pledgedBy;
   final DateTime lastModified;
   final bool isDeleted;
@@ -23,14 +42,11 @@ class GiftModel {
     required this.description,
     required this.category,
     this.giftImageUrl,
-    this.status = 'unpledged',
+    this.status = GiftStatus.unpledged,
     this.pledgedBy,
     DateTime? lastModified,
     this.isDeleted = false,
-  })  : lastModified = lastModified ?? DateTime.now(),
-        assert(status == 'unpledged' ||
-            status == 'purchased' ||
-            status == 'pledged');
+  }) : lastModified = lastModified ?? DateTime.now();
 
   Map<String, dynamic> toMap() {
     return {
@@ -40,9 +56,9 @@ class GiftModel {
       'name': name,
       'price': price,
       'description': description,
-      'category': category,
+      'category': category.toString().split('.').last,
       'giftImageUrl': giftImageUrl,
-      'status': status,
+      'status': status.toString().split('.').last,
       'pledgedBy': pledgedBy,
       'lastModified': lastModified.toIso8601String(),
     };
@@ -56,12 +72,18 @@ class GiftModel {
       name: map['name'],
       price: map['price'],
       description: map['description'],
-      category: map['category'],
+      category: GiftCategory.values.firstWhere(
+        (e) => e.toString().split('.').last == map['category'],
+        orElse: () => GiftCategory.other,
+      ),
       giftImageUrl: map['giftImageUrl'],
-      status: map['status'],
+      status: GiftStatus.values.firstWhere(
+        (e) => e.toString().split('.').last == map['status'],
+        orElse: () => GiftStatus.unpledged,
+      ),
       pledgedBy: map['pledgedBy'],
       lastModified: DateTime.parse(map['lastModified']),
-      isDeleted: map['isDeleted'] ?? false,
+      isDeleted: map['isDeleted'] == 0 ? false : true,
     );
   }
 
@@ -72,9 +94,14 @@ class GiftModel {
       name: data['name'],
       price: data['price'],
       description: data['description'],
-      category: data['category'],
+      category: GiftCategory.values.firstWhere(
+        (e) => e.toString().split('.').last == data['category'],
+      ),
       giftImageUrl: data['giftImageUrl'],
-      status: data['status'],
+      status: GiftStatus.values.firstWhere(
+        (e) => e.toString().split('.').last == data['status'],
+        orElse: () => GiftStatus.unpledged,
+      ),
       pledgedBy: data['pledgedBy'],
       lastModified: DateTime.parse(data['lastModified']),
     );
@@ -85,9 +112,9 @@ class GiftModel {
       'name': this.name,
       'price': this.price,
       'description': this.description,
-      'category': this.category,
+      'category': this.category.toString().split('.').last,
       'giftImageUrl': this.giftImageUrl,
-      'status': this.status,
+      'status': this.status.toString().split('.').last,
       'pledgedBy': this.pledgedBy,
       'lastModified': this.lastModified.toIso8601String(),
       'ownerId': userId == '' ? null : userId,

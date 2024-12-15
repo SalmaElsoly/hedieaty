@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class EventModel {
   final int? id;
-  late  int? userId;
-  late  String? firestoreId;
+  late int? userId;
+  late String? firestoreId;
   final String name;
   final String date;
   final String time;
@@ -12,6 +12,7 @@ class EventModel {
   final String status;
   final DateTime lastModified;
   final bool isDeleted;
+  List<DocumentReference> gifts = [];
 
   EventModel({
     this.id,
@@ -25,6 +26,7 @@ class EventModel {
     this.status = 'upcoming',
     DateTime? lastModified,
     this.isDeleted = false,
+    List<DocumentReference>? gifts,
   })  : lastModified = lastModified ?? DateTime.now(),
         assert(status == 'upcoming' || status == 'current' || status == 'past');
 
@@ -70,6 +72,18 @@ class EventModel {
       description: data['description'],
       status: data['status'],
       lastModified: DateTime.parse(data['lastModified']),
+      gifts: data['gifts'] != null && data['gifts'] is List
+          ? (data['gifts'] as List<dynamic>)
+              .map((path) {
+                if (path != null && path is String) {
+                  return FirebaseFirestore.instance.doc(path);
+                } else {
+                  return null;
+                }
+              })
+              .whereType<DocumentReference>()
+              .toList()
+          : [],
     );
   }
 
@@ -82,6 +96,7 @@ class EventModel {
       'description': this.description,
       'status': this.status,
       'lastModified': this.lastModified.toIso8601String(),
+      'gifts': this.gifts.map((gift) => gift.path).toList(),
     };
   }
 

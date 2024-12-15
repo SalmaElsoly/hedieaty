@@ -13,11 +13,11 @@ class UserRepository {
   Future<int> createUser(UserModel user) async {
     try {
       final res = await _firestore.isUsernameUnique(user.username);
-      if(!res){
+      if (!res) {
         throw Exception("enter a unique username, this name is used");
       }
       await _firestore.createUser(user);
-     return await loginUser(user.firestoreId!);
+      return await loginUser(user.firestoreId!);
     } catch (e) {
       rethrow;
     }
@@ -27,7 +27,6 @@ class UserRepository {
     try {
       UserModel loggedIn = await _firestore.getUser(firestoreId);
       final id = await _localDB.insertUser(loggedIn);
-      await Future.delayed(const Duration(seconds: 1));
       return id;
     } catch (e) {
       rethrow;
@@ -59,9 +58,10 @@ class UserRepository {
   Future<UserModel> getUser(String id) async {
     try {
       UserModel? user;
+      Future.delayed(const Duration(seconds: 1));
       user = await _localDB.getUserByFirestoreId(id);
       if (user != null) {
-        return user;
+        return await _firestore.getUser(id);
       }
       throw Exception('No user found or saved');
     } catch (e) {

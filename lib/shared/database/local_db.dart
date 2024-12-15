@@ -19,7 +19,9 @@ class LocalDB {
   Future<Database> _initDatabase() async {
     String path = join(await getDatabasesPath(), _databaseName);
     return await openDatabase(path,
-        version: _databaseVersion, onCreate: _onCreate);
+        version: _databaseVersion, onCreate: _onCreate, onOpen: (db) async {
+      await db.execute('PRAGMA foreign_keys = ON;');
+    });
   }
 
   Future _onCreate(Database db, int version) async {
@@ -48,7 +50,7 @@ class LocalDB {
       status TEXT CHECK(status IN ('upcoming', 'current', 'past')) NOT NULL DEFAULT 'upcoming',
       isDeleted BOOLEAN NOT NULL DEFAULT FALSE,
       lastModified DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (userId) REFERENCES users(id)
+      FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
     );
   ''');
     await db.execute('''
@@ -65,7 +67,7 @@ class LocalDB {
       pledgedBy TEXT,
       isDeleted BOOLEAN NOT NULL DEFAULT FALSE,
       lastModified DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (eventId) REFERENCES events(id)
+      FOREIGN KEY (eventId) REFERENCES events(id) ON DELETE CASCADE
     );
   ''');
   }
@@ -133,6 +135,16 @@ class LocalDB {
         conflictAlgorithm: ConflictAlgorithm.abort);
   }
 
+  Future<EventModel> getEvent(int eventId) async {
+    Database db = await database;
+    final List<Map<String, dynamic>> results = await db.query(
+      'events',
+      where: 'id = ?',
+      whereArgs: [eventId],
+    );
+    return EventModel.fromMap(results[0]);
+  }
+
   Future<int> updateEvent(EventModel event) async {
     Database db = await database;
     return await db.update(
@@ -160,6 +172,7 @@ class LocalDB {
       whereArgs: [firestoreId],
     );
   }
+
   Future<int> deleteEventsByUserId(int userId) async {
     Database db = await database;
     return await db.delete(
@@ -223,13 +236,12 @@ class LocalDB {
     );
   }
 
-  Future<List<GiftModel>> getGiftsByEventIdAndStatus(
-      int eventId, String status) async {
+  Future<List<GiftModel>> getGiftsByEventId(int eventId) async {
     Database db = await database;
     final List<Map<String, dynamic>> results = await db.query(
       'gifts',
-      where: 'eventId = ? AND status = ?',
-      whereArgs: [eventId, status],
+      where: 'eventId = ?',
+      whereArgs: [eventId],
     );
     return List.generate(results.length, (i) => GiftModel.fromMap(results[i]));
   }
@@ -246,5 +258,12 @@ class LocalDB {
   Future<void> deleteAllGifts() async {
     Database db = await database;
     await db.rawDelete('DELETE FROM gifts');
+  }
+
+  Future<GiftModel> getGiftById(int giftId) async {
+    Database db = await database;
+    final List<Map<String, dynamic>> results =
+        await db.query('gifts', where: 'id=?', whereArgs: [giftId]);
+    return GiftModel.fromMap(results[0]);
   }
 }

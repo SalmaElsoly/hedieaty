@@ -59,9 +59,10 @@ class _FriendGiftListPageState extends State<FriendGiftListPage> {
           ),
         ],
         bottom: PreferredSize(
-          preferredSize: Size.fromHeight(180.0),
-          child: eventDetailCard(context, events[0], false),
-        ),
+            preferredSize: Size.fromHeight(180.0),
+            //TODO: Add event detail card here after updating this page
+            child: Text('what') //eventDetailCard(context, events[0], false),
+            ),
       ),
       body: ListView.separated(
         itemBuilder: (BuildContext context, int index) {

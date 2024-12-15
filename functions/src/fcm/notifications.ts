@@ -19,7 +19,10 @@ interface User {
 }
 
 export const notifyUserGiftHadPledged = onDocumentUpdated(
-  "gifts/{giftId}",
+  {
+    document: "gifts/{giftId}",
+    region: "europe-west6",
+  },
   async (event: FirestoreEvent<Change<QueryDocumentSnapshot> | undefined>) => {
     const giftBefore = event?.data?.before.data() as Gift;
     const giftAfter = event?.data?.after.data() as Gift;

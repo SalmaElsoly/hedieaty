@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:hedieaty/controllers/gifts.dart';
 import 'package:hedieaty/shared/components/cards.dart';
 import 'package:hedieaty/shared/components/list.dart';
 import 'package:hedieaty/shared/components/tabs.dart';
+import 'package:hedieaty/views/gift_create_page.dart';
+import 'package:hedieaty/views/gift_detail_page.dart';
 
-import '../dummy_data.dart';
+import '../models/event.dart';
+import '../models/gift.dart';
 
 class GiftListPage extends StatefulWidget {
-  const GiftListPage({super.key});
+  final EventModel? event;
+  const GiftListPage({super.key, this.event});
 
   @override
   State<GiftListPage> createState() => _GiftListPageState();
@@ -15,48 +20,42 @@ class GiftListPage extends StatefulWidget {
 class _GiftListPageState extends State<GiftListPage>
     with SingleTickerProviderStateMixin {
   static const List<Tab> tabs = <Tab>[
-    Tab(text: 'Unpledged'),
-    Tab(text: 'Pledged'),
+    Tab(icon: Icon(Icons.card_giftcard), text: 'Unpledged'),
+    Tab(icon: Icon(Icons.check_circle), text: 'Pledged'),
   ];
+  late Future<List<GiftModel>> _giftsFuture;
+  final GiftsController _giftsController = GiftsController.instance;
+  GiftCategory? selectedCategory;
 
   late TabController tabController;
-  final List<Map<String, dynamic>> unpledgedGifts = [
-    {
-      "id": 1,
-      "name": "Smart Watch",
-      "image": "https://example.com/images/smart_watch.png"
-    },
-    {
-      "id": 2,
-      "name": "Bluetooth Speaker",
-      "image": "https://example.com/images/bluetooth_speaker.png"
-    },
-  ];
 
-  final List<Map<String, dynamic>> pledgedGifts = [
-    {
-      "id": 3,
-      "name": "Wireless Earbuds",
-      "image": "https://example.com/images/wireless_earbuds.png",
-      "status": "Pledged"
-    },
-    {"id": 4, "name": "Fitness Tracker", "image": "", "status": "Purchased"},
-  ];
-
-  void onTap(int index, List<Map<String, dynamic>> list) {
-    Navigator.of(context)
-        .pushNamed('/gift_detail', arguments: {'giftId': list[index]['id']});
+  void onTap(int index, List<GiftModel> list) async {
+    await Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => GiftDetailPage(
+              gift: list[index],
+              isOwner: true,
+            )));
+    refreshGifts();
   }
 
-  void onDelete(int index, List<Map<String, dynamic>> list) {
-    setState(() {
-      list.removeAt(index);
-    });
+  void onDelete(int index, List<GiftModel> list) async {
+    await _giftsController.deleteGift(list[index], widget.event!, context);
+    refreshGifts();
   }
 
-  void onEdit(int index, List<Map<String, dynamic>> list) {
+  void onEdit(int index, List<GiftModel> list) async {
+    final result = await Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => GiftCreatePage(
+              gift: list[index],
+            )));
+    if (result != null) {
+      refreshGifts();
+    }
+  }
+
+  void refreshGifts() {
     setState(() {
-      list[index]['name'] = 'Edited Gift';
+      _giftsFuture = _giftsController.getGifts(widget.event!.id!, context);
     });
   }
 
@@ -64,6 +63,7 @@ class _GiftListPageState extends State<GiftListPage>
   void initState() {
     super.initState();
     tabController = TabController(vsync: this, length: tabs.length);
+    _giftsFuture = _giftsController.getGifts(widget.event!.id!, context);
   }
 
   @override
@@ -79,21 +79,58 @@ class _GiftListPageState extends State<GiftListPage>
         title: Text('My Gift List'),
         actions: [
           PopupMenuButton<String>(
-            icon: Icon(Icons.sort),
+            icon: Icon(Icons.filter_list),
             onSelected: (String result) {
-              setState(() {
-                if (result == 'name') {
-                  unpledgedGifts.sort((a, b) =>
-                      (a['name'] as String).compareTo(b['name'] as String));
-                  pledgedGifts.sort((a, b) =>
-                      (a['name'] as String).compareTo(b['name'] as String));
-                } else if (result == 'category') {
-                  unpledgedGifts.sort((a, b) => (a['category'] as String)
-                      .compareTo(b['category'] as String));
-                  pledgedGifts.sort((a, b) => (a['category'] as String)
-                      .compareTo(b['category'] as String));
-                }
-              });
+              if (result == 'name') {
+                setState(() {
+                  _giftsFuture.then((gifts) {
+                    gifts.sort((a, b) => a.name.compareTo(b.name));
+                  });
+                });
+              } else if (result == 'filter') {
+                showDialog(
+                  context: context,
+                  builder: (BuildContext context) {
+                    return FutureBuilder<List<GiftModel>>(
+                      future: _giftsFuture,
+                      builder: (context, snapshot) {
+                        if (!snapshot.hasData) {
+                          return Center(child: CircularProgressIndicator());
+                        }
+
+                        final categories = GiftCategory.values.toList();
+
+                        return AlertDialog(
+                          title: Text('Filter by Category'),
+                          content: DropdownButton<GiftCategory>(
+                            value: selectedCategory,
+                            hint: Text('Select Category'),
+                            isExpanded: true,
+                            items: [
+                              DropdownMenuItem<GiftCategory>(
+                                value: null,
+                                child: Text('All Categories'),
+                              ),
+                              ...categories.map((category) {
+                                return DropdownMenuItem<GiftCategory>(
+                                  value: category,
+                                  child: Text(category.name),
+                                );
+                              }).toList(),
+                            ],
+                            onChanged: (GiftCategory? value) {
+                              setState(() {
+                                selectedCategory = value;
+                                Navigator.pop(context);
+                              });
+                            },
+                          ),
+                        );
+                      },
+                    );
+                  },
+                );
+              }
             },
             itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
               const PopupMenuItem<String>(
@@ -101,70 +138,165 @@ class _GiftListPageState extends State<GiftListPage>
                 child: Text('Sort by Name'),
               ),
               const PopupMenuItem<String>(
-                value: 'category',
-                child: Text('Sort by Category'),
+                value: 'filter',
+                child: Text('Filter by Category'),
               ),
             ],
           ),
         ],
         bottom: PreferredSize(
-            preferredSize: Size.fromHeight(280.0),
+            preferredSize: Size.fromHeight(300.0),
             child: Column(
               children: [
-                eventDetailCard(context, events[0], true),
+                eventDetailCard(context, widget.event),
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 4.0),
+                  child: InkWell(
+                    onTap: () async {
+                      final result = await Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                GiftCreatePage(event: widget.event)),
+                      );
+                      if (result != null) {
+                        refreshGifts();
+                      }
+                    },
+                    borderRadius: BorderRadius.circular(8),
+                    child: Container(
+                      width: double.infinity,
+                      height: 48,
+                      decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              Theme.of(context).cardColor,
+                              Theme.of(context).primaryColor,
+                              Theme.of(context).colorScheme.secondary,
+                              Theme.of(context).cardColor
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: Theme.of(context).cardColor,
+                            width: 1,
+                          )),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.add,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Add Gift',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
                 defaultTabBar(context, tabs, tabController)
               ],
             )),
       ),
-      body: TabBarView(
-        controller: tabController,
-        children: [
-          eventAndGiftList(
-              context, unpledgedGifts, onTap, true, onDelete, onEdit),
-          ListView.separated(
-              itemBuilder: (BuildContext context, int index) {
-                return ListTile(
-                  leading: CircleAvatar(
-                    radius: 24,
-                  ),
-                  title: Text(pledgedGifts[index]['name']),
-                  onTap: () {
-                    onTap(index, pledgedGifts);
-                  },
-                  trailing: pledgedGifts[index]['status'] == 'Pledged'
-                      ? Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).highlightColor,
-                            borderRadius: BorderRadius.circular(8),
+      body: FutureBuilder<List<GiftModel>>(
+        future: _giftsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(child: Text(snapshot.error.toString()));
+          }
+
+          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Center(child: Text('No gifts found'));
+          }
+
+          var gifts = snapshot.data!;
+
+          if (selectedCategory != null) {
+            gifts = gifts
+                .where((gift) => gift.category == selectedCategory)
+                .toList();
+          }
+
+          final pledgedGifts = gifts
+              .where((gift) =>
+                  gift.status == GiftStatus.pledged ||
+                  gift.status == GiftStatus.purchased)
+              .toList();
+          final unpledgedGifts = gifts
+              .where((gift) => gift.status == GiftStatus.unpledged)
+              .toList();
+
+          return TabBarView(
+            controller: tabController,
+            children: [
+              unpledgedGifts.isEmpty
+                  ? const Center(child: Text('No unpledged gifts'))
+                  : eventAndGiftList(
+                      context, unpledgedGifts, onTap, true, onDelete, onEdit),
+              pledgedGifts.isEmpty
+                  ? const Center(child: Text('No pledged gifts'))
+                  : ListView.separated(
+                      itemBuilder: (BuildContext context, int index) {
+                        return ListTile(
+                          leading: CircleAvatar(
+                            radius: 24,
                           ),
-                          child: const Text(
-                            'Pledged',
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                        )
-                      : Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.greenAccent,
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            'Purchased',
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.onSecondary,
-                            ),
-                          ),
-                        ),
-                );
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                return const Divider();
-              },
-              itemCount: pledgedGifts.length)
-        ],
+                          title: Text(pledgedGifts[index].name),
+                          onTap: () {
+                            onTap(index, pledgedGifts);
+                          },
+                          trailing:
+                              pledgedGifts[index].status == GiftStatus.pledged
+                                  ? Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context).highlightColor,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: const Text(
+                                        'Pledged',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    )
+                                  : Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: Colors.greenAccent,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        'Purchased',
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSecondary,
+                                        ),
+                                      ),
+                                    ),
+                        );
+                      },
+                      separatorBuilder: (BuildContext context, int index) {
+                        return const Divider();
+                      },
+                      itemCount: pledgedGifts.length)
+            ],
+          );
+        },
       ),
     );
   }

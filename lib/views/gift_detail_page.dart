@@ -1,13 +1,42 @@
 import 'package:flutter/material.dart';
+import 'package:hedieaty/controllers/user.dart';
+
+import '../controllers/gifts.dart';
+import '../models/gift.dart';
+import '../models/user.dart';
 
 class GiftDetailPage extends StatefulWidget {
-  const GiftDetailPage({super.key});
+  final GiftModel? gift;
+  final bool isOwner;
+  const GiftDetailPage({super.key, this.gift, this.isOwner = false});
   @override
   _GiftDetailPageState createState() => _GiftDetailPageState();
 }
 
 class _GiftDetailPageState extends State<GiftDetailPage> {
+  final GiftsController _giftsController = GiftsController.instance;
+  final UserController _userController = UserController.instance;
+
   bool isPledged = false;
+  late Future<UserModel?> _user;
+  String? pledgedUsername;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.gift?.pledgedBy != null) {
+      isPledged = true;
+      _user = _userController
+          .getUser(widget.gift!.pledgedBy!, context)
+          .then((value) {
+        setState(() {
+          isPledged = true;
+          pledgedUsername = value?.username;
+        });
+        return value;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +49,19 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
           Container(
             width: double.infinity,
             height: MediaQuery.of(context).size.height * 0.6,
+            child: FadeInImage.assetNetwork(
+              placeholder: 'assets/images/app_icon.png',
+              image: widget.gift!.giftImageUrl!,
+              fit: BoxFit.cover,
+              imageErrorBuilder: (context, error, stackTrace) {
+                return Image.asset('assets/images/app_icon.png',
+                    fit: BoxFit.cover);
+              },
+            ),
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/app_icon.png'),
+                image: widget.gift!.giftImageUrl== null? AssetImage('assets/images/app_icon.png'):
+                NetworkImage(widget.gift!.giftImageUrl!) as ImageProvider,
                 fit: BoxFit.contain,
               ),
             ),
@@ -82,7 +121,7 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
                         _buildDetailRow(
                             context,
                             'Gift Name:',
-                            'iPhone 13',
+                            widget.gift?.name ?? 'N/A',
                             Theme.of(context)
                                 .colorScheme
                                 .primary
@@ -91,7 +130,7 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
                         _buildDetailRow(
                             context,
                             'Price:',
-                            '\$1000',
+                            '${widget.gift?.price?.toString() ?? 'N/A'}',
                             Theme.of(context)
                                 .colorScheme
                                 .secondary
@@ -100,7 +139,7 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
                         _buildDetailRow(
                             context,
                             'Category:',
-                            'Electronics',
+                            widget.gift?.category.name ?? 'N/A',
                             Theme.of(context)
                                 .colorScheme
                                 .tertiary
@@ -109,87 +148,124 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
                         _buildDetailRow(
                             context,
                             'Description:',
-                            'The latest iPhone',
+                            widget.gift?.description ?? 'N/A',
                             Theme.of(context)
                                 .colorScheme
                                 .primary
                                 .withOpacity(0.8),
                             Icons.description),
                         SizedBox(height: 20),
-                        Container(
-                          padding: EdgeInsets.all(15),
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.surface,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .primary
-                                    .withOpacity(0.3)),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.check_circle_outline,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .primary
-                                        .withOpacity(0.8),
-                                  ),
-                                  SizedBox(width: 8),
-                                  Text(
-                                    'Pledged:',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyLarge
-                                        ?.copyWith(
-                                          fontWeight: FontWeight.w600,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary
-                                              .withOpacity(0.8),
-                                        ),
-                                  ),
-                                ],
-                              ),
-                              Switch(
-                                value: isPledged,
-                                onChanged: (value) {
-                                  setState(() {
-                                    isPledged = value;
-                                  });
-                                },
-                                activeColor:
-                                    Theme.of(context).colorScheme.primary,
-                                inactiveThumbColor: Colors.grey,
-                                inactiveTrackColor: Colors.grey.shade300,
-                              ),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 10),
-                        Center(
-                          child: Text(
-                            isPledged
-                                ? 'Gift has been pledged!'
-                                : 'Gift not pledged',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.copyWith(
-                                  color: isPledged
-                                      ? Theme.of(context)
+                        if (!widget.isOwner && !isPledged)
+                          Container(
+                            padding: EdgeInsets.all(15),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.surface,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(0.3)),
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.check_circle_outline,
+                                      color: Theme.of(context)
                                           .colorScheme
                                           .primary
-                                          .withOpacity(0.8)
-                                      : Colors.grey,
-                                  fontWeight: FontWeight.bold,
+                                          .withOpacity(0.8),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Pledge this gift:',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w600,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                                .withOpacity(0.8),
+                                          ),
+                                    ),
+                                  ],
                                 ),
+                                Switch(
+                                  value: isPledged,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      isPledged = value;
+                                    });
+                                  },
+                                  activeColor:
+                                      Theme.of(context).colorScheme.primary,
+                                  inactiveThumbColor: Colors.grey,
+                                  inactiveTrackColor: Colors.grey.shade300,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
+                        if (isPledged)
+                          Container(
+                            padding: EdgeInsets.all(15),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.surface,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .primary
+                                      .withOpacity(0.3)),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.check_circle,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withOpacity(0.8),
+                                    ),
+                                    SizedBox(width: 8),
+                                    Text(
+                                      'Gift Status:',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyLarge
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w600,
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                                .withOpacity(0.8),
+                                          ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  'Pledged by: ${pledgedUsername ?? 'Unknown'}',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .primary
+                                            .withOpacity(0.8),
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
                       ],
                     ),
                   ),
