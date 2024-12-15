@@ -17,12 +17,22 @@ class _HomePageState extends State<HomePage> {
   bool _isSearching = false;
   late TextEditingController _searchController;
   final UserController _userController = UserController();
+  late final Future<UserModel?> _user;
 
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
+    _user = _userController.getCurrentUser(context);
+    //loadCurrentUser();
   }
+
+  // Future<void> loadCurrentUser()async{
+  //   final user = await _userController.getCurrentUser(context);
+  //   setState(() {
+  //     _user = user!;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -91,6 +101,8 @@ class _HomePageState extends State<HomePage> {
                 icon: const Icon(Icons.notifications_active)),
           ],
         ),
+        // drawer: defaultDrawer(_user),
+        //use Future builder ti load drawer
         drawer: FutureBuilder<UserModel?>(
           future: _userController.getCurrentUser(context),
           builder: (context, snapshot) {
@@ -163,8 +175,8 @@ class _HomePageState extends State<HomePage> {
                 itemCount: _friends.length);
           },
         ),
-        floatingActionButton: addEventButton((){
+        floatingActionButton: addEventButton(() {
           Navigator.pushNamed(context, '/event_create');
-        },context));
+        }, context));
   }
 }

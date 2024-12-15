@@ -34,7 +34,7 @@ class _EventCreatePageState extends State<EventCreatePage> {
     _eventLocationController =
         TextEditingController(text: widget.event?.location ?? '');
     _eventTimeController =
-        TextEditingController(text: widget.event?.time?? '');
+        TextEditingController(text: widget.event?.time ?? '');
     _eventDescriptionController =
         TextEditingController(text: widget.event?.description ?? '');
   }
@@ -50,7 +50,7 @@ class _EventCreatePageState extends State<EventCreatePage> {
     super.dispose();
   }
 
-  void _createEvent()async {
+  void _createEvent() async {
     if (_formKey.currentState!.validate()) {
       _isLoading.value = true;
       final newEvent = EventModel(
@@ -85,6 +85,7 @@ class _EventCreatePageState extends State<EventCreatePage> {
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.event != null;
@@ -101,7 +102,11 @@ class _EventCreatePageState extends State<EventCreatePage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Theme.of(context).primaryColor.withOpacity(0.4), Colors.white],          ),
+            colors: [
+              Theme.of(context).primaryColor.withOpacity(0.4),
+              Colors.white
+            ],
+          ),
         ),
         height: screenHeight,
         child: SingleChildScrollView(
@@ -195,7 +200,8 @@ class _EventCreatePageState extends State<EventCreatePage> {
                             initialTime: TimeOfDay(hour: 12, minute: 0),
                           );
                           if (time != null) {
-                            String formattedTime = "${time.hour}:${time.minute}";
+                            String formattedTime =
+                                "${time.hour}:${time.minute}";
                             setState(() {
                               _eventTimeController.text = formattedTime;
                             });
@@ -233,23 +239,26 @@ class _EventCreatePageState extends State<EventCreatePage> {
                         valueListenable: _isLoading,
                         builder: (context, isLoading, child) {
                           return defaultFormButton(
-                            onPressed: isLoading ? (){} : (isEditing ? _saveEvent : _createEvent),
+                            onPressed: isLoading
+                                ? () {}
+                                : (isEditing ? _saveEvent : _createEvent),
                             child: isLoading
-                              ? SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                ? SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                          Colors.white),
+                                    ),
+                                  )
+                                : Text(
+                                    isEditing ? 'Save Changes' : 'Create Event',
+                                    style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
-                                )
-                              : Text(
-                                  isEditing ? 'Save Changes' : 'Create Event',
-                                  style: TextStyle(
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
                             screenWidth: screenWidth,
                           );
                         },

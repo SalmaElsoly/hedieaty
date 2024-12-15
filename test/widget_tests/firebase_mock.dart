@@ -6,8 +6,6 @@ typedef Callback = void Function(MethodCall call);
 
 void setupFirebaseMocks([Callback? customHandlers]) {
   TestWidgetsFlutterBinding.ensureInitialized();
-
-  setupFirebaseCoreMocks();
 }
 
 Future<T> neverEndingFuture<T>() async {

@@ -7,18 +7,19 @@ import '../repositories/user.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final UserRepository _userRepository = UserRepository();
-  late int localUserId=1;
+  late int localUserId = 1;
 
-   Future<void> _saveLocalUserId(int id) async {
-     final prefs = await SharedPreferences.getInstance();
-     await prefs.setInt('localUserId', id);
-     localUserId = id;
-   }
+  Future<void> _saveLocalUserId(int id) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('localUserId', id);
+    localUserId = id;
+  }
 
-   Future<int> loadLocalUserId() async {
-     final prefs = await SharedPreferences.getInstance();
-     return localUserId = prefs.getInt('localUserId') ?? 0;
-   }
+  Future<int> loadLocalUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    return localUserId = prefs.getInt('localUserId') ?? 0;
+  }
+
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
   User? get currentUser => _auth.currentUser;
@@ -30,7 +31,7 @@ class AuthService {
       email: email,
       password: password,
     );
-    localUserId= await _userRepository.loginUser(result.user!.uid);
+    localUserId = await _userRepository.loginUser(result.user!.uid);
     await _saveLocalUserId(localUserId);
     return result;
   }
@@ -38,7 +39,6 @@ class AuthService {
   // register with email & password
   Future<UserCredential?> registerWithEmailAndPassword(
       String email, String password, String username) async {
-
     UserCredential result = await _auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
@@ -57,7 +57,7 @@ class AuthService {
 
   // sign out
   Future<void> signOut() async {
-    await _userRepository.logoutUser();
     await _auth.signOut();
+    await _userRepository.logoutUser();
   }
 }

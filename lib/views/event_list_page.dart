@@ -7,6 +7,7 @@ import '../models/event.dart';
 import '../shared/components/list.dart';
 import '../shared/components/tabs.dart';
 import 'event_creation_page.dart';
+
 class EventListPage extends StatefulWidget {
   UserModel? user;
   EventListPage({super.key, this.user});
@@ -20,11 +21,11 @@ class _EventListPageState extends State<EventListPage>
   static const List<Tab> myTabs = <Tab>[
     Tab(text: 'Past', icon: Icon(Icons.history)),
     Tab(text: 'Current', icon: Icon(Icons.event)),
-    Tab(text: 'Upcoming', icon: Icon(Icons.event_available)),  ];
+    Tab(text: 'Upcoming', icon: Icon(Icons.event_available)),
+  ];
   EventController _eventController = EventController.instance;
   late TabController _tabController;
   late Future<List<EventModel>> _eventsFuture;
-
 
   @override
   void initState() {
@@ -54,18 +55,16 @@ class _EventListPageState extends State<EventListPage>
   }
 
   void onTab(int index, List<EventModel> eventList) async {
-     Navigator.of(context).push(
-       MaterialPageRoute(
-        builder: (context) => GiftListPage(event: eventList[index])
-      )
-     );
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => GiftListPage(event: eventList[index])));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Text('My Events List 🎉'),          actions: [
+          title: const Text('My Events List 🎉'),
+          actions: [
             PopupMenuButton<String>(
               icon: Icon(Icons.sort),
               onSelected: (String result) {
@@ -98,7 +97,10 @@ class _EventListPageState extends State<EventListPage>
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacity(0.3),
                           spreadRadius: 2,
                           blurRadius: 5,
                           offset: const Offset(0, 2),
@@ -107,13 +109,13 @@ class _EventListPageState extends State<EventListPage>
                     ),
                     child: CircleAvatar(
                       radius: 35,
-                      backgroundImage: widget.user?.profileImage!=null?
-                      NetworkImage(
-                        widget.user?.profileImage as String,
-                        ):
-                      AssetImage(
-                          'assets/images/avater.png',
-                        ) as ImageProvider,
+                      backgroundImage: widget.user?.profileImage != null
+                          ? NetworkImage(
+                              widget.user?.profileImage as String,
+                            )
+                          : AssetImage(
+                              'assets/images/avater.png',
+                            ) as ImageProvider,
                     ),
                   ),
                   Text(
@@ -125,12 +127,16 @@ class _EventListPageState extends State<EventListPage>
                       shadows: [
                         Shadow(
                           blurRadius: 3,
-                          color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacity(0.3),
                           offset: const Offset(2, 2),
                         ),
                       ],
                     ),
-                  ),                  defaultTabBar(context, myTabs, _tabController),
+                  ),
+                  defaultTabBar(context, myTabs, _tabController),
                 ],
               ))),
       body: FutureBuilder<List<EventModel>>(
@@ -148,8 +154,10 @@ class _EventListPageState extends State<EventListPage>
 
           final events = snapshot.data!;
           final pastEvents = events.where((event) => event.isPast).toList();
-          final currentEvents = events.where((event) => event.isCurrent).toList();
-          final upcomingEvents = events.where((event) => event.isUpcoming).toList();
+          final currentEvents =
+              events.where((event) => event.isCurrent).toList();
+          final upcomingEvents =
+              events.where((event) => event.isUpcoming).toList();
 
           return TabBarView(
             controller: _tabController,
@@ -164,7 +172,7 @@ class _EventListPageState extends State<EventListPage>
           );
         },
       ),
-      floatingActionButton: addEventButton(()async{
+      floatingActionButton: addEventButton(() async {
         final result = await Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => EventCreatePage(),
@@ -175,7 +183,7 @@ class _EventListPageState extends State<EventListPage>
             _eventsFuture = _eventController.getMyEvents(context);
           });
         }
-      },context),
+      }, context),
     );
   }
 }

@@ -13,11 +13,11 @@ class UserRepository {
   Future<int> createUser(UserModel user) async {
     try {
       final res = await _firestore.isUsernameUnique(user.username);
-      if(!res){
+      if (!res) {
         throw Exception("enter a unique username, this name is used");
       }
       await _firestore.createUser(user);
-     return await loginUser(user.firestoreId!);
+      return await loginUser(user.firestoreId!);
     } catch (e) {
       rethrow;
     }
@@ -66,7 +66,6 @@ class UserRepository {
       throw Exception('No user found or saved');
     } catch (e) {
       rethrow;
-
     }
   }
 

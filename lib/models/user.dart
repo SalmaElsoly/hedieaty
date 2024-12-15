@@ -9,8 +9,8 @@ class UserModel {
   int eventsCount;
   final DateTime lastModified;
   // array of doc ref to events
-  List<DocumentReference> events=[];
-  List<DocumentReference> friends=[];
+  List<DocumentReference> events = [];
+  List<DocumentReference> friends = [];
 
   UserModel({
     this.id,
@@ -22,9 +22,9 @@ class UserModel {
     DateTime? lastModified,
     List<DocumentReference>? events,
     List<DocumentReference>? friends,
-  }) : lastModified = lastModified ?? DateTime.now(),
-       events = events ?? const [],
-  friends = friends ?? const [];
+  })  : lastModified = lastModified ?? DateTime.now(),
+        events = events ?? const [],
+        friends = friends ?? const [];
 
   Map<String, dynamic> toMap() {
     return {
@@ -59,23 +59,29 @@ class UserModel {
       profileImage: data['photoUrl'],
       eventsCount: data['eventsCount'] ?? 0,
       lastModified: (data['lastModified'] as Timestamp).toDate(),
-        events: data['events'] != null && data['events'] is List
-            ? (data['events'] as List<dynamic>).map((path) {
-          if (path != null && path is String) {
-            return FirebaseFirestore.instance.doc(path);
-          } else {
-            return null;
-          }
-        }).whereType<DocumentReference>().toList()
-            : [],
+      events: data['events'] != null && data['events'] is List
+          ? (data['events'] as List<dynamic>)
+              .map((path) {
+                if (path != null && path is String) {
+                  return FirebaseFirestore.instance.doc(path);
+                } else {
+                  return null;
+                }
+              })
+              .whereType<DocumentReference>()
+              .toList()
+          : [],
       friends: data['friends'] != null && data['friends'] is List
-          ? (data['friends'] as List<dynamic>).map((path) {
-        if (path != null && path is String) {
-          return FirebaseFirestore.instance.doc(path);
-        } else {
-          return null;
-        }
-      }).whereType<DocumentReference>().toList()
+          ? (data['friends'] as List<dynamic>)
+              .map((path) {
+                if (path != null && path is String) {
+                  return FirebaseFirestore.instance.doc(path);
+                } else {
+                  return null;
+                }
+              })
+              .whereType<DocumentReference>()
+              .toList()
           : [],
     );
   }

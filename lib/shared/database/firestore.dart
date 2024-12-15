@@ -6,7 +6,6 @@ import 'package:hedieaty/models/user.dart';
 class FirestoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-
   Future<void> createUser(UserModel user) async {
     try {
       await _firestore
@@ -88,7 +87,8 @@ class FirestoreService {
       QuerySnapshot userEventIdsSnapshot = await _firestore
           .collection('users')
           .doc(userId)
-          .collection('events').get();
+          .collection('events')
+          .get();
       return userEventIdsSnapshot.docs.map((doc) => doc.id).toList();
     } catch (e) {
       rethrow;
@@ -97,16 +97,13 @@ class FirestoreService {
 
   Future<List<EventModel>> getEventsOfUser(String userId) async {
     try {
-
       DocumentReference userRef = _firestore.collection('users').doc(userId);
       DocumentSnapshot userSnapshot = await userRef.get();
-
 
       if (!userSnapshot.exists) {
         print('User not found for ID: $userId');
         return [];
       }
-
 
       List<dynamic> eventPaths = userSnapshot.get('events') ?? [];
       if (eventPaths.isEmpty) {
@@ -114,13 +111,12 @@ class FirestoreService {
         return [];
       }
 
-
       List<DocumentReference> eventRefs = eventPaths.map((path) {
         return _firestore.doc(path as String);
       }).toList();
 
-
-      List<DocumentSnapshot> eventSnapshots = await Future.wait(eventRefs.map((ref) => ref.get()));
+      List<DocumentSnapshot> eventSnapshots =
+          await Future.wait(eventRefs.map((ref) => ref.get()));
 
       return eventSnapshots
           .where((snapshot) => snapshot.exists)
@@ -147,7 +143,8 @@ class FirestoreService {
 
   Future<List<GiftModel>> getGiftsByEventId(String eventId) async {
     try {
-      DocumentReference eventRef = FirebaseFirestore.instance.collection('events').doc(eventId);
+      DocumentReference eventRef =
+          FirebaseFirestore.instance.collection('events').doc(eventId);
       DocumentSnapshot eventSnapshot = await eventRef.get();
 
       if (!eventSnapshot.exists) {
@@ -163,7 +160,8 @@ class FirestoreService {
         return FirebaseFirestore.instance.doc(path as String);
       }).toList();
 
-      List<DocumentSnapshot> giftSnapshots = await Future.wait(giftRefs.map((ref) => ref.get()));
+      List<DocumentSnapshot> giftSnapshots =
+          await Future.wait(giftRefs.map((ref) => ref.get()));
 
       return giftSnapshots
           .where((snapshot) => snapshot.exists)
@@ -174,14 +172,14 @@ class FirestoreService {
     }
   }
 
-
   Future<void> deleteEvent(String eventId, String userId) async {
     try {
-      DocumentReference eventRef = FirebaseFirestore.instance.collection('events').doc(eventId);
-      DocumentReference userRef = FirebaseFirestore.instance.collection('users').doc(userId);
+      DocumentReference eventRef =
+          FirebaseFirestore.instance.collection('events').doc(eventId);
+      DocumentReference userRef =
+          FirebaseFirestore.instance.collection('users').doc(userId);
 
       await eventRef.delete();
-
 
       await userRef.update({
         'events': FieldValue.arrayRemove([eventRef.path]),
@@ -244,8 +242,10 @@ class FirestoreService {
 
   Future<void> addGiftToEvent(String eventId, GiftModel gift) async {
     try {
-      DocumentReference giftRef = FirebaseFirestore.instance.collection('gifts').doc(gift.firestoreId);
-      DocumentReference eventRef = FirebaseFirestore.instance.collection('events').doc(eventId);
+      DocumentReference giftRef =
+          FirebaseFirestore.instance.collection('gifts').doc(gift.firestoreId);
+      DocumentReference eventRef =
+          FirebaseFirestore.instance.collection('events').doc(eventId);
 
       await eventRef.update({
         'gifts': FieldValue.arrayUnion([giftRef.path]),
@@ -257,8 +257,10 @@ class FirestoreService {
 
   Future<void> removeGiftFromEvent(String eventId, String giftId) async {
     try {
-      DocumentReference giftRef = FirebaseFirestore.instance.collection('gifts').doc(giftId);
-      DocumentReference eventRef = FirebaseFirestore.instance.collection('events').doc(eventId);
+      DocumentReference giftRef =
+          FirebaseFirestore.instance.collection('gifts').doc(giftId);
+      DocumentReference eventRef =
+          FirebaseFirestore.instance.collection('events').doc(eventId);
 
       await eventRef.update({
         'gifts': FieldValue.arrayRemove([giftRef.path]),
@@ -281,8 +283,8 @@ class FirestoreService {
 
   Future<void> addEventToUser(String userId, String eventId) async {
     try {
-
-      DocumentReference eventRef = FirebaseFirestore.instance.collection('events').doc(eventId);
+      DocumentReference eventRef =
+          FirebaseFirestore.instance.collection('events').doc(eventId);
 
       await FirebaseFirestore.instance.collection('users').doc(userId).update({
         'events': FieldValue.arrayUnion([eventRef.path]),
@@ -296,4 +298,38 @@ class FirestoreService {
     }
   }
 
+  Stream<List<GiftModel>> getGiftsStreamForEvent(String eventId) {
+    return FirebaseFirestore.instance
+        .collection('events')
+        .doc(eventId)
+        .snapshots()
+        .asyncExpand((eventSnapshot) async* {
+      if (!eventSnapshot.exists) {
+        yield [];
+        return;
+      }
+
+      // Extract the list of document references from the event document
+      List<dynamic> giftPaths = eventSnapshot.get('gifts') ?? [];
+      if (giftPaths.isEmpty) {
+        yield [];
+        return;
+      }
+
+      // Extract the document references from the paths
+      List<DocumentReference> giftRefs = giftPaths.map((path) {
+        return FirebaseFirestore.instance.doc(path as String);
+      }).toList();
+
+      // Listen for real-time updates for all the gift references
+      yield* FirebaseFirestore.instance
+          .collection('gifts')
+          .where(FieldPath.documentId,
+              whereIn: giftRefs.map((ref) => ref.id).toList())
+          .snapshots()
+          .map((snapshot) => snapshot.docs
+              .map((doc) => GiftModel.fromFirestore(doc))
+              .toList());
+    });
+  }
 }

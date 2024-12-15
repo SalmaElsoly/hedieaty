@@ -37,7 +37,8 @@ Widget defaultDrawer(UserModel user) => Builder(builder: (context) {
                           radius: 42,
                           backgroundImage: user.profileImage != null
                               ? NetworkImage(user.profileImage!)
-                              : const AssetImage('assets/images/avater.png') as ImageProvider,
+                              : const AssetImage('assets/images/avater.png')
+                                  as ImageProvider,
                         ),
                         const SizedBox(width: 16),
                         Text(
@@ -61,11 +62,13 @@ Widget defaultDrawer(UserModel user) => Builder(builder: (context) {
             ListTile(
               title: const Text('My Event List'),
               onTap: () {
-               Navigator.of(context).push(
-                 MaterialPageRoute(
-                    builder: (context) => EventListPage(user: user,),
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => EventListPage(
+                      user: user,
+                    ),
                   ),
-               );
+                );
               },
               leading: const Icon(Icons.event),
             ),

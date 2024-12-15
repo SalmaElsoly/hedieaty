@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:hedieaty/models/event.dart';
 import 'package:hedieaty/shared/components/error_component.dart';
 
-
-Widget eventDetailCard(
-    BuildContext context, EventModel? event) {
+Widget eventDetailCard(BuildContext context, EventModel? event) {
   if (event == null) {
-    showError('Error', 'An error occurred while loading event details', context);
+    showError(
+        'Error', 'An error occurred while loading event details', context);
     return const SizedBox.shrink();
   }
   return Builder(builder: (context) {
@@ -14,7 +13,8 @@ Widget eventDetailCard(
       margin: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16.0),
-        side: BorderSide(color: Theme.of(context).primaryColor.withOpacity(0.2), width: 1),
+        side: BorderSide(
+            color: Theme.of(context).primaryColor.withOpacity(0.2), width: 1),
       ),
       elevation: 2,
       child: Container(
@@ -38,9 +38,9 @@ Widget eventDetailCard(
               Text(
                 event.name ?? '',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).primaryColor,
-                ),
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).primaryColor,
+                    ),
               ),
               const SizedBox(height: 12),
               Container(
@@ -70,7 +70,8 @@ Widget eventDetailCard(
               const SizedBox(height: 12),
               Row(
                 children: [
-                  Icon(Icons.location_on, size: 16, color: Theme.of(context).primaryColor),
+                  Icon(Icons.location_on,
+                      size: 16, color: Theme.of(context).primaryColor),
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(

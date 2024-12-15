@@ -20,8 +20,12 @@ class ImagePickerHelper {
         context: context,
         builder: (context) => AlertDialog(
           backgroundColor: Theme.of(context).dialogBackgroundColor,
-          title: Text('Permission Required', style: TextStyle(color: Theme.of(context).textTheme.titleLarge?.color)),
-          content: Text('Please enable required permissions in settings', style: TextStyle(color: Theme.of(context).textTheme.bodyMedium?.color)),
+          title: Text('Permission Required',
+              style: TextStyle(
+                  color: Theme.of(context).textTheme.titleLarge?.color)),
+          content: Text('Please enable required permissions in settings',
+              style: TextStyle(
+                  color: Theme.of(context).textTheme.bodyMedium?.color)),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -72,7 +76,9 @@ class ImagePickerHelper {
         context: context,
         builder: (context) => AlertDialog(
               backgroundColor: Theme.of(context).dialogBackgroundColor,
-              title: Text('Select Image', style: TextStyle(color: Theme.of(context).textTheme.titleLarge?.color)),
+              title: Text('Select Image',
+                  style: TextStyle(
+                      color: Theme.of(context).textTheme.titleLarge?.color)),
               content: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -81,8 +87,11 @@ class ImagePickerHelper {
                       Navigator.of(context).pop();
                       pickImage(ImageSource.gallery);
                     },
-                    icon: Icon(Icons.photo, color: Theme.of(context).colorScheme.onPrimary),
-                    label: Text('Gallery', style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
+                    icon: Icon(Icons.photo,
+                        color: Theme.of(context).colorScheme.onPrimary),
+                    label: Text('Gallery',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).colorScheme.primary,
                       shape: RoundedRectangleBorder(
@@ -96,8 +105,11 @@ class ImagePickerHelper {
                       Navigator.of(context).pop();
                       pickImage(ImageSource.camera);
                     },
-                    icon: Icon(Icons.camera, color: Theme.of(context).colorScheme.onPrimary),
-                    label: Text('Camera', style: TextStyle(color: Theme.of(context).colorScheme.onPrimary)),
+                    icon: Icon(Icons.camera,
+                        color: Theme.of(context).colorScheme.onPrimary),
+                    label: Text('Camera',
+                        style: TextStyle(
+                            color: Theme.of(context).colorScheme.onPrimary)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Theme.of(context).colorScheme.primary,
                       shape: RoundedRectangleBorder(
