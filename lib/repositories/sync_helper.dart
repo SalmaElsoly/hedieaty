@@ -47,7 +47,7 @@ class SyncHelper {
   }
 
   Future<void> syncGifts(int eventId, List<GiftModel> remoteGifts) async {
-    //delete gifts and save the new ones
+    print(eventId);
     await _localDB.deleteGiftsByEventId(eventId);
     for (var remoteGift in remoteGifts) {
       remoteGift.eventId = eventId;

@@ -19,7 +19,9 @@ class LocalDB {
   Future<Database> _initDatabase() async {
     String path = join(await getDatabasesPath(), _databaseName);
     return await openDatabase(path,
-        version: _databaseVersion, onCreate: _onCreate);
+        version: _databaseVersion, onCreate: _onCreate, onOpen: (db) async {
+          await db.execute('PRAGMA foreign_keys = ON;');
+        });
   }
 
   Future _onCreate(Database db, int version) async {
@@ -48,7 +50,7 @@ class LocalDB {
       status TEXT CHECK(status IN ('upcoming', 'current', 'past')) NOT NULL DEFAULT 'upcoming',
       isDeleted BOOLEAN NOT NULL DEFAULT FALSE,
       lastModified DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (userId) REFERENCES users(id)
+      FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
     );
   ''');
     await db.execute('''
@@ -65,7 +67,7 @@ class LocalDB {
       pledgedBy TEXT,
       isDeleted BOOLEAN NOT NULL DEFAULT FALSE,
       lastModified DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      FOREIGN KEY (eventId) REFERENCES events(id)
+      FOREIGN KEY (eventId) REFERENCES events(id) ON DELETE CASCADE
     );
   ''');
   }

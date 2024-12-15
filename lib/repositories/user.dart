@@ -26,9 +26,7 @@ class UserRepository {
   Future<int> loginUser(String firestoreId) async {
     try {
       UserModel loggedIn = await _firestore.getUser(firestoreId);
-      print('========insert user in db===========');
       final id = await _localDB.insertUser(loggedIn);
-      print('=========user inserted in db===========');
       return id;
     } catch (e) {
       rethrow;
@@ -60,13 +58,15 @@ class UserRepository {
   Future<UserModel> getUser(String id) async {
     try {
       UserModel? user;
+      Future.delayed(const Duration(seconds: 1));
       user = await _localDB.getUserByFirestoreId(id);
       if (user != null) {
-        return user;
+        return await _firestore.getUser(id);
       }
       throw Exception('No user found or saved');
     } catch (e) {
       rethrow;
+
     }
   }
 

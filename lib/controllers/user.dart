@@ -103,6 +103,21 @@ class UserController {
       showError('Error', e.toString(), context);
     }
   }
+
+  Future<UserModel?> getUser(String userId, BuildContext context) async {
+    try {
+      return await _userRepository.getUser(userId);
+    } on FirebaseAuthException catch (e) {
+      showError(
+          'Authentication Error', e.message ?? 'Failed to get user', context);
+    } on FirebaseException catch (e) {
+      showError(
+          'Database Error', e.message ?? 'Database operation failed', context);
+    } catch (e) {
+      showError('Error', e.toString(), context);
+    }
+  }
+
 // Future<void> updateUserProfile({String? name, String? email, BuildContext context}) async {
 //   try {
 //     final user = _auth.currentUser;

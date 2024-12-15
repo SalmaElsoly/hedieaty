@@ -31,7 +31,7 @@ class GiftRepository {
 
       await _firestoreService.addGiftToEvent(event.firestoreId!, gift);
       await _localDB.insertGift(gift);
-      final imageUrl = await _storageService.uploadImageToGifts(gift.giftImageUrl!, gift.firestoreId!);
+      final imageUrl = await _storageService.uploadImageToGifts(gift.firestoreId!, gift.giftImageUrl!);
       gift.giftImageUrl = imageUrl;
       await _localDB.updateGift(gift);
       await _firestoreService.updateGift(gift);

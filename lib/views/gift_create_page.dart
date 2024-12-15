@@ -108,6 +108,7 @@ class _GiftCreatePageState extends State<GiftCreatePage> {
         category: _category,
         description: _descriptionController.text,
         giftImageUrl: _imagePath,
+        eventId: widget.event?.id,
       );
       try {
         await _giftsController.createGift(newGift, widget.event!, context);

@@ -34,6 +34,7 @@ class _GiftListPageState extends State<GiftListPage>
       MaterialPageRoute(
           builder: (context) => GiftDetailPage(
             gift: list[index],
+            isOwner: true,
               )
           )
     );

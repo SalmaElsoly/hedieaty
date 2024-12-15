@@ -27,6 +27,8 @@ dependencies:
   cloud_firestore: ^5.5.0
   firebase_auth: ^5.3.3
   connectivity_plus: ^4.0.0
+  permission_handler: ^10.1.0
+  firebase_storage: ^12.3.7
 
   path: any
 dev_dependencies:
