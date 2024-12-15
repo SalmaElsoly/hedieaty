@@ -14,7 +14,6 @@ class GiftDetailPage extends StatefulWidget {
 }
 
 class _GiftDetailPageState extends State<GiftDetailPage> {
-
   final GiftsController _giftsController = GiftsController.instance;
   final UserController _userController = UserController.instance;
 
@@ -27,7 +26,9 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
     super.initState();
     if (widget.gift?.pledgedBy != null) {
       isPledged = true;
-      _user = _userController.getUser(widget.gift!.pledgedBy!, context).then((value) {
+      _user = _userController
+          .getUser(widget.gift!.pledgedBy!, context)
+          .then((value) {
         setState(() {
           isPledged = true;
           pledgedUsername = value?.username;
@@ -35,8 +36,8 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
         return value;
       });
     }
-
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -124,7 +125,8 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
                                 .colorScheme
                                 .secondary
                                 .withOpacity(0.8),
-                            Icons.attach_money),                        _buildDetailRow(
+                            Icons.attach_money),
+                        _buildDetailRow(
                             context,
                             'Category:',
                             widget.gift?.category.name ?? 'N/A',

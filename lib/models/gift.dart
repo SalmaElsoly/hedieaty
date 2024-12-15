@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
 enum GiftStatus { unpledged, purchased, pledged }
 
 enum GiftCategory {
@@ -22,7 +21,7 @@ enum GiftCategory {
 
 class GiftModel {
   final int? id;
-   int? eventId;
+  int? eventId;
   String? firestoreId;
   final String name;
   final double price;
@@ -47,7 +46,7 @@ class GiftModel {
     this.pledgedBy,
     DateTime? lastModified,
     this.isDeleted = false,
-  })  : lastModified = lastModified ?? DateTime.now();
+  }) : lastModified = lastModified ?? DateTime.now();
 
   Map<String, dynamic> toMap() {
     return {
@@ -84,7 +83,7 @@ class GiftModel {
       ),
       pledgedBy: map['pledgedBy'],
       lastModified: DateTime.parse(map['lastModified']),
-        isDeleted: map['isDeleted'] == 0 ? false : true,
+      isDeleted: map['isDeleted'] == 0 ? false : true,
     );
   }
 

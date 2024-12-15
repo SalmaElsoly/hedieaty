@@ -30,23 +30,20 @@ class _GiftListPageState extends State<GiftListPage>
   late TabController tabController;
 
   void onTap(int index, List<GiftModel> list) async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(
-          builder: (context) => GiftDetailPage(
-            gift: list[index],
-            isOwner: true,
-              )
-          )
-    );
+    await Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => GiftDetailPage(
+              gift: list[index],
+              isOwner: true,
+            )));
     refreshGifts();
   }
 
-  void onDelete(int index, List<GiftModel> list)async {
+  void onDelete(int index, List<GiftModel> list) async {
     await _giftsController.deleteGift(list[index], widget.event!, context);
     refreshGifts();
   }
 
-  void onEdit(int index, List<GiftModel> list)async {
+  void onEdit(int index, List<GiftModel> list) async {
     final result = await Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => GiftCreatePage(
               gift: list[index],
@@ -153,11 +150,14 @@ class _GiftListPageState extends State<GiftListPage>
               children: [
                 eventDetailCard(context, widget.event),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 4.0),
                   child: InkWell(
                     onTap: () async {
                       final result = await Navigator.of(context).push(
-                        MaterialPageRoute(builder: (context) => GiftCreatePage(event: widget.event)),
+                        MaterialPageRoute(
+                            builder: (context) =>
+                                GiftCreatePage(event: widget.event)),
                       );
                       if (result != null) {
                         refreshGifts();
@@ -168,22 +168,21 @@ class _GiftListPageState extends State<GiftListPage>
                       width: double.infinity,
                       height: 48,
                       decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [
-                            Theme.of(context).cardColor,
-                            Theme.of(context).primaryColor,
-                            Theme.of(context).colorScheme.secondary,
-                            Theme.of(context).cardColor
-                          ],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: Theme.of(context).cardColor,
-                          width: 1,
-                        )
-                      ),
+                          gradient: LinearGradient(
+                            colors: [
+                              Theme.of(context).cardColor,
+                              Theme.of(context).primaryColor,
+                              Theme.of(context).colorScheme.secondary,
+                              Theme.of(context).cardColor
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: Theme.of(context).cardColor,
+                            width: 1,
+                          )),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -203,8 +202,7 @@ class _GiftListPageState extends State<GiftListPage>
                       ),
                     ),
                   ),
-                )
-                ,
+                ),
                 defaultTabBar(context, tabs, tabController)
               ],
             )),
@@ -227,13 +225,15 @@ class _GiftListPageState extends State<GiftListPage>
           var gifts = snapshot.data!;
 
           if (selectedCategory != null) {
-            gifts = gifts.where((gift) => gift.category == selectedCategory).toList();
+            gifts = gifts
+                .where((gift) => gift.category == selectedCategory)
+                .toList();
           }
 
           final pledgedGifts = gifts
               .where((gift) =>
-          gift.status == GiftStatus.pledged ||
-              gift.status == GiftStatus.purchased)
+                  gift.status == GiftStatus.pledged ||
+                  gift.status == GiftStatus.purchased)
               .toList();
           final unpledgedGifts = gifts
               .where((gift) => gift.status == GiftStatus.unpledged)
@@ -258,33 +258,36 @@ class _GiftListPageState extends State<GiftListPage>
                           onTap: () {
                             onTap(index, pledgedGifts);
                           },
-                          trailing: pledgedGifts[index].status == GiftStatus.pledged
-                              ? Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: Theme.of(context).highlightColor,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: const Text(
-                                    'Pledged',
-                                    style: TextStyle(
-                                      color: Colors.white,
+                          trailing:
+                              pledgedGifts[index].status == GiftStatus.pledged
+                                  ? Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context).highlightColor,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: const Text(
+                                        'Pledged',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    )
+                                  : Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: Colors.greenAccent,
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Text(
+                                        'Purchased',
+                                        style: TextStyle(
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .onSecondary,
+                                        ),
+                                      ),
                                     ),
-                                  ),
-                                )
-                              : Container(
-                                  padding: const EdgeInsets.all(8),
-                                  decoration: BoxDecoration(
-                                    color: Colors.greenAccent,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Text(
-                                    'Purchased',
-                                    style: TextStyle(
-                                      color: Theme.of(context).colorScheme.onSecondary,
-                                    ),
-                                  ),
-                                ),
                         );
                       },
                       separatorBuilder: (BuildContext context, int index) {

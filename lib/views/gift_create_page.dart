@@ -34,8 +34,10 @@ class _GiftCreatePageState extends State<GiftCreatePage> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.gift?.name ?? '');
-    _priceController = TextEditingController(text: widget.gift?.price.toString() ?? '');
-    _descriptionController = TextEditingController(text: widget.gift?.description ?? '');
+    _priceController =
+        TextEditingController(text: widget.gift?.price.toString() ?? '');
+    _descriptionController =
+        TextEditingController(text: widget.gift?.description ?? '');
     if (widget.gift?.category != null) {
       _category = GiftCategory.values.firstWhere(
         (e) => e.toString() == 'GiftCategory.${widget.gift!.category}',
@@ -142,7 +144,10 @@ class _GiftCreatePageState extends State<GiftCreatePage> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [Theme.of(context).primaryColor.withOpacity(0.4), Colors.white],
+            colors: [
+              Theme.of(context).primaryColor.withOpacity(0.4),
+              Colors.white
+            ],
           ),
         ),
         height: screenHeight,
@@ -165,8 +170,9 @@ class _GiftCreatePageState extends State<GiftCreatePage> {
                         children: [
                           CircleAvatar(
                             radius: 60.0,
-                            backgroundImage:
-                                _imagePath.isNotEmpty ? FileImage(File(_imagePath)) : null,
+                            backgroundImage: _imagePath.isNotEmpty
+                                ? FileImage(File(_imagePath))
+                                : null,
                             child: IconButton(
                                 onPressed: () {
                                   ImagePickerHelper(
@@ -246,19 +252,30 @@ class _GiftCreatePageState extends State<GiftCreatePage> {
                               decoration: InputDecoration(
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10.0),
-                                  borderSide: BorderSide(color: Colors.transparent),
+                                  borderSide:
+                                      BorderSide(color: Colors.transparent),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10.0),
-                                  borderSide: BorderSide(color: Colors.transparent),
+                                  borderSide:
+                                      BorderSide(color: Colors.transparent),
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(10.0),
-                                  borderSide: BorderSide(color: Colors.transparent),
+                                  borderSide:
+                                      BorderSide(color: Colors.transparent),
                                 ),
                                 filled: true,
-                                fillColor: Provider.of<ThemeColorData>(context, listen: false).isDark?Colors.black38:Theme.of(context).colorScheme.onSecondary.withOpacity(0.7),
-                                prefixIcon: Icon(Icons.category, color: Theme.of(context).primaryColor),
+                                fillColor: Provider.of<ThemeColorData>(context,
+                                            listen: false)
+                                        .isDark
+                                    ? Colors.black38
+                                    : Theme.of(context)
+                                        .colorScheme
+                                        .onSecondary
+                                        .withOpacity(0.7),
+                                prefixIcon: Icon(Icons.category,
+                                    color: Theme.of(context).primaryColor),
                               ),
                               value: _category,
                               items: GiftCategory.values.map((category) {
@@ -302,16 +319,18 @@ class _GiftCreatePageState extends State<GiftCreatePage> {
                       ),
                       SizedBox(height: 30),
                       defaultFormButton(
-                        onPressed: _isLoading ? (){} : (isEditing ? _saveGift : _createGift),
+                        onPressed: _isLoading
+                            ? () {}
+                            : (isEditing ? _saveGift : _createGift),
                         child: _isLoading
-                          ? CircularProgressIndicator(color: Colors.white)
-                          : Text(
-                              isEditing ? 'Save Changes' : 'Create Gift',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
+                            ? CircularProgressIndicator(color: Colors.white)
+                            : Text(
+                                isEditing ? 'Save Changes' : 'Create Gift',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
-                            ),
                         screenWidth: screenWidth,
                       ),
                     ],

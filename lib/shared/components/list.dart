@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hedieaty/models/event.dart';
 import 'package:hedieaty/models/gift.dart';
 
-
-Widget eventAndGiftList<T>(BuildContext context, List<T> list,
-    Function onTap, bool trailing, dynamic onDelete, dynamic onEdit) {
+Widget eventAndGiftList<T>(BuildContext context, List<T> list, Function onTap,
+    bool trailing, dynamic onDelete, dynamic onEdit) {
   if (list.isEmpty) {
     return Center(
       child: Column(
@@ -15,11 +14,10 @@ Widget eventAndGiftList<T>(BuildContext context, List<T> list,
           Text(
             'No items found',
             style: TextStyle(
-              fontSize: 18,
-              color: Colors.grey,
-              fontFamily: 'Poppins',
-              fontWeight: FontWeight.w500
-            ),
+                fontSize: 18,
+                color: Colors.grey,
+                fontFamily: 'Poppins',
+                fontWeight: FontWeight.w500),
           ),
         ],
       ),
@@ -74,45 +72,61 @@ Widget eventAndGiftList<T>(BuildContext context, List<T> list,
                     ],
                   ),
                   child: CircleAvatar(
-            radius: 24,
-            backgroundColor: Colors.transparent,
-            child: ClipOval(
-              child: FadeInImage.assetNetwork(
-                placeholder: 'assets/images/app_icon.png',
-                image: imageUrl,
-                fit: BoxFit.cover,
-                imageErrorBuilder: (context, error, stackTrace) {
-                  return Image.asset('assets/images/app_icon.png', fit: BoxFit.cover);
-                },
-              ),
-            ),
-          )
-                )              : Container(
+                    radius: 24,
+                    backgroundColor: Colors.transparent,
+                    child: FadeInImage.assetNetwork(
+                      placeholder: 'assets/images/app_icon.png',
+                      image: imageUrl,
+                      fit: BoxFit.cover,
+                      imageErrorBuilder: (context, error, stackTrace) {
+                        return Image.asset('assets/images/app_icon.png',
+                            fit: BoxFit.cover);
+                      },
+                    ),
+                  ))
+              : Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    boxShadow: item is GiftModel ? [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 8,
-                        offset: Offset(0, 2),
-                      ),
-                    ] : null,
-                    gradient: item is EventModel ? LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Theme.of(context).colorScheme.primary.withOpacity(0.2),
-                        Theme.of(context).colorScheme.secondary.withOpacity(0.2),
-                      ],
-                    ) : null,
+                    boxShadow: item is GiftModel
+                        ? [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 8,
+                              offset: Offset(0, 2),
+                            ),
+                          ]
+                        : null,
+                    gradient: item is EventModel
+                        ? LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withOpacity(0.2),
+                              Theme.of(context)
+                                  .colorScheme
+                                  .secondary
+                                  .withOpacity(0.2),
+                            ],
+                          )
+                        : null,
                   ),
                   child: CircleAvatar(
                     radius: 24,
-                    backgroundColor: item is EventModel ? Colors.transparent : null,
-                    backgroundImage: item is GiftModel ? AssetImage('assets/images/app_icon.png') : null,
-                    child: item is EventModel ? Icon(Icons.event, color: Theme.of(context).colorScheme.primary) : null,
+                    backgroundColor:
+                        item is EventModel ? Colors.transparent : null,
+                    backgroundImage: item is GiftModel
+                        ? AssetImage('assets/images/app_icon.png')
+                        : null,
+                    child: item is EventModel
+                        ? Icon(Icons.event,
+                            color: Theme.of(context).colorScheme.primary)
+                        : null,
                   ),
-                ),          trailing: trailing
+                ),
+          trailing: trailing
               ? SizedBox(
                   width: 100,
                   child: Row(
@@ -121,16 +135,18 @@ Widget eventAndGiftList<T>(BuildContext context, List<T> list,
                           onPressed: () {
                             onEdit(index, list);
                           },
-                          style:
-                              ButtonStyle(iconSize: WidgetStatePropertyAll(20.0)),
-                          icon: Icon(Icons.edit, color: Theme.of(context).colorScheme.primary)),
+                          style: ButtonStyle(
+                              iconSize: WidgetStatePropertyAll(20.0)),
+                          icon: Icon(Icons.edit,
+                              color: Theme.of(context).colorScheme.primary)),
                       IconButton(
                           onPressed: () {
                             onDelete(index, list);
                           },
-                          style:
-                              ButtonStyle(iconSize: WidgetStatePropertyAll(20.0)),
-                          icon: Icon(Icons.delete, color: Theme.of(context).colorScheme.error)),
+                          style: ButtonStyle(
+                              iconSize: WidgetStatePropertyAll(20.0)),
+                          icon: Icon(Icons.delete,
+                              color: Theme.of(context).colorScheme.error)),
                     ],
                   ),
                 )
