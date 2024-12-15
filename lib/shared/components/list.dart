@@ -74,11 +74,20 @@ Widget eventAndGiftList<T>(BuildContext context, List<T> list,
                     ],
                   ),
                   child: CircleAvatar(
-                    backgroundImage: NetworkImage(imageUrl),
-                    radius: 24,
-                  ),
-                )
-              : Container(
+            radius: 24,
+            backgroundColor: Colors.transparent,
+            child: ClipOval(
+              child: FadeInImage.assetNetwork(
+                placeholder: 'assets/images/app_icon.png',
+                image: imageUrl,
+                fit: BoxFit.cover,
+                imageErrorBuilder: (context, error, stackTrace) {
+                  return Image.asset('assets/images/app_icon.png', fit: BoxFit.cover);
+                },
+              ),
+            ),
+          )
+                )              : Container(
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     boxShadow: item is GiftModel ? [

@@ -1,0 +1,87 @@
+
+
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:hedieaty/models/event.dart';
+import 'package:hedieaty/services/auth.dart';
+import 'package:hedieaty/services/storage.dart';
+
+import '../models/gift.dart';
+import '../shared/database/firestore.dart';
+import '../shared/database/local_db.dart';
+import 'sync_helper.dart';
+
+class GiftRepository {
+  final FirestoreService _firestoreService = FirestoreService();
+  final LocalDB _localDB = LocalDB();
+  late SyncHelper _syncHelper = SyncHelper(_firestoreService, _localDB);
+  final AuthService _authService = AuthService();
+  final StorageService _storageService = StorageService();
+
+  Future<void> createGift(GiftModel gift, EventModel event) async {
+    try {
+      final checkConnectivity = await Connectivity().checkConnectivity();
+      if (checkConnectivity == ConnectivityResult.none) {
+        throw Exception("No internet connection. Cannot create gift remotely.");
+      }
+      final firestoreId = await _firestoreService.createGift(
+          gift, _authService.currentUser!.uid);
+      if (gift.firestoreId == null) {
+        gift.firestoreId = firestoreId;
+      }
+
+      await _firestoreService.addGiftToEvent(event.firestoreId!, gift);
+      await _localDB.insertGift(gift);
+      final imageUrl = await _storageService.uploadImageToGifts(gift.giftImageUrl!, gift.firestoreId!);
+      gift.giftImageUrl = imageUrl;
+      await _localDB.updateGift(gift);
+      await _firestoreService.updateGift(gift);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<GiftModel>> getGifts(int eventId) async {
+    try {
+      final localGifts = await _localDB.getGiftsByEventId(eventId);
+
+      final connectivityResult = await Connectivity().checkConnectivity();
+      final isConnected = connectivityResult != ConnectivityResult.none;
+      if (isConnected) {
+        final event = await _localDB.getEvent(eventId);
+        final remoteGifts = await _firestoreService.getGiftsByEventId(event.firestoreId!);
+        await _syncHelper.syncGifts(eventId, remoteGifts);
+        final updatedGifts = await _localDB.getGiftsByEventId(eventId);
+        return updatedGifts;
+      } else {
+        return localGifts;
+      }
+    } catch (e) {
+      rethrow;
+    }
+  }
+  Future<void> updateGift(GiftModel gift) async {
+    try {
+      final checkConnectivity = await Connectivity().checkConnectivity();
+      if (checkConnectivity == ConnectivityResult.none) {
+        throw Exception("No internet connection. Cannot update gift remotely.");
+      }
+      await _firestoreService.updateGift(gift);
+      await _localDB.updateGift(gift);
+    } catch (e) {
+      rethrow;
+    }
+  }
+  Future<void> deleteGift(GiftModel gift, EventModel event) async {
+    try {
+      final checkConnectivity = await Connectivity().checkConnectivity();
+      if (checkConnectivity == ConnectivityResult.none) {
+        throw Exception("No internet connection. Cannot delete gift remotely.");
+      }
+      await _firestoreService.removeGiftFromEvent(event.firestoreId!, gift.firestoreId!);
+      await _firestoreService.deleteGift(gift.firestoreId!);
+      await _localDB.deleteGift(gift);
+    } catch (e) {
+      rethrow;
+    }
+  }
+}

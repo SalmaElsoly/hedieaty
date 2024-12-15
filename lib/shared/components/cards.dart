@@ -1,63 +1,101 @@
 import 'package:flutter/material.dart';
+import 'package:hedieaty/models/event.dart';
+import 'package:hedieaty/shared/components/error_component.dart';
+
 
 Widget eventDetailCard(
-    BuildContext context, Map<String, dynamic> event, bool isOwner) {
-  return Card(
-    margin: const EdgeInsets.all(10.0),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(15.0),
-    ),
-    elevation: 5,
-    child: Padding(
-      padding: const EdgeInsets.all(15.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            event['name'],
-            style: Theme.of(context).textTheme.headlineSmall,
+    BuildContext context, EventModel? event) {
+  if (event == null) {
+    showError('Error', 'An error occurred while loading event details', context);
+    return const SizedBox.shrink();
+  }
+  return Builder(builder: (context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 6.0),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16.0),
+        side: BorderSide(color: Theme.of(context).primaryColor.withOpacity(0.2), width: 1),
+      ),
+      elevation: 2,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16.0),
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Theme.of(context).cardColor.withOpacity(0.9),
+              Theme.of(context).cardColor,
+              Theme.of(context).cardColor.withOpacity(0.9),
+            ],
           ),
-          const SizedBox(height: 10),
-          Row(
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Date: ${event['date']}',
-                style: Theme.of(context).textTheme.bodyLarge,
+                event.name ?? '',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).primaryColor,
+                ),
               ),
-              const SizedBox(width: 10),
-              Text(
-                'Time: ${event['time']}',
-                style: Theme.of(context).textTheme.bodyLarge,
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor.withOpacity(0.6),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  children: [
+                    Icon(Icons.calendar_today, size: 16),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Date: ${event.date ?? ''}',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                    const SizedBox(width: 12),
+                    Icon(Icons.access_time, size: 16),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Time: ${event.time ?? ''}',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  Icon(Icons.location_on, size: 16, color: Theme.of(context).primaryColor),
+                  const SizedBox(width: 4),
+                  Expanded(
+                    child: Text(
+                      'Location: ${event.location ?? ''}',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor.withOpacity(0.4),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  'Description: ${event.description ?? ''}',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
-          Text(
-            'Location: ${event['location']}',
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-          const SizedBox(height: 10),
-          Text(
-            'Description: ${event['description']}',
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          const SizedBox(height: 10),
-          if (isOwner)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                FloatingActionButton.extended(
-                  onPressed: () {
-                    Navigator.of(context).pushNamed('/gift_create',
-                        arguments: {'eventId': event['id']});
-                  },
-                  icon: Icon(Icons.add),
-                  label: const Text('Add Gift'),
-                ),
-              ],
-            ),
-        ],
+        ),
       ),
-    ),
-  );
+    );
+  });
 }
