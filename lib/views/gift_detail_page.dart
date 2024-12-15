@@ -49,9 +49,19 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
           Container(
             width: double.infinity,
             height: MediaQuery.of(context).size.height * 0.6,
+            child: FadeInImage.assetNetwork(
+              placeholder: 'assets/images/app_icon.png',
+              image: widget.gift!.giftImageUrl!,
+              fit: BoxFit.cover,
+              imageErrorBuilder: (context, error, stackTrace) {
+                return Image.asset('assets/images/app_icon.png',
+                    fit: BoxFit.cover);
+              },
+            ),
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: AssetImage('assets/images/app_icon.png'),
+                image: widget.gift!.giftImageUrl== null? AssetImage('assets/images/app_icon.png'):
+                NetworkImage(widget.gift!.giftImageUrl!) as ImageProvider,
                 fit: BoxFit.contain,
               ),
             ),
