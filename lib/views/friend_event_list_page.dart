@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:hedieaty/views/friend_gift_list_page.dart';
 
+import '../controllers/event.dart';
 import '../dummy_data.dart';
+import '../models/event.dart';
+import '../models/user.dart';
 import '../shared/components/list.dart';
 import '../shared/components/tabs.dart';
 
 class FriendEventListPage extends StatefulWidget {
-  const FriendEventListPage({super.key});
+  UserModel? friend;
+  FriendEventListPage({super.key, this.friend});
 
   @override
   State<FriendEventListPage> createState() => _FriendEventListPageState();
@@ -14,72 +19,55 @@ class FriendEventListPage extends StatefulWidget {
 class _FriendEventListPageState extends State<FriendEventListPage>
     with SingleTickerProviderStateMixin {
   static const List<Tab> myTabs = <Tab>[
-    Tab(text: 'Past'),
-    Tab(text: 'Current'),
-    Tab(text: 'Upcoming'),
+    Tab(text: 'Past', icon: Icon(Icons.history)),
+    Tab(text: 'Current', icon: Icon(Icons.event)),
+    Tab(text: 'Upcoming', icon: Icon(Icons.event_available)),
   ];
-
+  EventController _eventController = EventController.instance;
   late TabController _tabController;
-  int userId = 0;
-
-  final pastEvents = [
-    {"id": 1, "name": "Alice's Birthday"},
-    {"id": 2, "name": "Tech Conference"},
-  ];
-
-  final currentEvents = [
-    {"id": 3, "name": "Cooking Workshop"},
-  ];
-
-  final upcomingEvents = [
-    {"id": 4, "name": "Football Match"},
-    {"id": 5, "name": "Music Festival"},
-  ];
-
+  late Future<List<EventModel>> _eventsFuture;
   @override
   void initState() {
     super.initState();
     _tabController = TabController(vsync: this, length: myTabs.length);
+    _eventsFuture = _eventController.getEvents(widget.friend!.id!, context);
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final args =
-        ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
-    userId = args['userId'];
-  }
 
   void onTab(int index, List eventList) {
-    Navigator.of(context).pushNamed('/friend_gift_list',
-        arguments: {'eventId': eventList[index]['id']});
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => FriendGiftListPage(
+          event: eventList[index],
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Event List'),
+        title: Row(
+          children: [
+            Icon(Icons.people, color: Theme.of(context).colorScheme.secondary),
+            SizedBox(width: 8),
+            const Text('Friend\'s Events'),
+          ],
+        ),
         actions: [
           PopupMenuButton<String>(
             icon: Icon(Icons.sort),
             onSelected: (String result) {
               setState(() {
                 if (result == 'name') {
-                  pastEvents.sort((a, b) =>
-                      (a['name'] as String).compareTo(b['name'] as String));
-                  currentEvents.sort((a, b) =>
-                      (a['name'] as String).compareTo(b['name'] as String));
-                  upcomingEvents.sort((a, b) =>
-                      (a['name'] as String).compareTo(b['name'] as String));
-                } else if (result == 'time') {
-                  // Assuming you have a 'time' field in your events
-                  pastEvents.sort((a, b) =>
-                      (a['time'] as String).compareTo(b['time'] as String));
-                  currentEvents.sort((a, b) =>
-                      (a['time'] as String).compareTo(b['time'] as String));
-                  upcomingEvents.sort((a, b) =>
-                      (a['time'] as String).compareTo(b['time'] as String));
+                  setState(() {
+                    _eventsFuture = _eventsFuture.then((events) {
+                      events.sort((a, b) => a.name.compareTo(b.name));
+                      return events;
+                    });
+                  });
                 }
               });
             },
@@ -92,28 +80,69 @@ class _FriendEventListPageState extends State<FriendEventListPage>
           ),
         ],
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(160.0),
+          preferredSize: const Size.fromHeight(180.0),
           child: Column(
             children: [
-              Container(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Theme.of(context).colorScheme.secondary,
-                    width: 3,
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: Theme.of(context).colorScheme.secondary,
+                        width: 3,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                          spreadRadius: 2,
+                          blurRadius: 8,
+                        ),
+                      ],
+                    ),
+                    child: CircleAvatar(
+                      radius: 35,
+                      backgroundImage: widget.friend?.profileImage != null
+                          ? NetworkImage(
+                        widget.friend?.profileImage as String,
+                      )
+                          : AssetImage(
+                        'assets/images/avater.png',
+                      ) as ImageProvider,
+                    ),
                   ),
-                ),
-                child: const CircleAvatar(
-                  radius: 35,
-                  backgroundImage: AssetImage('assets/images/avater.png'),
-                ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      padding: EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).colorScheme.secondary,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.person_add_alt_1,
+                        size: 16,
+                      ),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 10),
               Text(
-                '${users[userId - 1]['username']}',
+                widget.friend?.username ?? '',
                 style: TextStyle(
                   fontSize: 24,
+                  fontWeight: FontWeight.bold,
                   color: Theme.of(context).highlightColor,
+                  shadows: [
+                    Shadow(
+                      offset: Offset(1, 1),
+                      blurRadius: 2,
+                      color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                    ),
+                  ],
                 ),
               ),
               defaultTabBar(context, myTabs, _tabController),
@@ -121,13 +150,45 @@ class _FriendEventListPageState extends State<FriendEventListPage>
           ),
         ),
       ),
-      body: TabBarView(
-        controller: _tabController,
-        children: [
-          eventAndGiftList(context, pastEvents, onTab, false, null, null),
-          eventAndGiftList(context, currentEvents, onTab, false, null, null),
-          eventAndGiftList(context, upcomingEvents, onTab, false, null, null),
-        ],
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Theme.of(context).colorScheme.secondary.withOpacity(0.1),
+              Theme.of(context).scaffoldBackgroundColor,
+            ],
+          ),
+        ),
+        child: FutureBuilder<List<EventModel>>(
+          future: _eventsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+              return Center(child: Text('No events found'));
+            }
+
+            var events = snapshot.data!;
+            final pastEvents = events.where((event) => event.isPast).toList();
+            final currentEvents =
+            events.where((event) => event.isCurrent).toList();
+            final upcomingEvents =
+            events.where((event) => event.isUpcoming).toList();
+
+            return TabBarView(
+              controller: _tabController,
+              children: [
+                eventAndGiftList(context, pastEvents, onTab, false, null, null),
+                eventAndGiftList(context, currentEvents, onTab, false, null, null),
+                eventAndGiftList(context, upcomingEvents, onTab, false, null, null),
+              ],
+            );
+          },
+        ),
       ),
     );
   }

@@ -21,6 +21,10 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
   late Future<UserModel?> _user;
   String? pledgedUsername;
 
+  void pledge()async{
+    await _giftsController.pledgeGift(widget.gift!, context);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -57,13 +61,6 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
                 return Image.asset('assets/images/app_icon.png',
                     fit: BoxFit.cover);
               },
-            ),
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: widget.gift!.giftImageUrl== null? AssetImage('assets/images/app_icon.png'):
-                NetworkImage(widget.gift!.giftImageUrl!) as ImageProvider,
-                fit: BoxFit.contain,
-              ),
             ),
           ),
           DraggableScrollableSheet(
@@ -198,8 +195,13 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
                                 Switch(
                                   value: isPledged,
                                   onChanged: (value) {
-                                    setState(() {
-                                      isPledged = value;
+                                    pledge();
+                                    _user = _userController.getCurrentUser(context).then(
+                                    (value) {
+                                      setState(() {
+                                        isPledged = true;
+                                        pledgedUsername = value?.username;
+                                      });
                                     });
                                   },
                                   activeColor:
@@ -236,7 +238,7 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
                                     ),
                                     SizedBox(width: 8),
                                     Text(
-                                      'Gift Status:',
+                                      'Gift Status: ${widget.gift?.status.name}',
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyLarge

@@ -28,10 +28,12 @@ class GiftModel {
   final String description;
   final GiftCategory category;
   String? giftImageUrl;
-  final GiftStatus status;
-  final String? pledgedBy;
+   GiftStatus status;
+  String? pledgedBy;
   final DateTime lastModified;
   final bool isDeleted;
+  String? ownerId;
+  String? deadline;
 
   GiftModel({
     this.id,
@@ -46,6 +48,8 @@ class GiftModel {
     this.pledgedBy,
     DateTime? lastModified,
     this.isDeleted = false,
+    this.ownerId,
+    this.deadline,
   }) : lastModified = lastModified ?? DateTime.now();
 
   Map<String, dynamic> toMap() {
@@ -61,6 +65,8 @@ class GiftModel {
       'status': status.toString().split('.').last,
       'pledgedBy': pledgedBy,
       'lastModified': lastModified.toIso8601String(),
+      'ownerId': ownerId,
+      'deadline': deadline,
     };
   }
 
@@ -84,6 +90,8 @@ class GiftModel {
       pledgedBy: map['pledgedBy'],
       lastModified: DateTime.parse(map['lastModified']),
       isDeleted: map['isDeleted'] == 0 ? false : true,
+      ownerId: map['ownerId'],
+      deadline: map['deadline'],
     );
   }
 
@@ -104,10 +112,12 @@ class GiftModel {
       ),
       pledgedBy: data['pledgedBy'],
       lastModified: DateTime.parse(data['lastModified']),
+      ownerId: data['ownerId'],
+      deadline: data['deadline']
     );
   }
 
-  Map<String, dynamic> toFirestore(String userId) {
+  Map<String, dynamic> toFirestore() {
     return {
       'name': this.name,
       'price': this.price,
@@ -117,7 +127,8 @@ class GiftModel {
       'status': this.status.toString().split('.').last,
       'pledgedBy': this.pledgedBy,
       'lastModified': this.lastModified.toIso8601String(),
-      'ownerId': userId == '' ? null : userId,
+      'ownerId': this.ownerId,
+      'deadline': this.deadline,
     };
   }
 }

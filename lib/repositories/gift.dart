@@ -21,8 +21,11 @@ class GiftRepository {
       if (checkConnectivity == ConnectivityResult.none) {
         throw Exception("No internet connection. Cannot create gift remotely.");
       }
+      gift.ownerId = _authService.currentUser!.uid;
+      gift.deadline = event.date;
+
       final firestoreId = await _firestoreService.createGift(
-          gift, _authService.currentUser!.uid);
+          gift);
       if (gift.firestoreId == null) {
         gift.firestoreId = firestoreId;
       }
@@ -89,6 +92,63 @@ class GiftRepository {
           event.firestoreId!, gift.firestoreId!);
       await _firestoreService.deleteGift(gift.firestoreId!);
       await _localDB.deleteGift(gift);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> pledgeGift(GiftModel gift) async{
+    try {
+      final checkConnectivity = await Connectivity().checkConnectivity();
+      if (checkConnectivity == ConnectivityResult.none) {
+        throw Exception("No internet connection. Cannot pledge gift remotely.");
+      }
+      gift.status = GiftStatus.pledged;
+      gift.pledgedBy = _authService.currentUser!.uid;
+      await _firestoreService.updateGift(gift);
+      await _localDB.updateGift(gift);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> unpledgeGift(GiftModel gift) async{
+    try {
+      final checkConnectivity = await Connectivity().checkConnectivity();
+      if (checkConnectivity == ConnectivityResult.none) {
+        throw Exception("No internet connection. Cannot unpledge gift remotely.");
+      }
+      gift.status = GiftStatus.unpledged;
+      gift.pledgedBy = '';
+      await _firestoreService.updateGift(gift);
+      await _localDB.updateGift(gift);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> completeGift(GiftModel gift) async{
+    try {
+      final checkConnectivity = await Connectivity().checkConnectivity();
+      if (checkConnectivity == ConnectivityResult.none) {
+        throw Exception("No internet connection. Cannot complete gift remotely.");
+      }
+      gift.status = GiftStatus.purchased;
+      await _firestoreService.updateGift(gift);
+      await _localDB.updateGift(gift);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<List<GiftModel>> getPledgedGifts(String userId) async {
+    try {
+      final checkConnectivity = await Connectivity().checkConnectivity();
+      if (checkConnectivity == ConnectivityResult.none) {
+        throw Exception("No internet connection. Cannot get pledged gifts remotely.");
+      }
+      final gifts = await _firestoreService.getPledgedGifts(userId);
+      return gifts;
     } catch (e) {
       rethrow;
     }

@@ -253,6 +253,16 @@ class _GiftListPageState extends State<GiftListPage>
                         return ListTile(
                           leading: CircleAvatar(
                             radius: 24,
+                            backgroundColor: Colors.transparent,
+                            child: FadeInImage.assetNetwork(
+                              placeholder: 'assets/images/app_icon.png',
+                              image: pledgedGifts[index].giftImageUrl!,
+                              fit: BoxFit.cover,
+                              imageErrorBuilder: (context, error, stackTrace) {
+                                return Image.asset('assets/images/app_icon.png',
+                                    fit: BoxFit.cover);
+                              },
+                            ),
                           ),
                           title: Text(pledgedGifts[index].name),
                           onTap: () {
@@ -261,10 +271,10 @@ class _GiftListPageState extends State<GiftListPage>
                           trailing:
                               pledgedGifts[index].status == GiftStatus.pledged
                                   ? Container(
-                                      padding: const EdgeInsets.all(8),
-                                      decoration: BoxDecoration(
-                                        color: Theme.of(context).highlightColor,
-                                        borderRadius: BorderRadius.circular(8),
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).highlightColor.withOpacity(0.8),
+                                  borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: const Text(
                                         'Pledged',
@@ -274,10 +284,10 @@ class _GiftListPageState extends State<GiftListPage>
                                       ),
                                     )
                                   : Container(
-                                      padding: const EdgeInsets.all(8),
-                                      decoration: BoxDecoration(
-                                        color: Colors.greenAccent,
-                                        borderRadius: BorderRadius.circular(8),
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: Colors.greenAccent,
+                                  borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Text(
                                         'Purchased',
@@ -291,7 +301,7 @@ class _GiftListPageState extends State<GiftListPage>
                         );
                       },
                       separatorBuilder: (BuildContext context, int index) {
-                        return const Divider();
+                        return defaultDivider(context);
                       },
                       itemCount: pledgedGifts.length)
             ],

@@ -1,19 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:hedieaty/controllers/user.dart';
 import 'package:hedieaty/models/user.dart';
+import 'package:hedieaty/shared/components/error_component.dart';
 import 'package:hedieaty/shared/components/list.dart';
 import 'package:provider/provider.dart';
 
 import '../../views/event_list_page.dart';
 import '../theme.dart';
 
-Widget defaultDrawer(UserModel user) => Builder(builder: (context) {
+Widget defaultDrawer(UserModel user, UserController userController, BuildContext parentContext) => Builder(builder: (parentContext) {
+      final TextEditingController usernameController = TextEditingController();
+      final TextEditingController emailController = TextEditingController();
+
       return Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
             DrawerHeader(
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.secondary,
+                  color: Theme.of(parentContext).colorScheme.secondary,
                 ),
                 child: Column(
                   children: [
@@ -21,11 +26,11 @@ Widget defaultDrawer(UserModel user) => Builder(builder: (context) {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         IconButton(
-                          icon: Provider.of<ThemeColorData>(context).isDark
+                          icon: Provider.of<ThemeColorData>(parentContext).isDark
                               ? const Icon(Icons.wb_sunny_rounded)
                               : const Icon(Icons.nightlight_round_rounded),
                           onPressed: () {
-                            Provider.of<ThemeColorData>(context, listen: false)
+                            Provider.of<ThemeColorData>(parentContext, listen: false)
                                 .toggleTheme();
                           },
                         ),
@@ -55,14 +60,14 @@ Widget defaultDrawer(UserModel user) => Builder(builder: (context) {
             ListTile(
               title: const Text('Profile'),
               onTap: () {
-                Navigator.pushNamed(context, '/profile');
+                Navigator.pushNamed(parentContext, '/profile');
               },
               leading: const Icon(Icons.person),
             ),
             ListTile(
               title: const Text('My Event List'),
               onTap: () {
-                Navigator.of(context).push(
+                Navigator.of(parentContext).push(
                   MaterialPageRoute(
                     builder: (context) => EventListPage(
                       user: user,
@@ -75,7 +80,7 @@ Widget defaultDrawer(UserModel user) => Builder(builder: (context) {
             ListTile(
               title: const Text('My Pledged Gifts'),
               onTap: () {
-                Navigator.pushNamed(context, '/my_pledged_gifts');
+                Navigator.pushNamed(parentContext, '/my_pledged_gifts');
               },
               leading: const Icon(Icons.card_giftcard),
             ),
@@ -83,16 +88,62 @@ Widget defaultDrawer(UserModel user) => Builder(builder: (context) {
               title: const Text('Add Friend'),
               onTap: () {
                 showDialog(
-                    context: context,
-                    builder: (context) => AlertDialog(
+                    barrierDismissible: false,
+                    context: parentContext,
+                    builder: (BuildContext context) => AlertDialog(
                           title: Text('Add Friend'),
                           content: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               ElevatedButton.icon(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                  showGeneralDialog(
+                                      context: context,
+                                      pageBuilder: (context, animation,
+                                              secondaryAnimation) =>
+                                          SimpleDialog(
+                                            title: Text('Add Friend'),
+                                            children: [
+                                              SizedBox(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.8,
+                                                child: Padding(
+                                                  padding: const EdgeInsets.all(
+                                                      12.0),
+                                                  child: TextFormField(
+                                                    controller: usernameController,
+                                                    decoration: InputDecoration(
+                                                      labelText: 'Username',
+                                                      hintText:
+                                                          'Enter username',
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              ElevatedButton(
+                                                onPressed: () async {
+                                                  Navigator.of(context).pop();
+                                                  try {
+                                                    await userController.addFriendByUsername(usernameController.text, context);
+                                                  } catch(e) {
+                                                    showError("Error", e.toString(), context);
+                                                  }
+                                                },
+                                                style: ElevatedButton.styleFrom(
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    ),
+                                                    elevation: 0.0),
+                                                child: Text('Add'),
+                                              ),
+                                            ],
+                                          ));
+                                },
                                 icon: Icon(Icons.person_add),
-                                label: Text('Contact'),
+                                label: Text('Username'),
                                 style: ElevatedButton.styleFrom(
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
@@ -113,29 +164,32 @@ Widget defaultDrawer(UserModel user) => Builder(builder: (context) {
                                                 width: MediaQuery.of(context)
                                                         .size
                                                         .width *
-                                                    0.8, // Adjust the width as needed
+                                                    0.8,
                                                 child: Padding(
                                                   padding: const EdgeInsets.all(
                                                       12.0),
                                                   child: TextFormField(
+                                                    controller: emailController,
                                                     decoration: InputDecoration(
-                                                      labelText: 'Phone Number',
+                                                      labelText: 'Email',
                                                       hintText:
-                                                          'Enter phone number',
+                                                          'Enter email address',
                                                     ),
                                                   ),
                                                 ),
                                               ),
                                               ElevatedButton(
-                                                onPressed: () {
+                                                onPressed: () async {
                                                   Navigator.of(context).pop();
+                                                  try {
+                                                    await userController.addFriendByEmail(emailController.text, context);
+                                                  } catch(e) {
+                                                    showError("Error", e.toString(), context);
+                                                  }
                                                 },
                                                 style: ElevatedButton.styleFrom(
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8.0),
+                                                    shape: RoundedRectangleBorder(
+                                                      borderRadius: BorderRadius.circular(8.0),
                                                     ),
                                                     elevation: 0.0),
                                                 child: Text('Add'),
@@ -143,8 +197,8 @@ Widget defaultDrawer(UserModel user) => Builder(builder: (context) {
                                             ],
                                           ));
                                 },
-                                icon: Icon(Icons.phone_android),
-                                label: Text('Number'),
+                                icon: Icon(Icons.email),
+                                label: Text('Email'),
                                 style: ElevatedButton.styleFrom(
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(8.0),
@@ -157,11 +211,12 @@ Widget defaultDrawer(UserModel user) => Builder(builder: (context) {
               },
               leading: const Icon(Icons.person_add),
             ),
-            defaultDivider(context),
+            defaultDivider(parentContext),
             ListTile(
               title: const Text('Sign Out'),
-              onTap: () {
-                Navigator.pushNamed(context, '/sign_in');
+              onTap: ()async {
+                await userController.signOut(parentContext);
+                Navigator.pushReplacementNamed(parentContext, '/');
               },
               leading: const Icon(Icons.logout),
             ),
