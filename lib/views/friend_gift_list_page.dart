@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hedieaty/models/event.dart';
-import 'package:hedieaty/shared/components/list.dart';
 
 import '../controllers/gifts.dart';
-import '../dummy_data.dart';
+
 import '../models/gift.dart';
 import '../shared/components/cards.dart';
 import 'gift_detail_page.dart';
@@ -27,13 +26,15 @@ class _FriendGiftListPageState extends State<FriendGiftListPage> {
     super.initState();
     _giftsFuture = _giftsController.getGifts(widget.event!.id!, context);
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title:  Row(
+        title: Row(
           children: [
-            Icon(Icons.card_giftcard, color: Theme.of(context).colorScheme.secondary),
+            Icon(Icons.card_giftcard,
+                color: Theme.of(context).colorScheme.secondary),
             SizedBox(width: 8),
             const Text('Friend\'s Gift list'),
           ],
@@ -142,9 +143,9 @@ class _FriendGiftListPageState extends State<FriendGiftListPage> {
           ),
         ],
         bottom: PreferredSize(
-            preferredSize: Size.fromHeight(180.0),
-            child: eventDetailCard(context, widget.event),
-            ),
+          preferredSize: Size.fromHeight(180.0),
+          child: eventDetailCard(context, widget.event),
+        ),
       ),
       body: Container(
         decoration: BoxDecoration(
@@ -181,9 +182,8 @@ class _FriendGiftListPageState extends State<FriendGiftListPage> {
             }
 
             if (selectedStatus != null) {
-              gifts = gifts
-                  .where((gift) => gift.status == selectedStatus)
-                  .toList();
+              gifts =
+                  gifts.where((gift) => gift.status == selectedStatus).toList();
             }
 
             return ListView.separated(
@@ -209,18 +209,18 @@ class _FriendGiftListPageState extends State<FriendGiftListPage> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     leading: CircleAvatar(
-                          radius: 24,
-                          backgroundColor: Colors.transparent,
-                          child: FadeInImage.assetNetwork(
-                            placeholder: 'assets/images/app_icon.png',
-                            image: gift.giftImageUrl!,
-                            fit: BoxFit.cover,
-                            imageErrorBuilder: (context, error, stackTrace) {
-                              return Image.asset('assets/images/app_icon.png',
-                                  fit: BoxFit.cover);
-                            },
-                          ),
-                        ),
+                      radius: 24,
+                      backgroundColor: Colors.transparent,
+                      child: FadeInImage.assetNetwork(
+                        placeholder: 'assets/images/app_icon.png',
+                        image: gift.giftImageUrl!,
+                        fit: BoxFit.cover,
+                        imageErrorBuilder: (context, error, stackTrace) {
+                          return Image.asset('assets/images/app_icon.png',
+                              fit: BoxFit.cover);
+                        },
+                      ),
+                    ),
                     title: Text(
                       gift.name,
                       style: TextStyle(fontWeight: FontWeight.bold),
@@ -235,24 +235,32 @@ class _FriendGiftListPageState extends State<FriendGiftListPage> {
                     },
                     trailing: gift.status == GiftStatus.unpledged
                         ? Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 8),
                             decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.secondary.withOpacity(0.8),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .secondary
+                                  .withOpacity(0.8),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Text(
                               'Unpledged',
                               style: TextStyle(
-                                color: Theme.of(context).colorScheme.onSecondary,
+                                color:
+                                    Theme.of(context).colorScheme.onSecondary,
                                 fontWeight: FontWeight.w500,
                               ),
                             ),
                           )
                         : (gift.status == GiftStatus.pledged
                             ? Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
                                 decoration: BoxDecoration(
-                                  color: Theme.of(context).highlightColor.withOpacity(0.8),
+                                  color: Theme.of(context)
+                                      .highlightColor
+                                      .withOpacity(0.8),
                                   borderRadius: BorderRadius.circular(20),
                                 ),
                                 child: const Text(
@@ -264,7 +272,8 @@ class _FriendGiftListPageState extends State<FriendGiftListPage> {
                                 ),
                               )
                             : Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 12, vertical: 8),
                                 decoration: BoxDecoration(
                                   color: Colors.greenAccent.withOpacity(0.8),
                                   borderRadius: BorderRadius.circular(20),

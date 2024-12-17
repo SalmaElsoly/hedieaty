@@ -27,7 +27,8 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
   @override
   void initState() {
     super.initState();
-    _confettiController = ConfettiController(duration: const Duration(seconds: 2));
+    _confettiController =
+        ConfettiController(duration: const Duration(seconds: 2));
     if (widget.gift?.pledgedBy != null && widget.gift?.pledgedBy != "") {
       isPledged = true;
       _user = _userController
@@ -119,7 +120,9 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
         Navigator.pop(context);
       });
     });
-  }  @override
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -273,8 +276,9 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
                                   value: isPledged,
                                   onChanged: (value) {
                                     pledge();
-                                    _user = _userController.getCurrentUser(context).then(
-                                    (value) {
+                                    _user = _userController
+                                        .getCurrentUser(context)
+                                        .then((value) {
                                       setState(() {
                                         isPledged = true;
                                         pledgedUsername = value?.username;

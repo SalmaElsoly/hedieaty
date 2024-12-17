@@ -19,17 +19,12 @@ class _HomePageState extends State<HomePage> {
   late TextEditingController _searchController;
   final UserController _userController = UserController();
 
-
-
-
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
     //loadCurrentUser();
   }
-
-
 
   // Future<void> loadCurrentUser()async{
   //   final user = await _userController.getCurrentUser(context);
@@ -68,9 +63,7 @@ class _HomePageState extends State<HomePage> {
                           .toList();
                     });
                     if (value.isEmpty) {
-                     setState(() {
-
-                      });
+                      setState(() {});
                     }
                   },
                 )
@@ -117,9 +110,7 @@ class _HomePageState extends State<HomePage> {
             if (!snapshot.hasData) {
               return const Center(child: Text('No user data found'));
             }
-            return defaultDrawer(
-              snapshot.data!, _userController,context
-            );
+            return defaultDrawer(snapshot.data!, _userController, context);
           },
         ),
         body: FutureBuilder<List<UserModel>>(
@@ -143,7 +134,7 @@ class _HomePageState extends State<HomePage> {
                       radius: 24,
                       child: FadeInImage.assetNetwork(
                         placeholder: 'assets/images/avater.png',
-                        image: _friends[index].profileImage?? '',
+                        image: _friends[index].profileImage ?? '',
                         fit: BoxFit.cover,
                         imageErrorBuilder: (context, error, stackTrace) {
                           return Image.asset('assets/images/avater.png',
@@ -153,11 +144,11 @@ class _HomePageState extends State<HomePage> {
                     ),
                     title: Text(_friends[index].username),
                     onTap: () {
-                     Navigator.push(
+                      Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  FriendEventListPage(friend:_friends[index])));
+                              builder: (context) => FriendEventListPage(
+                                  friend: _friends[index])));
                     },
                     hoverColor: Theme.of(context).hoverColor,
                     enabled: true,

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hedieaty/views/friend_gift_list_page.dart';
 
 import '../controllers/event.dart';
-import '../dummy_data.dart';
 import '../models/event.dart';
 import '../models/user.dart';
 import '../shared/components/list.dart';
@@ -32,7 +31,6 @@ class _FriendEventListPageState extends State<FriendEventListPage>
     _tabController = TabController(vsync: this, length: myTabs.length);
     _eventsFuture = _eventController.getEvents(widget.friend!.id!, context);
   }
-
 
   void onTab(int index, List eventList) {
     Navigator.push(
@@ -95,7 +93,10 @@ class _FriendEventListPageState extends State<FriendEventListPage>
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .secondary
+                              .withOpacity(0.3),
                           spreadRadius: 2,
                           blurRadius: 8,
                         ),
@@ -105,11 +106,11 @@ class _FriendEventListPageState extends State<FriendEventListPage>
                       radius: 35,
                       backgroundImage: widget.friend?.profileImage != null
                           ? NetworkImage(
-                        widget.friend?.profileImage as String,
-                      )
+                              widget.friend?.profileImage as String,
+                            )
                           : AssetImage(
-                        'assets/images/avater.png',
-                      ) as ImageProvider,
+                              'assets/images/avater.png',
+                            ) as ImageProvider,
                     ),
                   ),
                   Positioned(
@@ -140,7 +141,10 @@ class _FriendEventListPageState extends State<FriendEventListPage>
                     Shadow(
                       offset: Offset(1, 1),
                       blurRadius: 2,
-                      color: Theme.of(context).colorScheme.secondary.withOpacity(0.3),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .secondary
+                          .withOpacity(0.3),
                     ),
                   ],
                 ),
@@ -175,16 +179,18 @@ class _FriendEventListPageState extends State<FriendEventListPage>
             var events = snapshot.data!;
             final pastEvents = events.where((event) => event.isPast).toList();
             final currentEvents =
-            events.where((event) => event.isCurrent).toList();
+                events.where((event) => event.isCurrent).toList();
             final upcomingEvents =
-            events.where((event) => event.isUpcoming).toList();
+                events.where((event) => event.isUpcoming).toList();
 
             return TabBarView(
               controller: _tabController,
               children: [
                 eventAndGiftList(context, pastEvents, onTab, false, null, null),
-                eventAndGiftList(context, currentEvents, onTab, false, null, null),
-                eventAndGiftList(context, upcomingEvents, onTab, false, null, null),
+                eventAndGiftList(
+                    context, currentEvents, onTab, false, null, null),
+                eventAndGiftList(
+                    context, upcomingEvents, onTab, false, null, null),
               ],
             );
           },

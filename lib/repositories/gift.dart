@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:hedieaty/models/event.dart';
 import 'package:hedieaty/services/auth.dart';
@@ -24,8 +25,7 @@ class GiftRepository {
       gift.ownerId = _authService.currentUser!.uid;
       gift.deadline = event.date;
 
-      final firestoreId = await _firestoreService.createGift(
-          gift);
+      final firestoreId = await _firestoreService.createGift(gift);
       if (gift.firestoreId == null) {
         gift.firestoreId = firestoreId;
       }
@@ -97,7 +97,7 @@ class GiftRepository {
     }
   }
 
-  Future<void> pledgeGift(GiftModel gift) async{
+  Future<void> pledgeGift(GiftModel gift) async {
     try {
       final checkConnectivity = await Connectivity().checkConnectivity();
       if (checkConnectivity == ConnectivityResult.none) {
@@ -112,11 +112,12 @@ class GiftRepository {
     }
   }
 
-  Future<void> unpledgeGift(GiftModel gift) async{
+  Future<void> unpledgeGift(GiftModel gift) async {
     try {
       final checkConnectivity = await Connectivity().checkConnectivity();
       if (checkConnectivity == ConnectivityResult.none) {
-        throw Exception("No internet connection. Cannot unpledge gift remotely.");
+        throw Exception(
+            "No internet connection. Cannot unpledge gift remotely.");
       }
       gift.status = GiftStatus.unpledged;
       gift.pledgedBy = '';
@@ -127,11 +128,12 @@ class GiftRepository {
     }
   }
 
-  Future<void> completeGift(GiftModel gift) async{
+  Future<void> completeGift(GiftModel gift) async {
     try {
       final checkConnectivity = await Connectivity().checkConnectivity();
       if (checkConnectivity == ConnectivityResult.none) {
-        throw Exception("No internet connection. Cannot complete gift remotely.");
+        throw Exception(
+            "No internet connection. Cannot complete gift remotely.");
       }
       gift.status = GiftStatus.purchased;
       await _firestoreService.updateGift(gift);
@@ -145,7 +147,7 @@ class GiftRepository {
     try {
       final checkConnectivity = await Connectivity().checkConnectivity();
       if (checkConnectivity == ConnectivityResult.none) {
-        throw Exception("No internet connection. Cannot get pledged gifts remotely.");
+        return await _localDB.getPledgedGifts(userId);
       }
       final gifts = await _firestoreService.getPledgedGifts(userId);
       return gifts;

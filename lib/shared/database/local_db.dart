@@ -268,4 +268,12 @@ class LocalDB {
         await db.query('gifts', where: 'id=?', whereArgs: [giftId]);
     return GiftModel.fromMap(results[0]);
   }
+
+  Future<List<GiftModel>> getPledgedGifts(String userId) async {
+    Database db = await database;
+    final List<Map<String, dynamic>> results = await db.query('gifts',
+        where: 'pledgedBy=? AND status=?',
+        whereArgs: [userId, GiftStatus.pledged.toString().split('.').last]);
+    return List.generate(results.length, (i) => GiftModel.fromMap(results[i]));
+  }
 }

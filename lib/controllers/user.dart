@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:hedieaty/repositories/user.dart';
 import 'package:hedieaty/services/auth.dart';
+import 'package:hedieaty/services/notification.dart';
 import 'package:hedieaty/shared/database/firestore.dart';
 import 'package:hedieaty/models/user.dart';
 
@@ -17,7 +18,7 @@ class UserController {
 
   final AuthService _authService = AuthService();
   final UserRepository _userRepository = UserRepository();
-
+  final NotificationService _notificationService = NotificationService();
   User? firebaseUser;
 
   UserController() {
@@ -39,9 +40,15 @@ class UserController {
       String email, String password, BuildContext context) async {
     try {
       await _authService.signInWithEmailAndPassword(email, password);
+      _notificationService.init(_authService.currentUser!.uid);
       Navigator.pushReplacementNamed(context, '/home');
     } on FirebaseAuthException catch (e) {
       showError('Authentication Error', e.message ?? 'Sign in failed', context);
+    } on FirebaseException catch (e) {
+      showError(
+          'Database Error', e.message ?? 'Database operation failed', context);
+    } catch (e) {
+      showError('Sign Out Error', e.toString(), context);
     }
   }
 
@@ -49,12 +56,15 @@ class UserController {
       String email, String password, String name, BuildContext context) async {
     try {
       await _authService.registerWithEmailAndPassword(email, password, name);
+      _notificationService.init(_authService.currentUser!.uid);
       Navigator.pushReplacementNamed(context, '/home');
     } on FirebaseAuthException catch (e) {
       showError('Authentication Error', e.message ?? 'Sign up failed', context);
     } on FirebaseException catch (e) {
       showError(
           'Database Error', e.message ?? 'Database operation failed', context);
+    } catch (e) {
+      showError('Sign Up Error', e.toString(), context);
     }
   }
 
@@ -64,12 +74,18 @@ class UserController {
       await _authService.signOut();
     } on FirebaseAuthException catch (e) {
       showError('Sign Out Error', e.message ?? 'Sign out failed', context);
+    } on FirebaseException catch (e) {
+      showError(
+          'Database Error', e.message ?? 'Database operation failed', context);
+    } catch (e) {
+      showError('Sign Out Error', e.toString(), context);
     }
   }
 
   Future<List<UserModel>> getFriends(BuildContext context) async {
     try {
-      final friends = await _userRepository.getFriends(_authService.currentUser!.uid);
+      final friends =
+          await _userRepository.getFriends(_authService.currentUser!.uid);
       return friends;
     } on FirebaseAuthException catch (e) {
       showError('Authentication Error', e.message ?? 'Failed to get friends',
@@ -78,6 +94,9 @@ class UserController {
     } on FirebaseException catch (e) {
       showError(
           'Database Error', e.message ?? 'Database operation failed', context);
+      return [];
+    } catch (e) {
+      showError('Error', e.toString(), context);
       return [];
     }
   }
@@ -91,6 +110,8 @@ class UserController {
     } on FirebaseException catch (e) {
       showError(
           'Database Error', e.message ?? 'Database operation failed', context);
+    } catch (e) {
+      showError('Error', e.toString(), context);
     }
   }
 
@@ -107,11 +128,14 @@ class UserController {
   }
 
   Future<void> addFriendByEmail(String username, BuildContext context) async {
-    await _userRepository.addFriendByEmail(username, _authService.currentUser!.uid);
+    await _userRepository.addFriendByEmail(
+        username, _authService.currentUser!.uid);
   }
 
-  Future<void> addFriendByUsername(String username, BuildContext context) async {
-    await _userRepository.addFriendByUsername(username, _authService.currentUser!.uid);
+  Future<void> addFriendByUsername(
+      String username, BuildContext context) async {
+    await _userRepository.addFriendByUsername(
+        username, _authService.currentUser!.uid);
   }
 
 // Future<void> updateUserProfile({String? name, String? email, BuildContext context}) async {

@@ -65,7 +65,7 @@ class UserRepository {
   }
 
   Future<void> logoutUser() async {
-      await _localDB.deleteAllUsers();
+    await _localDB.deleteAllUsers();
   }
 
   Future<void> addFriendByEmail(String email, String userId) async {
@@ -79,6 +79,7 @@ class UserRepository {
       rethrow;
     }
   }
+
   Future<void> addFriendByUsername(String username, String userId) async {
     try {
       final friend = await _firestore.getUserByUsername(username);
@@ -91,4 +92,3 @@ class UserRepository {
     }
   }
 }
-

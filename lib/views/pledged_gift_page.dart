@@ -64,8 +64,10 @@ class _PledgedGiftPageState extends State<PledgedGiftPage> {
                                 placeholder: 'assets/images/app_icon.png',
                                 image: gift.giftImageUrl!,
                                 fit: BoxFit.cover,
-                                imageErrorBuilder: (context, error, stackTrace) {
-                                  return Image.asset('assets/images/app_icon.png',
+                                imageErrorBuilder:
+                                    (context, error, stackTrace) {
+                                  return Image.asset(
+                                      'assets/images/app_icon.png',
                                       fit: BoxFit.cover);
                                 },
                               ),
@@ -105,7 +107,8 @@ class _PledgedGiftPageState extends State<PledgedGiftPage> {
                             ),
                           ),
                           Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 16.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
@@ -113,17 +116,20 @@ class _PledgedGiftPageState extends State<PledgedGiftPage> {
                                   width: 120,
                                   height: 40,
                                   child: ElevatedButton(
-                                    onPressed: () async{
-                                    await  _giftsController.markGiftPurchased(gift, context);
-                                    setState(() {
-
-                                    });
+                                    onPressed: () async {
+                                      await _giftsController.markGiftPurchased(
+                                          gift, context);
+                                      setState(() {
+                                        _gifts = _giftsController
+                                            .getGiftPledgedByMe(context);
+                                      });
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor:
                                           Theme.of(context).colorScheme.primary,
-                                      foregroundColor:
-                                          Theme.of(context).colorScheme.onPrimary,
+                                      foregroundColor: Theme.of(context)
+                                          .colorScheme
+                                          .onPrimary,
                                     ),
                                     child: Text('Purchased'),
                                   ),
@@ -133,11 +139,13 @@ class _PledgedGiftPageState extends State<PledgedGiftPage> {
                                   width: 120,
                                   height: 40,
                                   child: ElevatedButton(
-                                    onPressed: () async{
-                                     await _giftsController.cancelGift(gift, context);
-                                     setState(() {
-
-                                     });
+                                    onPressed: () async {
+                                      await _giftsController.cancelGift(
+                                          gift, context);
+                                      setState(() {
+                                        _gifts = _giftsController
+                                            .getGiftPledgedByMe(context);
+                                      });
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Theme.of(context)

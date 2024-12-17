@@ -76,40 +76,41 @@ class GiftsController {
       showError('Error', e.toString(), context);
     }
   }
+
   Future<List<GiftModel>> getGiftPledgedByMe(BuildContext context) async {
-    try{
-      final gifts = _giftRepository.getPledgedGifts(_authService.currentUser!.uid);
+    try {
+      final gifts =
+          _giftRepository.getPledgedGifts(_authService.currentUser!.uid);
       return gifts;
-  } on FirebaseException catch (e) {
-  showError('Database Error',
-  e.message ?? 'An error occurred while deleting event', context);
-  return [];
-  } catch (e) {
-  showError('Error', e.toString(), context);
-  return [];
-  }
+    } on FirebaseException catch (e) {
+      showError('Database Error',
+          e.message ?? 'An error occurred while deleting event', context);
+      return [];
+    } catch (e) {
+      showError('Error', e.toString(), context);
+      return [];
+    }
   }
 
-  Future<void>markGiftPurchased(GiftModel gift, BuildContext context)async{
-    try{
+  Future<void> markGiftPurchased(GiftModel gift, BuildContext context) async {
+    try {
       return await _giftRepository.completeGift(gift);
     } on FirebaseException catch (e) {
-  showError('Database Error',
-  e.message ?? 'An error occurred while deleting event', context);
-  } catch (e) {
-  showError('Error', e.toString(), context);
+      showError('Database Error',
+          e.message ?? 'An error occurred while deleting event', context);
+    } catch (e) {
+      showError('Error', e.toString(), context);
+    }
   }
-  }
-  Future <void> cancelGift(GiftModel gift, BuildContext context)async{
-    try
-        {
-          return await _giftRepository.unpledgeGift(gift);
-        }
-   on FirebaseException catch (e) {
-  showError('Database Error',
-  e.message ?? 'An error occurred while deleting event', context);
-  } catch (e) {
-  showError('Error', e.toString(), context);
-  }
+
+  Future<void> cancelGift(GiftModel gift, BuildContext context) async {
+    try {
+      return await _giftRepository.unpledgeGift(gift);
+    } on FirebaseException catch (e) {
+      showError('Database Error',
+          e.message ?? 'An error occurred while deleting event', context);
+    } catch (e) {
+      showError('Error', e.toString(), context);
+    }
   }
 }

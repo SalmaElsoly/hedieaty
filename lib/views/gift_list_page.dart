@@ -271,10 +271,13 @@ class _GiftListPageState extends State<GiftListPage>
                           trailing:
                               pledgedGifts[index].status == GiftStatus.pledged
                                   ? Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                decoration: BoxDecoration(
-                                  color: Theme.of(context).highlightColor.withOpacity(0.8),
-                                  borderRadius: BorderRadius.circular(20),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12, vertical: 8),
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(context)
+                                            .highlightColor
+                                            .withOpacity(0.8),
+                                        borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: const Text(
                                         'Pledged',
@@ -284,10 +287,11 @@ class _GiftListPageState extends State<GiftListPage>
                                       ),
                                     )
                                   : Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                                decoration: BoxDecoration(
-                                  color: Colors.greenAccent,
-                                  borderRadius: BorderRadius.circular(20),
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12, vertical: 8),
+                                      decoration: BoxDecoration(
+                                        color: Colors.greenAccent,
+                                        borderRadius: BorderRadius.circular(20),
                                       ),
                                       child: Text(
                                         'Purchased',

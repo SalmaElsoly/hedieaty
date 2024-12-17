@@ -312,13 +312,12 @@ class FirestoreService {
           .collection('users')
           .where('email', isEqualTo: email)
           .get();
-      if(querySnapshot.docs.isEmpty) {
+      if (querySnapshot.docs.isEmpty) {
         print('User not found for email: $email');
         throw Exception('User not found');
       }
       return UserModel.fromFirestore(querySnapshot.docs.first);
-    }
-    catch (e) {
+    } catch (e) {
       print('Error in getUserByEmail: $e');
       rethrow;
     }
@@ -327,10 +326,9 @@ class FirestoreService {
   Future<void> addFriend(String userId, String friendId) async {
     try {
       DocumentReference userRef = _firestore.collection('users').doc(friendId);
-      await _firestore
-          .collection('users')
-          .doc(userId)
-          .update({'friends': FieldValue.arrayUnion([userRef.path])});
+      await _firestore.collection('users').doc(userId).update({
+        'friends': FieldValue.arrayUnion([userRef.path])
+      });
     } catch (e) {
       rethrow;
     }
@@ -357,7 +355,7 @@ class FirestoreService {
       }).toList();
 
       List<DocumentSnapshot> friendsSnapshots =
-      await Future.wait(friendsRefs.map((ref) => ref.get()));
+          await Future.wait(friendsRefs.map((ref) => ref.get()));
 
       return friendsSnapshots
           .where((snapshot) => snapshot.exists)
@@ -380,19 +378,16 @@ class FirestoreService {
         throw Exception('User not found');
       }
       return UserModel.fromFirestore(querySnapshot.docs.first);
-    }
-      catch (e) {
+    } catch (e) {
       print('Error in getUserByEmail: $e');
       rethrow;
     }
   }
 
-
   Future<void> deleteGiftsFromEvent(String eventId) async {
-
     try {
-
-      final DocumentReference eventRef = _firestore.collection('events').doc(eventId);
+      final DocumentReference eventRef =
+          _firestore.collection('events').doc(eventId);
       final DocumentSnapshot eventSnapshot = await eventRef.get();
 
       if (!eventSnapshot.exists) {
@@ -435,10 +430,10 @@ class FirestoreService {
           .where('pledgedBy', isEqualTo: userId)
           .where('status', isEqualTo: 'pledged')
           .get();
-      return querySnapshot.docs.map((doc) => GiftModel.fromFirestore(doc))
+      return querySnapshot.docs
+          .map((doc) => GiftModel.fromFirestore(doc))
           .toList();
-    }
-      catch (e) {
+    } catch (e) {
       print('Error in getPledgedGifts: $e');
       rethrow;
     }

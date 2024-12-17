@@ -18,6 +18,8 @@ import 'views/sign_in.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -37,7 +39,6 @@ void main() async {
 class MyApp extends StatelessWidget {
   MyApp({super.key});
 
-
   @override
   Widget build(BuildContext context) {
     Provider.of<ThemeColorData>(context, listen: false)
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
       theme: Provider.of<ThemeColorData>(context).themeColor,
       themeAnimationCurve: Curves.easeInOut,
       themeAnimationDuration: const Duration(milliseconds: 200),
+      navigatorKey: navigatorKey,
       routes: {
         '/friend_gift_list': (context) => FriendGiftListPage(),
         '/friend_event_list': (context) => FriendEventListPage(),

@@ -28,7 +28,7 @@ class GiftModel {
   final String description;
   final GiftCategory category;
   String? giftImageUrl;
-   GiftStatus status;
+  GiftStatus status;
   String? pledgedBy;
   final DateTime lastModified;
   final bool isDeleted;
@@ -98,23 +98,22 @@ class GiftModel {
   factory GiftModel.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return GiftModel(
-      firestoreId: doc.id,
-      name: data['name'],
-      price: data['price'],
-      description: data['description'],
-      category: GiftCategory.values.firstWhere(
-        (e) => e.toString().split('.').last == data['category'],
-      ),
-      giftImageUrl: data['giftImageUrl'],
-      status: GiftStatus.values.firstWhere(
-        (e) => e.toString().split('.').last == data['status'],
-        orElse: () => GiftStatus.unpledged,
-      ),
-      pledgedBy: data['pledgedBy'],
-      lastModified: DateTime.parse(data['lastModified']),
-      ownerId: data['ownerId'],
-      deadline: data['deadline']
-    );
+        firestoreId: doc.id,
+        name: data['name'],
+        price: data['price'],
+        description: data['description'],
+        category: GiftCategory.values.firstWhere(
+          (e) => e.toString().split('.').last == data['category'],
+        ),
+        giftImageUrl: data['giftImageUrl'],
+        status: GiftStatus.values.firstWhere(
+          (e) => e.toString().split('.').last == data['status'],
+          orElse: () => GiftStatus.unpledged,
+        ),
+        pledgedBy: data['pledgedBy'],
+        lastModified: DateTime.parse(data['lastModified']),
+        ownerId: data['ownerId'],
+        deadline: data['deadline']);
   }
 
   Map<String, dynamic> toFirestore() {

@@ -8,7 +8,9 @@ import 'package:provider/provider.dart';
 import '../../views/event_list_page.dart';
 import '../theme.dart';
 
-Widget defaultDrawer(UserModel user, UserController userController, BuildContext parentContext) => Builder(builder: (parentContext) {
+Widget defaultDrawer(UserModel user, UserController userController,
+        BuildContext parentContext) =>
+    Builder(builder: (parentContext) {
       final TextEditingController usernameController = TextEditingController();
       final TextEditingController emailController = TextEditingController();
 
@@ -26,11 +28,13 @@ Widget defaultDrawer(UserModel user, UserController userController, BuildContext
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         IconButton(
-                          icon: Provider.of<ThemeColorData>(parentContext).isDark
-                              ? const Icon(Icons.wb_sunny_rounded)
-                              : const Icon(Icons.nightlight_round_rounded),
+                          icon:
+                              Provider.of<ThemeColorData>(parentContext).isDark
+                                  ? const Icon(Icons.wb_sunny_rounded)
+                                  : const Icon(Icons.nightlight_round_rounded),
                           onPressed: () {
-                            Provider.of<ThemeColorData>(parentContext, listen: false)
+                            Provider.of<ThemeColorData>(parentContext,
+                                    listen: false)
                                 .toggleTheme();
                           },
                         ),
@@ -114,7 +118,8 @@ Widget defaultDrawer(UserModel user, UserController userController, BuildContext
                                                   padding: const EdgeInsets.all(
                                                       12.0),
                                                   child: TextFormField(
-                                                    controller: usernameController,
+                                                    controller:
+                                                        usernameController,
                                                     decoration: InputDecoration(
                                                       labelText: 'Username',
                                                       hintText:
@@ -127,14 +132,22 @@ Widget defaultDrawer(UserModel user, UserController userController, BuildContext
                                                 onPressed: () async {
                                                   Navigator.of(context).pop();
                                                   try {
-                                                    await userController.addFriendByUsername(usernameController.text, context);
-                                                  } catch(e) {
-                                                    showError("Error", e.toString(), context);
+                                                    await userController
+                                                        .addFriendByUsername(
+                                                            usernameController
+                                                                .text,
+                                                            context);
+                                                  } catch (e) {
+                                                    showError("Error",
+                                                        e.toString(), context);
                                                   }
                                                 },
                                                 style: ElevatedButton.styleFrom(
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
                                                     ),
                                                     elevation: 0.0),
                                                 child: Text('Add'),
@@ -182,14 +195,22 @@ Widget defaultDrawer(UserModel user, UserController userController, BuildContext
                                                 onPressed: () async {
                                                   Navigator.of(context).pop();
                                                   try {
-                                                    await userController.addFriendByEmail(emailController.text, context);
-                                                  } catch(e) {
-                                                    showError("Error", e.toString(), context);
+                                                    await userController
+                                                        .addFriendByEmail(
+                                                            emailController
+                                                                .text,
+                                                            context);
+                                                  } catch (e) {
+                                                    showError("Error",
+                                                        e.toString(), context);
                                                   }
                                                 },
                                                 style: ElevatedButton.styleFrom(
-                                                    shape: RoundedRectangleBorder(
-                                                      borderRadius: BorderRadius.circular(8.0),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8.0),
                                                     ),
                                                     elevation: 0.0),
                                                 child: Text('Add'),
@@ -214,7 +235,7 @@ Widget defaultDrawer(UserModel user, UserController userController, BuildContext
             defaultDivider(parentContext),
             ListTile(
               title: const Text('Sign Out'),
-              onTap: ()async {
+              onTap: () async {
                 await userController.signOut(parentContext);
                 Navigator.pushReplacementNamed(parentContext, '/');
               },
