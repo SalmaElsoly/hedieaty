@@ -30,6 +30,7 @@ dependencies:
   permission_handler: ^10.1.0
   firebase_storage: ^12.3.7
   collection: ^1.15.0
+  confetti: ^0.6.0
 
 
   path: any

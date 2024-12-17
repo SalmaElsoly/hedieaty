@@ -1,6 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:hedieaty/controllers/user.dart';
-
+import 'package:confetti/confetti.dart';
 import '../controllers/gifts.dart';
 import '../models/gift.dart';
 import '../models/user.dart';
@@ -16,19 +18,17 @@ class GiftDetailPage extends StatefulWidget {
 class _GiftDetailPageState extends State<GiftDetailPage> {
   final GiftsController _giftsController = GiftsController.instance;
   final UserController _userController = UserController.instance;
+  late ConfettiController _confettiController;
 
   bool isPledged = false;
   late Future<UserModel?> _user;
   String? pledgedUsername;
 
-  void pledge()async{
-    await _giftsController.pledgeGift(widget.gift!, context);
-  }
-
   @override
   void initState() {
     super.initState();
-    if (widget.gift?.pledgedBy != null) {
+    _confettiController = ConfettiController(duration: const Duration(seconds: 2));
+    if (widget.gift?.pledgedBy != null && widget.gift?.pledgedBy != "") {
       isPledged = true;
       _user = _userController
           .getUser(widget.gift!.pledgedBy!, context)
@@ -43,6 +43,83 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
   }
 
   @override
+  void dispose() {
+    _confettiController.dispose();
+    super.dispose();
+  }
+
+  void pledge() async {
+    await _giftsController.pledgeGift(widget.gift!, context);
+    _showCelebration();
+  }
+
+  void _showCelebration() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        _confettiController.play();
+        return Container(
+          height: 200,
+          child: Stack(
+            children: [
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: ConfettiWidget(
+                  confettiController: _confettiController,
+                  blastDirection: -pi / 2,
+                  emissionFrequency: 0.05,
+                  numberOfParticles: 20,
+                  maxBlastForce: 100,
+                  minBlastForce: 80,
+                  minimumSize: const Size(10, 10),
+                  maximumSize: const Size(20, 20),
+                  gravity: 0.2,
+                  blastDirectionality: BlastDirectionality.explosive,
+                  shouldLoop: false,
+                  colors: const [
+                    Colors.blue,
+                    Colors.pink,
+                    Colors.orange,
+                    Colors.purple,
+                    Colors.red,
+                    Colors.green,
+                    Colors.yellow,
+                    Colors.teal,
+                    Colors.indigo,
+                  ],
+                ),
+              ),
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      '🎉',
+                      style: TextStyle(fontSize: 50),
+                    ),
+                    SizedBox(height: 20),
+                    Text(
+                      'Gift Pledged Successfully!',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    ).then((_) {
+      Future.delayed(Duration(seconds: 1), () {
+        Navigator.pop(context);
+      });
+    });
+  }  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
