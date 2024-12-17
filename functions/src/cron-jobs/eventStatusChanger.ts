@@ -9,7 +9,7 @@ interface Event {
 }
 
 export const eventStatusChangerCron = functions.scheduler.onSchedule(
-  "every 1 hours",
+  "every 24 hours",
   async () => {
     console.log("Function triggered at: ", new Date().getUTCDate());
 
@@ -53,6 +53,13 @@ export const eventStatusChangerCron = functions.scheduler.onSchedule(
           .collection("events")
           .doc(event.id)
           .update({status: "current"});
+      } else {
+        console.log(`Event ${event.id} is upcoming, updating status`);
+        admin
+          .firestore()
+          .collection("events")
+          .doc(event.id)
+          .update({status: "upcoming"});
       }
     });
   }

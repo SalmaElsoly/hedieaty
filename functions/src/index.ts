@@ -8,3 +8,4 @@ exports.notifyUserGiftHadPledged = fcm.notifyUserGiftHadPledged;
 exports.eventStatusChangerCron = jobs.eventStatusChangerCron;
 exports.onNewEventCreated = jobs.onNewEventCreated;
 
+exports.giftDeadlineNotify = fcm.giftDeadlineNotify;
