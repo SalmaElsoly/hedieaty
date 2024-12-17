@@ -36,20 +36,16 @@ class UserRepository {
   Future<List<UserModel>> getFriends(String userId) async {
     try {
       final localFriends = await _localDB.getFriendOfUser(userId);
-      var friends = localFriends.map((friend) => friend).toList();
       // Check internet connection
       final connectivityResult = await Connectivity().checkConnectivity();
       final isConnected = connectivityResult != ConnectivityResult.none;
 
       if (isConnected) {
-        final remoteFriends = await _firestore.getFriendsOfUser(userId);
-
+        final remoteFriends = await _firestore.getFriends(userId);
         await _syncHelper.syncFriends(userId, remoteFriends);
-
-        friends = remoteFriends;
+        return await _localDB.getFriendOfUser(userId);
       }
-
-      return friends;
+      return localFriends;
     } catch (e) {
       rethrow;
     }
@@ -58,24 +54,41 @@ class UserRepository {
   Future<UserModel> getUser(String id) async {
     try {
       UserModel? user;
-      Future.delayed(const Duration(seconds: 1));
       user = await _localDB.getUserByFirestoreId(id);
-      if (user != null) {
+      if (user == null) {
         return await _firestore.getUser(id);
       }
-      throw Exception('No user found or saved');
+      return user;
     } catch (e) {
       rethrow;
     }
   }
 
   Future<void> logoutUser() async {
-    try {
-      await _localDB.deleteAllGifts();
-      await _localDB.deleteAllEvents();
       await _localDB.deleteAllUsers();
+  }
+
+  Future<void> addFriendByEmail(String email, String userId) async {
+    try {
+      final friend = await _firestore.getUserByEmail(email);
+      if (friend == null) {
+        throw Exception('User not found');
+      }
+      await _firestore.addFriend(userId, friend.firestoreId!);
+    } catch (e) {
+      rethrow;
+    }
+  }
+  Future<void> addFriendByUsername(String username, String userId) async {
+    try {
+      final friend = await _firestore.getUserByUsername(username);
+      if (friend == null) {
+        throw Exception('User not found');
+      }
+      await _firestore.addFriend(userId, friend.firestoreId!);
     } catch (e) {
       rethrow;
     }
   }
 }
+

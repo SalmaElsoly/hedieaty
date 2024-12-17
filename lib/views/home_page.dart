@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hedieaty/models/user.dart';
 import 'package:hedieaty/shared/components/buttons.dart';
 import 'package:hedieaty/controllers/user.dart';
+import 'package:hedieaty/views/friend_event_list_page.dart';
 
 import '../shared/components/drawer.dart';
 
@@ -17,15 +18,18 @@ class _HomePageState extends State<HomePage> {
   bool _isSearching = false;
   late TextEditingController _searchController;
   final UserController _userController = UserController();
-  late final Future<UserModel?> _user;
+
+
+
 
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
-    _user = _userController.getCurrentUser(context);
     //loadCurrentUser();
   }
+
+
 
   // Future<void> loadCurrentUser()async{
   //   final user = await _userController.getCurrentUser(context);
@@ -64,10 +68,8 @@ class _HomePageState extends State<HomePage> {
                           .toList();
                     });
                     if (value.isEmpty) {
-                      _userController.getFriends(context).then((value) {
-                        setState(() {
-                          _friends = value;
-                        });
+                     setState(() {
+
                       });
                     }
                   },
@@ -116,7 +118,7 @@ class _HomePageState extends State<HomePage> {
               return const Center(child: Text('No user data found'));
             }
             return defaultDrawer(
-              snapshot.data!,
+              snapshot.data!, _userController,context
             );
           },
         ),
@@ -139,15 +141,23 @@ class _HomePageState extends State<HomePage> {
                   return ListTile(
                     leading: CircleAvatar(
                       radius: 24,
-                      backgroundImage: _friends[index].profileImage != null
-                          ? NetworkImage(_friends[index].profileImage!)
-                          : const AssetImage('assets/images/avater.png')
-                              as ImageProvider,
+                      child: FadeInImage.assetNetwork(
+                        placeholder: 'assets/images/avater.png',
+                        image: _friends[index].profileImage?? '',
+                        fit: BoxFit.cover,
+                        imageErrorBuilder: (context, error, stackTrace) {
+                          return Image.asset('assets/images/avater.png',
+                              fit: BoxFit.cover);
+                        },
+                      ),
                     ),
                     title: Text(_friends[index].username),
                     onTap: () {
-                      Navigator.pushNamed(context, '/friend_event_list',
-                          arguments: {'userId': _friends[index].id});
+                     Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  FriendEventListPage(friend:_friends[index])));
                     },
                     hoverColor: Theme.of(context).hoverColor,
                     enabled: true,

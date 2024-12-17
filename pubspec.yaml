@@ -29,6 +29,8 @@ dependencies:
   connectivity_plus: ^4.0.0
   permission_handler: ^10.1.0
   firebase_storage: ^12.3.7
+  collection: ^1.15.0
+
 
   path: any
 dev_dependencies:

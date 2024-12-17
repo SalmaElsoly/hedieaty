@@ -42,8 +42,6 @@ class UserController {
       Navigator.pushReplacementNamed(context, '/home');
     } on FirebaseAuthException catch (e) {
       showError('Authentication Error', e.message ?? 'Sign in failed', context);
-    } catch (e) {
-      showError('Error', e.toString(), context);
     }
   }
 
@@ -57,8 +55,6 @@ class UserController {
     } on FirebaseException catch (e) {
       showError(
           'Database Error', e.message ?? 'Database operation failed', context);
-    } catch (e) {
-      showError('Error', e.toString(), context);
     }
   }
 
@@ -68,14 +64,13 @@ class UserController {
       await _authService.signOut();
     } on FirebaseAuthException catch (e) {
       showError('Sign Out Error', e.message ?? 'Sign out failed', context);
-    } catch (e) {
-      showError('Error', e.toString(), context);
     }
   }
 
   Future<List<UserModel>> getFriends(BuildContext context) async {
     try {
-      return await _userRepository.getFriends(_authService.currentUser!.uid);
+      final friends = await _userRepository.getFriends(_authService.currentUser!.uid);
+      return friends;
     } on FirebaseAuthException catch (e) {
       showError('Authentication Error', e.message ?? 'Failed to get friends',
           context);
@@ -83,9 +78,6 @@ class UserController {
     } on FirebaseException catch (e) {
       showError(
           'Database Error', e.message ?? 'Database operation failed', context);
-      return [];
-    } catch (e) {
-      showError('Error', e.toString(), context);
       return [];
     }
   }
@@ -99,8 +91,6 @@ class UserController {
     } on FirebaseException catch (e) {
       showError(
           'Database Error', e.message ?? 'Database operation failed', context);
-    } catch (e) {
-      showError('Error', e.toString(), context);
     }
   }
 
@@ -113,9 +103,15 @@ class UserController {
     } on FirebaseException catch (e) {
       showError(
           'Database Error', e.message ?? 'Database operation failed', context);
-    } catch (e) {
-      showError('Error', e.toString(), context);
     }
+  }
+
+  Future<void> addFriendByEmail(String username, BuildContext context) async {
+    await _userRepository.addFriendByEmail(username, _authService.currentUser!.uid);
+  }
+
+  Future<void> addFriendByUsername(String username, BuildContext context) async {
+    await _userRepository.addFriendByUsername(username, _authService.currentUser!.uid);
   }
 
 // Future<void> updateUserProfile({String? name, String? email, BuildContext context}) async {

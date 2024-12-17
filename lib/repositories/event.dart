@@ -78,12 +78,18 @@ class EventRepository {
       if (checkConnectivity == ConnectivityResult.none) {
         throw Exception("No internet connection. Cannot delete event.");
       }
+
+      // delete gifts related to this event in local db
+      await _firestore.deleteGiftsFromEvent(event.firestoreId!);
+
+      // delete event from firestore
       await _firestore.deleteEvent(event.firestoreId!, userId);
       await _localDB.deleteEvent(event);
 
       final user = await _localDB.getUserByFirestoreId(userId);
       user?.eventsCount -= 1;
       await _localDB.updateUser(user!);
+      // delete gifts related to this event in firestore
     } catch (e) {
       rethrow;
     }
