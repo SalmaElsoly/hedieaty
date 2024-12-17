@@ -74,7 +74,7 @@ class _PledgedGiftPageState extends State<PledgedGiftPage> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Gift ${index + 1}',
+                                  'Gift: ${gift.name}',
                                   style: Theme.of(context)
                                       .textTheme
                                       .titleMedium
