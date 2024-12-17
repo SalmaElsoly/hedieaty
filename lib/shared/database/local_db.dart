@@ -66,6 +66,8 @@ class LocalDB {
       status TEXT CHECK(status IN ('unpledged', 'purchased', 'pledged')) NOT NULL DEFAULT 'unpledged',
       pledgedBy TEXT,
       isDeleted BOOLEAN NOT NULL DEFAULT FALSE,
+      ownerId TEXT,
+      deadline TEXT,
       lastModified DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (eventId) REFERENCES events(id) ON DELETE CASCADE
     );

@@ -1,6 +1,8 @@
+import 'package:collection/collection.dart';
 import 'package:hedieaty/shared/database/firestore.dart';
 import 'package:hedieaty/shared/database/local_db.dart';
 import 'package:hedieaty/models/user.dart';
+
 
 import '../models/event.dart';
 import '../models/gift.dart';
@@ -12,24 +14,38 @@ class SyncHelper {
   SyncHelper(this._firestore, this._localDB);
 
   Future<void> syncFriends(String userId, List<UserModel> remoteFriends) async {
-    final localFriends = await _localDB.getFriendOfUser(userId);
+    final localFriends = await _localDB.getFriendOfUser(userId); // Local friends
+    final localFriendIds = localFriends.map((f) => f.firestoreId).toSet(); // Set of Firestore IDs for easy lookup
 
-    final localMap = {
-      for (var friend in localFriends) friend.firestoreId: friend
-    };
-
-    // Determine which friends to add or update
     for (var remoteFriend in remoteFriends) {
-      final localFriend = localMap[remoteFriend.firestoreId];
-      if (localFriend == null) {
-        // Add new friend to local DB
-        await _localDB.insertUser(remoteFriend);
+      // Check if the friend exists in the local database
+      final UserModel? existingFriend = localFriends.firstWhereOrNull(
+              (friend) => friend.firestoreId == remoteFriend.firestoreId,
+      );
+
+      if (existingFriend != null) {
+        // Friend exists, so update their information in the local database
+        await _localDB.updateUser(
+            UserModel(
+              email: remoteFriend.email,
+              username: remoteFriend.username,
+              eventsCount: remoteFriend.eventsCount,
+              id: existingFriend.id, // Use the local friend's ID to ensure proper update
+              profileImage: remoteFriend.profileImage,
+              firestoreId: remoteFriend.firestoreId,
+            )
+        );
       } else {
-        // Update friend if remote data is newer
-        if (DateTime.parse(remoteFriend.lastModified.toString())
-            .isAfter(DateTime.parse(localFriend.lastModified.toString()))) {
-          await _localDB.updateUser(remoteFriend);
-        }
+        // Friend does not exist, so insert the friend as a new entry
+        await _localDB.insertUser(
+            UserModel(
+              email: remoteFriend.email,
+              username: remoteFriend.username,
+              eventsCount: remoteFriend.eventsCount,
+              profileImage: remoteFriend.profileImage,
+              firestoreId: remoteFriend.firestoreId,
+            )
+        );
       }
     }
   }

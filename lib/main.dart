@@ -4,9 +4,8 @@ import 'package:hedieaty/views/friend_gift_list_page.dart';
 import 'package:hedieaty/views/pledged_gift_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'models/user.dart';
-import 'shared/database/firestore.dart';
 import 'shared/theme.dart';
+import 'views/auth_state.dart';
 import 'views/event_creation_page.dart';
 import 'views/friend_event_list_page.dart';
 import 'views/gift_create_page.dart';
@@ -38,7 +37,6 @@ void main() async {
 class MyApp extends StatelessWidget {
   MyApp({super.key});
 
-  final AuthService _auth = AuthService();
 
   @override
   Widget build(BuildContext context) {
@@ -50,8 +48,8 @@ class MyApp extends StatelessWidget {
       themeAnimationCurve: Curves.easeInOut,
       themeAnimationDuration: const Duration(milliseconds: 200),
       routes: {
-        '/friend_gift_list': (context) => const FriendGiftListPage(),
-        '/friend_event_list': (context) => const FriendEventListPage(),
+        '/friend_gift_list': (context) => FriendGiftListPage(),
+        '/friend_event_list': (context) => FriendEventListPage(),
         '/my_event_list': (context) => EventListPage(),
         '/event_create': (context) => const EventCreatePage(),
         '/my_gift_list': (context) => const GiftListPage(),
@@ -62,7 +60,7 @@ class MyApp extends StatelessWidget {
         '/sign_in': (context) => const SignIn(),
         '/home': (context) => const HomePage(),
       },
-      home: _auth.currentUser != null ? const HomePage() : const SignIn(),
+      home: AuthStateWrapper(),
     );
   }
 }
