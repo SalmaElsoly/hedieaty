@@ -6,6 +6,7 @@ import 'package:hedieaty/services/notification.dart';
 import 'package:hedieaty/shared/database/firestore.dart';
 import 'package:hedieaty/models/user.dart';
 
+import '../models/notification.dart';
 import '../shared/components/error_component.dart';
 
 class UserController {
@@ -137,6 +138,28 @@ class UserController {
     await _userRepository.addFriendByUsername(
         username, _authService.currentUser!.uid);
   }
+
+  Stream<List<NotificationModel>> getNotifications() {
+    return _notificationService.getNotifications(_authService.currentUser!.uid);
+  }
+
+  Stream<UserModel?> getUserStream(){
+    return _userRepository.getUserStream(_authService.currentUser!.uid);
+  }
+
+  Future<void> updateUserProfile(UserModel user, BuildContext context) async {
+    try {
+      await _userRepository.updateUserProfile(user);
+    } on FirebaseAuthException catch (e) {
+      showError('Authentication Error', e.message ?? 'Update failed', context);
+    } on FirebaseException catch (e) {
+      showError('Database Error', e.message ?? 'Database operation failed', context);
+    } catch (e) {
+      showError('Error', e.toString(), context);
+    }
+  }
+
+
 
 // Future<void> updateUserProfile({String? name, String? email, BuildContext context}) async {
 //   try {

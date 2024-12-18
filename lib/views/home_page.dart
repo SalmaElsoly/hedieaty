@@ -3,6 +3,7 @@ import 'package:hedieaty/models/user.dart';
 import 'package:hedieaty/shared/components/buttons.dart';
 import 'package:hedieaty/controllers/user.dart';
 import 'package:hedieaty/views/friend_event_list_page.dart';
+import 'package:hedieaty/views/notification_page.dart';
 
 import '../shared/components/drawer.dart';
 
@@ -90,8 +91,12 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             IconButton(
-                onPressed: () {
-                  // Navigator.push(context, '/notifications');
+                onPressed: () async{
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => NotificationPage()));
+                  setState(() {});
                 },
                 icon: const Icon(Icons.notifications_active)),
           ],

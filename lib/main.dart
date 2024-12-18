@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:hedieaty/services/auth.dart';
 import 'package:hedieaty/views/friend_gift_list_page.dart';
+import 'package:hedieaty/views/notification_page.dart';
 import 'package:hedieaty/views/pledged_gift_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -61,6 +61,7 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => const ProfilePage(),
         '/sign_in': (context) => const SignIn(),
         '/home': (context) => const HomePage(),
+        '/notification': (context) => const NotificationPage(),
       },
       home: AuthStateWrapper(),
     );

@@ -70,6 +70,11 @@ class UserRepository {
 
   Future<void> addFriendByEmail(String email, String userId) async {
     try {
+      final connectivityResult = await Connectivity().checkConnectivity();
+      final isConnected = connectivityResult != ConnectivityResult.none;
+      if(!isConnected){
+        throw Exception('No internet connection');
+      }
       final friend = await _firestore.getUserByEmail(email);
       if (friend == null) {
         throw Exception('User not found');
@@ -82,11 +87,38 @@ class UserRepository {
 
   Future<void> addFriendByUsername(String username, String userId) async {
     try {
+      final connectivityResult = await Connectivity().checkConnectivity();
+      final isConnected = connectivityResult != ConnectivityResult.none;
+      if(!isConnected){
+        throw Exception('No internet connection');
+      }
       final friend = await _firestore.getUserByUsername(username);
       if (friend == null) {
         throw Exception('User not found');
       }
       await _firestore.addFriend(userId, friend.firestoreId!);
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Stream<UserModel?> getUserStream(String userId)async* {
+  final connectivityResult = await Connectivity().checkConnectivity();
+  final isConnected = connectivityResult != ConnectivityResult.none;
+  if(!isConnected){
+    yield await _localDB.getUserByFirestoreId(userId);
+  }
+  yield* _firestore.getUserStream(userId);
+  }
+
+  Future<void> updateUser(UserModel user) async {
+    try {
+      final connectivityResult = await Connectivity().checkConnectivity();
+      final isConnected = connectivityResult != ConnectivityResult.none;
+      if(!isConnected){
+        throw Exception('No internet connection, update failed');
+      }
+
     } catch (e) {
       rethrow;
     }

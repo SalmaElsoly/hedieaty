@@ -2,6 +2,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:hedieaty/main.dart';
+import 'package:hedieaty/models/notification.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -79,6 +80,14 @@ class NotificationService {
     final bool isEnabled = prefs.getBool('notifications_enabled') ?? true;
     print('Are notifications enabled? $isEnabled');
     return isEnabled;
+  }
+  
+  Stream<List<NotificationModel>>getNotifications(String userId){
+    return _firestore.collection('notifications').where('userId', isEqualTo: userId)
+        .orderBy('timestamp', descending: true)
+        .snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) => NotificationModel.fromFirestore(doc.data())).toList();
+    });
   }
 
   Future<void> showNotification(RemoteMessage message) async {

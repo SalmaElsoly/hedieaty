@@ -438,4 +438,12 @@ class FirestoreService {
       rethrow;
     }
   }
+
+  Stream<UserModel?>getUserStream(String userId) {
+    return _firestore
+        .collection('users')
+        .doc(userId)
+        .snapshots()
+        .map((snapshot) => UserModel.fromFirestore(snapshot));
+  }
 }
