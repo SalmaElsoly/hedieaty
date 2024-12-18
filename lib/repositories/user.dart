@@ -85,9 +85,6 @@ class UserRepository {
         throw Exception('No internet connection');
       }
       final friend = await _firestore.getUserByEmail(email);
-      if (friend == null) {
-        throw Exception('User not found');
-      }
       await _firestore.addFriend(userId, friend.firestoreId!);
     } catch (e) {
       rethrow;
@@ -102,9 +99,6 @@ class UserRepository {
         throw Exception('No internet connection');
       }
       final friend = await _firestore.getUserByUsername(username);
-      if (friend == null) {
-        throw Exception('User not found');
-      }
       await _firestore.addFriend(userId, friend.firestoreId!);
     } catch (e) {
       rethrow;

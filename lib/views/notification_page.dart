@@ -122,7 +122,7 @@ class NotificationPage extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            notification.message ?? '',
+                            notification.message,
                             style: TextStyle(
                               color: Colors.grey[600],
                             ),

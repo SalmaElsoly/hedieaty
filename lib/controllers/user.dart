@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:hedieaty/repositories/user.dart';
 import 'package:hedieaty/services/auth.dart';
 import 'package:hedieaty/services/notification.dart';
-import 'package:hedieaty/shared/database/firestore.dart';
 import 'package:hedieaty/models/user.dart';
 
 import '../models/notification.dart';
@@ -112,6 +111,7 @@ class UserController {
     } catch (e) {
       showError('Error', e.toString(), context);
     }
+    return null;
   }
 
   Future<UserModel?> getUser(String userId, BuildContext context) async {
@@ -124,6 +124,7 @@ class UserController {
       showError(
           'Database Error', e.message ?? 'Database operation failed', context);
     }
+    return null;
   }
 
   Future<void> addFriendByEmail(String username, BuildContext context) async {

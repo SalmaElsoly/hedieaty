@@ -207,7 +207,7 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
                         _buildDetailRow(
                             context,
                             'Price:',
-                            '${widget.gift?.price?.toString() ?? 'N/A'}',
+                            '${widget.gift?.price.toString() ?? 'N/A'}',
                             Theme.of(context)
                                 .colorScheme
                                 .secondary
@@ -283,6 +283,7 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
                                         isPledged = true;
                                         pledgedUsername = value?.username;
                                       });
+                                      return null;
                                     });
                                   },
                                   activeColor:

@@ -36,7 +36,7 @@ Widget eventDetailCard(BuildContext context, EventModel? event) {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                event.name ?? '',
+                event.name,
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).primaryColor,
@@ -54,14 +54,14 @@ Widget eventDetailCard(BuildContext context, EventModel? event) {
                     Icon(Icons.calendar_today, size: 16),
                     const SizedBox(width: 4),
                     Text(
-                      'Date: ${event.date ?? ''}',
+                      'Date: ${event.date}',
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                     const SizedBox(width: 12),
                     Icon(Icons.access_time, size: 16),
                     const SizedBox(width: 4),
                     Text(
-                      'Time: ${event.time ?? ''}',
+                      'Time: ${event.time}',
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ],
@@ -75,7 +75,7 @@ Widget eventDetailCard(BuildContext context, EventModel? event) {
                   const SizedBox(width: 4),
                   Expanded(
                     child: Text(
-                      'Location: ${event.location ?? ''}',
+                      'Location: ${event.location}',
                       style: Theme.of(context).textTheme.bodyMedium,
                     ),
                   ),
@@ -89,7 +89,7 @@ Widget eventDetailCard(BuildContext context, EventModel? event) {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  'Description: ${event.description ?? ''}',
+                  'Description: ${event.description}',
                   style: Theme.of(context).textTheme.bodySmall,
                 ),
               ),

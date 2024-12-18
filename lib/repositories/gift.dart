@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:hedieaty/models/event.dart';
 import 'package:hedieaty/services/auth.dart';

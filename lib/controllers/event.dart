@@ -19,7 +19,7 @@ class EventController {
   Future<void> createEvent(EventModel event, BuildContext context) async {
     try {
       await _authService.loadLocalUserId();
-      await _eventRepository.createEvent(event, _authService.localUserId!);
+      await _eventRepository.createEvent(event, _authService.localUserId);
     } on FirebaseException catch (e) {
       showError('Database Error',
           e.message ?? 'An error occurred while creating event', context);
