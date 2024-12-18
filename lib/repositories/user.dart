@@ -1,3 +1,4 @@
+import 'package:hedieaty/services/storage.dart';
 import 'package:hedieaty/shared/database/local_db.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '../models/user.dart';
@@ -7,6 +8,7 @@ import './sync_helper.dart';
 class UserRepository {
   final FirestoreService _firestore = FirestoreService();
   final LocalDB _localDB = LocalDB();
+  final StorageService _storageService = StorageService();
 
   late SyncHelper _syncHelper = SyncHelper(_firestore, _localDB);
 
@@ -33,7 +35,7 @@ class UserRepository {
     }
   }
 
-  Future<List<UserModel>> getFriends(String userId) async {
+  Stream<List<UserModel>> getFriends(String userId) async* {
     try {
       final localFriends = await _localDB.getFriendOfUser(userId);
       // Check internet connection
@@ -41,11 +43,18 @@ class UserRepository {
       final isConnected = connectivityResult != ConnectivityResult.none;
 
       if (isConnected) {
-        final remoteFriends = await _firestore.getFriends(userId);
-        await _syncHelper.syncFriends(userId, remoteFriends);
-        return await _localDB.getFriendOfUser(userId);
+
+        yield* _firestore.getFriends(userId).asyncMap((remoteFriends) async {
+
+          await _syncHelper.syncFriends(userId, remoteFriends);
+
+          final updatedLocalFriends = await _localDB.getFriendOfUser(userId);
+          return updatedLocalFriends;
+        });
+      } else {
+        print('No internet connection, using local friends only');
+        yield localFriends;
       }
-      return localFriends;
     } catch (e) {
       rethrow;
     }
@@ -111,14 +120,17 @@ class UserRepository {
   yield* _firestore.getUserStream(userId);
   }
 
-  Future<void> updateUser(UserModel user) async {
+  Future<void> updateUserProfile(UserModel user) async {
     try {
       final connectivityResult = await Connectivity().checkConnectivity();
       final isConnected = connectivityResult != ConnectivityResult.none;
       if(!isConnected){
         throw Exception('No internet connection, update failed');
       }
-
+      final imageUrl = await _storageService.uploadImageToUsers(user.firestoreId!, user.profileImage!);
+      user.profileImage = imageUrl;
+      await _firestore.updateUser(user);
+      await _localDB.updateUser(user);
     } catch (e) {
       rethrow;
     }

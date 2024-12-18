@@ -5,7 +5,7 @@ class UserModel {
   final String? firestoreId;
   final String email;
   final String username;
-  final String? profileImage;
+  String? profileImage;
   int eventsCount;
   final DateTime lastModified;
   // array of doc ref to events

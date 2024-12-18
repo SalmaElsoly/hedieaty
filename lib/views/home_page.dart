@@ -4,6 +4,7 @@ import 'package:hedieaty/shared/components/buttons.dart';
 import 'package:hedieaty/controllers/user.dart';
 import 'package:hedieaty/views/friend_event_list_page.dart';
 import 'package:hedieaty/views/notification_page.dart';
+import 'package:provider/provider.dart';
 
 import '../shared/components/drawer.dart';
 
@@ -19,11 +20,13 @@ class _HomePageState extends State<HomePage> {
   bool _isSearching = false;
   late TextEditingController _searchController;
   final UserController _userController = UserController();
+  late Stream<List<UserModel>> _userStream;
 
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
+    _userStream = _userController.getFriends(context);
     //loadCurrentUser();
   }
 
@@ -59,16 +62,14 @@ class _HomePageState extends State<HomePage> {
                       TextStyle(color: Theme.of(context).colorScheme.onSurface),
                   onChanged: (value) {
                     setState(() {
-                      _friends = _friends
-                          .where((element) => element.username.contains(value))
-                          .toList();
+                      _userStream = _userController.getFriends(context).map((users) =>
+                        users.where((element) =>
+                          element.username.toLowerCase().contains(value.toLowerCase())
+                        ).toList()
+                      );
                     });
-                    if (value.isEmpty) {
-                      setState(() {});
-                    }
                   },
-                )
-              : const Text('Hedieaty'),
+                )              : const Text('Hedieaty'),
           leading: Builder(
             builder: (BuildContext context) {
               return IconButton(
@@ -103,23 +104,16 @@ class _HomePageState extends State<HomePage> {
         ),
         // drawer: defaultDrawer(_user),
         //use Future builder ti load drawer
-        drawer: FutureBuilder<UserModel?>(
-          future: _userController.getCurrentUser(context),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
+        drawer:Consumer<UserModel?>(
+          builder: (context, user, child) {
+            if (user == null) {
               return const Center(child: CircularProgressIndicator());
             }
-            if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            }
-            if (!snapshot.hasData) {
-              return const Center(child: Text('No user data found'));
-            }
-            return defaultDrawer(snapshot.data!, _userController, context);
+            return defaultDrawer(user, _userController, context);
           },
         ),
-        body: FutureBuilder<List<UserModel>>(
-          future: _userController.getFriends(context),
+        body: StreamBuilder<List<UserModel>>(
+          stream: _userStream,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());

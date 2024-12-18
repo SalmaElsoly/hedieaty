@@ -334,39 +334,25 @@ class FirestoreService {
     }
   }
 
-  Future<List<UserModel>> getFriends(String userId) async {
+  Stream<List<UserModel>> getFriends(String userId) {
     try {
-      DocumentReference userRef = _firestore.collection('users').doc(userId);
-      DocumentSnapshot userSnapshot = await userRef.get();
+      return _firestore.collection('users').doc(userId).snapshots().asyncMap((userSnapshot) async {
+        if (!userSnapshot.exists) return [];
+        List<dynamic> friendsPaths = userSnapshot.get('friends') ?? [];
+        if (friendsPaths.isEmpty) return [];
 
-      if (!userSnapshot.exists) {
-        print('User not found for ID: $userId');
-        return [];
-      }
-
-      List<dynamic> friendsPaths = userSnapshot.get('friends') ?? [];
-      if (friendsPaths.isEmpty) {
-        print('No events found for user: $userId');
-        return [];
-      }
-
-      List<DocumentReference> friendsRefs = friendsPaths.map((path) {
-        return _firestore.doc(path as String);
-      }).toList();
-
-      List<DocumentSnapshot> friendsSnapshots =
-          await Future.wait(friendsRefs.map((ref) => ref.get()));
-
-      return friendsSnapshots
-          .where((snapshot) => snapshot.exists)
-          .map((snapshot) => UserModel.fromFirestore(snapshot))
-          .toList();
+        List<DocumentReference> friendsRefs = friendsPaths.map((path) => _firestore.doc(path as String)).toList();
+        List<DocumentSnapshot> friendsSnapshots = await Future.wait(friendsRefs.map((ref) => ref.get()));
+        return friendsSnapshots
+            .where((snapshot) => snapshot.exists)
+            .map((snapshot) => UserModel.fromFirestore(snapshot))
+            .toList();
+      });
     } catch (e) {
-      print('Error in getEventsOfUser: $e');
+      print('Error in getFriends: $e');
       rethrow;
     }
   }
-
   Future<UserModel> getUserByUsername(String username) async {
     try {
       QuerySnapshot querySnapshot = await _firestore
@@ -445,5 +431,17 @@ class FirestoreService {
         .doc(userId)
         .snapshots()
         .map((snapshot) => UserModel.fromFirestore(snapshot));
+  }
+
+  Future<void> updateUser(UserModel user) async {
+    try {
+      final userUpdate = user.toFirestore();
+      userUpdate..remove("friends");
+      userUpdate..remove("eventsCount");
+      userUpdate..remove("events");
+      await _firestore.collection('users').doc(user.firestoreId).update(userUpdate);
+    } catch (e) {
+      rethrow;
+    }
   }
 }

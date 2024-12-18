@@ -24,6 +24,10 @@ class StorageService {
 
   Future<String> uploadImageToUsers(String imageName, String imagePath) async {
     final file = File(imagePath);
+    if (!file.existsSync()) {
+      throw Exception('File not found at $imagePath');
+    }
+
     final uploadTask = await _storage.child('users/$imageName').putFile(file);
     return uploadTask.ref.getDownloadURL();
   }

@@ -15,9 +15,6 @@ class SyncHelper {
   Future<void> syncFriends(String userId, List<UserModel> remoteFriends) async {
     final localFriends =
         await _localDB.getFriendOfUser(userId); // Local friends
-    final localFriendIds = localFriends
-        .map((f) => f.firestoreId)
-        .toSet(); // Set of Firestore IDs for easy lookup
 
     for (var remoteFriend in remoteFriends) {
       // Check if the friend exists in the local database

@@ -83,22 +83,20 @@ class UserController {
     }
   }
 
-  Future<List<UserModel>> getFriends(BuildContext context) async {
+  Stream<List<UserModel>> getFriends(BuildContext context)  {
     try {
-      final friends =
-          await _userRepository.getFriends(_authService.currentUser!.uid);
-      return friends;
+      return _userRepository.getFriends(_authService.currentUser!.uid);
     } on FirebaseAuthException catch (e) {
       showError('Authentication Error', e.message ?? 'Failed to get friends',
           context);
-      return [];
+     return Stream.value([]);
     } on FirebaseException catch (e) {
       showError(
           'Database Error', e.message ?? 'Database operation failed', context);
-      return [];
+      return Stream.value([]);
     } catch (e) {
       showError('Error', e.toString(), context);
-      return [];
+      return Stream.value([]);
     }
   }
 

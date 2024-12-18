@@ -4,6 +4,8 @@ import 'package:hedieaty/views/notification_page.dart';
 import 'package:hedieaty/views/pledged_gift_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'controllers/user.dart';
+import 'models/user.dart';
 import 'shared/theme.dart';
 import 'views/auth_state.dart';
 import 'views/event_creation_page.dart';
@@ -29,8 +31,16 @@ void main() async {
   final themeData = ThemeColorData(sharedPreferences);
   await themeData.loadThemeFromSharedPref();
   runApp(
-    ChangeNotifierProvider<ThemeColorData>(
-      create: (BuildContext context) => themeData,
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<ThemeColorData>(
+          create: (BuildContext context) => themeData,
+        ),
+        StreamProvider<UserModel?>(
+          create: (BuildContext context) => UserController().getUserStream(),
+          initialData: null, // Provide initial data for the user
+        ),
+      ],
       child: MyApp(),
     ),
   );

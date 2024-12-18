@@ -62,7 +62,6 @@ class NotificationService {
 
   static Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     print('Handling background message: ${message.notification?.title} - ${message.notification?.body}');
-    // Handle logic for background message
   }
 
   Future<void> setNotificationEnabled(bool enabled) async {
@@ -100,6 +99,7 @@ class NotificationService {
         barrierDismissible: true,
         barrierLabel: 'Dismiss',
         transitionDuration: Duration(milliseconds: 300),
+        anchorPoint: const Offset(0, 0),
         pageBuilder: (context, animation, secondaryAnimation) {
           return Align(
             alignment: Alignment.topCenter, // Position it at the top
