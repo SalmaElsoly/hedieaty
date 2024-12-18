@@ -48,12 +48,11 @@ class NotificationService {
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       print('Message received in foreground: ${message.notification?.title} - ${message.notification?.body}');
       showNotification(message);
-
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       print('Message opened from terminated state or background: ${message.notification?.title} - ${message.notification?.body}');
-
+      showNotification(message);
     });
 
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
@@ -104,7 +103,7 @@ class NotificationService {
           return Align(
             alignment: Alignment.topCenter, // Position it at the top
             child: Padding(
-              padding: const EdgeInsets.only(top: 50), // Padding from the top
+              padding: const EdgeInsets.only(top: 15), // Padding from the top
               child: Dialog(
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
                 child: Padding(
