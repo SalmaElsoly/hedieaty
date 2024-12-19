@@ -64,14 +64,16 @@ class _HomePageState extends State<HomePage> {
                       TextStyle(color: Theme.of(context).colorScheme.onSurface),
                   onChanged: (value) {
                     setState(() {
-                      _userStream = _userController.getFriends(context).map((users) =>
-                        users.where((element) =>
-                          element.username.toLowerCase().contains(value.toLowerCase())
-                        ).toList()
-                      );
+                      _userStream = _userController.getFriends(context).map(
+                          (users) => users
+                              .where((element) => element.username
+                                  .toLowerCase()
+                                  .contains(value.toLowerCase()))
+                              .toList());
                     });
                   },
-                )              : const Text('Hedieaty'),
+                )
+              : const Text('Hedieaty'),
           leading: Builder(
             builder: (BuildContext context) {
               return IconButton(
@@ -94,10 +96,12 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             IconButton(
-                onPressed: () async{
+                onPressed: () async {
                   await Navigator.push(
-                    context,
-                    PageTransition(child: NotificationPage(), type: PageTransitionType.rightToLeft));
+                      context,
+                      PageTransition(
+                          child: NotificationPage(),
+                          type: PageTransitionType.rightToLeft));
                   setState(() {});
                 },
                 icon: const Icon(Icons.notifications_active)),
@@ -105,7 +109,7 @@ class _HomePageState extends State<HomePage> {
         ),
         // drawer: defaultDrawer(_user),
         //use Future builder ti load drawer
-        drawer:Consumer<UserModel?>(
+        drawer: Consumer<UserModel?>(
           builder: (context, user, child) {
             if (user == null) {
               return const Center(child: CircularProgressIndicator());
@@ -146,8 +150,10 @@ class _HomePageState extends State<HomePage> {
                     onTap: () {
                       Navigator.push(
                           context,
-                           PageTransition(child: FriendEventListPage(
-                               friend: _friends[index]), type: PageTransitionType.rightToLeft));
+                          PageTransition(
+                              child:
+                                  FriendEventListPage(friend: _friends[index]),
+                              type: PageTransitionType.rightToLeft));
                     },
                     hoverColor: Theme.of(context).hoverColor,
                     enabled: true,
@@ -176,7 +182,11 @@ class _HomePageState extends State<HomePage> {
           },
         ),
         floatingActionButton: addEventButton(() {
-          Navigator.push(context, PageTransition(child: EventCreatePage(), type: PageTransitionType.bottomToTop));
+          Navigator.push(
+              context,
+              PageTransition(
+                  child: EventCreatePage(),
+                  type: PageTransitionType.bottomToTop));
         }, context));
   }
 }

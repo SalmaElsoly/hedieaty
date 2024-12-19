@@ -35,10 +35,10 @@ class _FriendEventListPageState extends State<FriendEventListPage>
 
   void onTab(int index, List eventList) {
     Navigator.push(
-      context,
-      PageTransition(child: FriendGiftListPage(
-      event: eventList[index]), type: PageTransitionType.rightToLeft)
-    );
+        context,
+        PageTransition(
+            child: FriendGiftListPage(event: eventList[index]),
+            type: PageTransitionType.rightToLeft));
   }
 
   @override

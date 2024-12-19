@@ -228,9 +228,10 @@ class _FriendGiftListPageState extends State<FriendGiftListPage> {
                     ),
                     onTap: () {
                       Navigator.push(
-                        context,
-                       PageTransition(child: GiftDetailPage(gift: gift), type: PageTransitionType.rightToLeftWithFade)
-                      );
+                          context,
+                          PageTransition(
+                              child: GiftDetailPage(gift: gift),
+                              type: PageTransitionType.rightToLeftWithFade));
                     },
                     trailing: gift.status == GiftStatus.unpledged
                         ? Container(

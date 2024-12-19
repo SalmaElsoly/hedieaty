@@ -43,9 +43,7 @@ class UserRepository {
       final isConnected = connectivityResult != ConnectivityResult.none;
 
       if (isConnected) {
-
         yield* _firestore.getFriends(userId).asyncMap((remoteFriends) async {
-
           await _syncHelper.syncFriends(userId, remoteFriends);
 
           final updatedLocalFriends = await _localDB.getFriendOfUser(userId);
@@ -81,7 +79,7 @@ class UserRepository {
     try {
       final connectivityResult = await Connectivity().checkConnectivity();
       final isConnected = connectivityResult != ConnectivityResult.none;
-      if(!isConnected){
+      if (!isConnected) {
         throw Exception('No internet connection');
       }
       final friend = await _firestore.getUserByEmail(email);
@@ -95,7 +93,7 @@ class UserRepository {
     try {
       final connectivityResult = await Connectivity().checkConnectivity();
       final isConnected = connectivityResult != ConnectivityResult.none;
-      if(!isConnected){
+      if (!isConnected) {
         throw Exception('No internet connection');
       }
       final friend = await _firestore.getUserByUsername(username);
@@ -105,23 +103,24 @@ class UserRepository {
     }
   }
 
-  Stream<UserModel?> getUserStream(String userId)async* {
-  final connectivityResult = await Connectivity().checkConnectivity();
-  final isConnected = connectivityResult != ConnectivityResult.none;
-  if(!isConnected){
-    yield await _localDB.getUserByFirestoreId(userId);
-  }
-  yield* _firestore.getUserStream(userId);
+  Stream<UserModel?> getUserStream(String userId) async* {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    final isConnected = connectivityResult != ConnectivityResult.none;
+    if (!isConnected) {
+      yield await _localDB.getUserByFirestoreId(userId);
+    }
+    yield* _firestore.getUserStream(userId);
   }
 
   Future<void> updateUserProfile(UserModel user) async {
     try {
       final connectivityResult = await Connectivity().checkConnectivity();
       final isConnected = connectivityResult != ConnectivityResult.none;
-      if(!isConnected){
+      if (!isConnected) {
         throw Exception('No internet connection, update failed');
       }
-      final imageUrl = await _storageService.uploadImageToUsers(user.firestoreId!, user.profileImage!);
+      final imageUrl = await _storageService.uploadImageToUsers(
+          user.firestoreId!, user.profileImage!);
       user.profileImage = imageUrl;
       await _firestore.updateUser(user);
       await _localDB.updateUser(user);

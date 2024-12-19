@@ -58,8 +58,11 @@ class _EventListPageState extends State<EventListPage>
   }
 
   void onTab(int index, List<EventModel> eventList) async {
-    Navigator.push( context,
-    PageTransition(child: GiftListPage(event: eventList[index]), type: PageTransitionType.rightToLeftWithFade));
+    Navigator.push(
+        context,
+        PageTransition(
+            child: GiftListPage(event: eventList[index]),
+            type: PageTransitionType.rightToLeftWithFade));
   }
 
   @override

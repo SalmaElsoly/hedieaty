@@ -67,24 +67,35 @@ Widget defaultDrawer(UserModel user, UserController userController,
             ListTile(
               title: const Text('Profile'),
               onTap: () {
-                Navigator.push(parentContext, PageTransition(child: ProfilePage(), type: PageTransitionType.leftToRight));
+                Navigator.push(
+                    parentContext,
+                    PageTransition(
+                        child: ProfilePage(),
+                        type: PageTransitionType.leftToRight));
               },
               leading: const Icon(Icons.person),
             ),
             ListTile(
               title: const Text('My Event List'),
               onTap: () {
-                Navigator.push(parentContext,PageTransition(child: EventListPage(
-                  user: user,
-                ), type: PageTransitionType.leftToRight)
-                  );
+                Navigator.push(
+                    parentContext,
+                    PageTransition(
+                        child: EventListPage(
+                          user: user,
+                        ),
+                        type: PageTransitionType.leftToRight));
               },
               leading: const Icon(Icons.event),
             ),
             ListTile(
               title: const Text('My Pledged Gifts'),
               onTap: () {
-                Navigator.push(parentContext, PageTransition(child: PledgedGiftPage(), type: PageTransitionType.leftToRight));
+                Navigator.push(
+                    parentContext,
+                    PageTransition(
+                        child: PledgedGiftPage(),
+                        type: PageTransitionType.leftToRight));
               },
               leading: const Icon(Icons.card_giftcard),
             ),

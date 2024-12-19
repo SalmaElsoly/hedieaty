@@ -1,4 +1,3 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NotificationModel {
@@ -26,4 +25,5 @@ class NotificationModel {
       'timestamp': Timestamp.fromDate(timestamp),
       'userId': userId,
     };
-  }}
+  }
+}

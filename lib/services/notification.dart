@@ -9,6 +9,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../shared/components/notification_component.dart';
 
 
+Future<void> _firebaseMessagingBackgroundHandler(
+    RemoteMessage message) async {
+  print(
+      "Message received in background: ${message.notification?.title} - ${message.notification?.body}");
+}
+
 class NotificationService {
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -28,6 +34,7 @@ class NotificationService {
   Future<void> init(String userId) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     bool? notificationsEnabled = prefs.getBool('notifications_enabled');
+    await FirebaseMessaging.instance.setAutoInitEnabled(true);
 
     if (notificationsEnabled == null) {
       await prefs.setBool('notifications_enabled', true);
@@ -42,26 +49,27 @@ class NotificationService {
 
     String? token = await _messaging.getToken();
     if (token != null) {
-      await _firestore.collection('users').doc(userId).set({'fcmToken': token}, SetOptions(merge: true));
+      await _firestore
+          .collection('users')
+          .doc(userId)
+          .set({'fcmToken': token}, SetOptions(merge: true));
     }
 
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Message received in foreground: ${message.notification?.title} - ${message.notification?.body}');
+      print(
+          'Message received in foreground: ${message.notification?.title} - ${message.notification?.body}');
       showNotification(message);
     });
 
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('Message opened from terminated state or background: ${message.notification?.title} - ${message.notification?.body}');
+      print(
+          'Message opened from terminated state or background: ${message.notification?.title} - ${message.notification?.body}');
       showNotification(message);
     });
 
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
   }
 
-  static Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-    print('Handling background message: ${message.notification?.title} - ${message.notification?.body}');
-  }
 
   Future<void> setNotificationEnabled(bool enabled) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -79,17 +87,23 @@ class NotificationService {
     print('Are notifications enabled? $isEnabled');
     return isEnabled;
   }
-  
-  Stream<List<NotificationModel>>getNotifications(String userId){
-    return _firestore.collection('notifications').where('userId', isEqualTo: userId)
+
+  Stream<List<NotificationModel>> getNotifications(String userId) {
+    return _firestore
+        .collection('notifications')
+        .where('userId', isEqualTo: userId)
         .orderBy('timestamp', descending: true)
-        .snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) => NotificationModel.fromFirestore(doc.data())).toList();
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs
+          .map((doc) => NotificationModel.fromFirestore(doc.data()))
+          .toList();
     });
   }
 
   Future<void> showNotification(RemoteMessage message) async {
-    print('Displaying notification: ${message.notification?.title} - ${message.notification?.body}');
+    print(
+        'Displaying notification: ${message.notification?.title} - ${message.notification?.body}');
     BuildContext? context = navigatorKey.currentContext;
     if (context != null) {
       showGeneralDialog(
@@ -105,7 +119,8 @@ class NotificationService {
             child: Padding(
               padding: const EdgeInsets.only(top: 15), // Padding from the top
               child: Dialog(
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12.0)),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0)),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: notification(message, context),
@@ -119,7 +134,8 @@ class NotificationService {
           const end = Offset.zero; // End at position 0
           const curve = Curves.easeInOut;
 
-          var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          var tween =
+              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
           var offsetAnimation = animation.drive(tween);
 
           return SlideTransition(

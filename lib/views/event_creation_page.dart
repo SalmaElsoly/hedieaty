@@ -154,6 +154,32 @@ class _EventCreatePageState extends State<EventCreatePage> {
                       ),
                       SizedBox(height: 20),
                       defaultFormField(
+                        controller: _eventLocationController,
+                        label: 'Event Location',
+                        prefix: Icons.location_on,
+                        validate: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a location';
+                          }
+                          return null;
+                        },
+                        type: TextInputType.text,
+                      ),
+                      SizedBox(height: 20),
+                      defaultFormField(
+                        controller: _eventDescriptionController,
+                        label: 'Event Description',
+                        prefix: Icons.description,
+                        validate: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter a description';
+                          }
+                          return null;
+                        },
+                        type: TextInputType.text,
+                      ),
+                      SizedBox(height: 20),
+                      defaultFormField(
                         controller: _eventDateController,
                         label: 'Date',
                         validate: (value) {
@@ -207,32 +233,6 @@ class _EventCreatePageState extends State<EventCreatePage> {
                             });
                           }
                         },
-                      ),
-                      SizedBox(height: 20),
-                      defaultFormField(
-                        controller: _eventLocationController,
-                        label: 'Event Location',
-                        prefix: Icons.location_on,
-                        validate: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a location';
-                          }
-                          return null;
-                        },
-                        type: TextInputType.text,
-                      ),
-                      SizedBox(height: 20),
-                      defaultFormField(
-                        controller: _eventDescriptionController,
-                        label: 'Event Description',
-                        prefix: Icons.description,
-                        validate: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter a description';
-                          }
-                          return null;
-                        },
-                        type: TextInputType.text,
                       ),
                       SizedBox(height: 30),
                       ValueListenableBuilder<bool>(

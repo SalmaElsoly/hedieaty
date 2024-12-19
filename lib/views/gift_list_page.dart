@@ -32,12 +32,13 @@ class _GiftListPageState extends State<GiftListPage>
 
   void onTap(int index, List<GiftModel> list) async {
     await Navigator.push(
-      context,
-      PageTransition(child: GiftDetailPage(
-        gift: list[index],
-        isOwner: true,
-      ), type: PageTransitionType.rightToLeftWithFade)
-    );
+        context,
+        PageTransition(
+            child: GiftDetailPage(
+              gift: list[index],
+              isOwner: true,
+            ),
+            type: PageTransitionType.rightToLeftWithFade));
     refreshGifts();
   }
 
@@ -161,6 +162,7 @@ class _GiftListPageState extends State<GiftListPage>
                   padding: const EdgeInsets.symmetric(
                       horizontal: 16.0, vertical: 4.0),
                   child: InkWell(
+                    key: Key('addGiftButton'),
                     onTap: () async {
                       final result = await Navigator.push(
                         context,

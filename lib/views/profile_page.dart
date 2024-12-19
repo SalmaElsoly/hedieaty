@@ -72,15 +72,14 @@ class _ProfilePageState extends State<ProfilePage>
     final user = await _userController.getCurrentUser(context);
     if (user != null) {
       await _userController.updateUserProfile(
-        UserModel(
-          username: _usernameController.text,
-          email: _emailController.text,
-          profileImage: _imagePath,
-          id: user.id,
-          firestoreId: user.firestoreId,
-        ),
-        context
-      );
+          UserModel(
+            username: _usernameController.text,
+            email: _emailController.text,
+            profileImage: _imagePath,
+            id: user.id,
+            firestoreId: user.firestoreId,
+          ),
+          context);
     }
     setState(() {
       _isLoading = false;
@@ -145,34 +144,36 @@ class _ProfilePageState extends State<ProfilePage>
                     child: Column(
                       children: [
                         GestureDetector(
-                          onTap: _isEditing ? () async {
-                            ImagePickerHelper(
-                                context: context,
-                                onImageSelected: (imagePath) {
-                                  setState(() {
-                                    _imagePath = imagePath;
-                                    _imageError = null;
-                                    _imageFile = File(imagePath);
-                                  });
-                                }).showImagePickerDialog();
-                          } : null,
+                          onTap: _isEditing
+                              ? () async {
+                                  ImagePickerHelper(
+                                      context: context,
+                                      onImageSelected: (imagePath) {
+                                        setState(() {
+                                          _imagePath = imagePath;
+                                          _imageError = null;
+                                          _imageFile = File(imagePath);
+                                        });
+                                      }).showImagePickerDialog();
+                                }
+                              : null,
                           child: Container(
                             decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  blurRadius: 10,
-                                  color: Colors.black12,
-                                  spreadRadius: 5
-                                )
-                              ]
-                            ),
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                      blurRadius: 10,
+                                      color: Colors.black12,
+                                      spreadRadius: 5)
+                                ]),
                             child: CircleAvatar(
                               radius: 60,
                               backgroundImage: _imageFile != null
                                   ? FileImage(_imageFile!) as ImageProvider
                                   : _imagePath != null && _imagePath!.isNotEmpty
-                                      ? NetworkImage(snapshot.data!.profileImage!) as ImageProvider
+                                      ? NetworkImage(
+                                              snapshot.data!.profileImage!)
+                                          as ImageProvider
                                       : AssetImage('assets/images/avater.png'),
                               child: _isEditing
                                   ? Container(
@@ -200,37 +201,35 @@ class _ProfilePageState extends State<ProfilePage>
                               child: Column(
                                 children: [
                                   defaultFormField(
-                                    type: TextInputType.name,
-                                    label: 'Username',
-                                    prefix: Icons.person,
-                                    isPassword: false,
-                                    controller: _usernameController,
-                                    readOnly: !_isEditing,
-                                    validate: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter your username';
-                                      }
-                                      return null;
-                                    }
-                                  ),
+                                      type: TextInputType.name,
+                                      label: 'Username',
+                                      prefix: Icons.person,
+                                      isPassword: false,
+                                      controller: _usernameController,
+                                      readOnly: !_isEditing,
+                                      validate: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter your username';
+                                        }
+                                        return null;
+                                      }),
                                   SizedBox(height: 20),
                                   defaultFormField(
-                                    type: TextInputType.emailAddress,
-                                    label: 'Email',
-                                    prefix: Icons.email,
-                                    isPassword: false,
-                                    controller: _emailController,
-                                    readOnly: !_isEditing,
-                                    validate: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter your email';
-                                      }
-                                      if (!value.contains('@')) {
-                                        return 'Please enter a valid email';
-                                      }
-                                      return null;
-                                    }
-                                  ),
+                                      type: TextInputType.emailAddress,
+                                      label: 'Email',
+                                      prefix: Icons.email,
+                                      isPassword: false,
+                                      controller: _emailController,
+                                      readOnly: !_isEditing,
+                                      validate: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return 'Please enter your email';
+                                        }
+                                        if (!value.contains('@')) {
+                                          return 'Please enter a valid email';
+                                        }
+                                        return null;
+                                      }),
                                 ],
                               ),
                             ),
@@ -312,7 +311,8 @@ class _ProfilePageState extends State<ProfilePage>
                                 leading: Icon(Icons.notifications,
                                     color: Theme.of(context).primaryColor),
                                 title: Text('Push Notifications',
-                                    style: TextStyle(fontWeight: FontWeight.w500)),
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w500)),
                                 trailing: Switch(
                                   value: _pushNotifications,
                                   onChanged: (bool value) {
@@ -346,7 +346,8 @@ class _ProfilePageState extends State<ProfilePage>
                                 leading: Icon(Icons.volume_up,
                                     color: Theme.of(context).primaryColor),
                                 title: Text('Sound',
-                                    style: TextStyle(fontWeight: FontWeight.w500)),
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w500)),
                                 trailing: Switch(
                                   value: _soundEnabled,
                                   onChanged: (bool value) {
@@ -360,7 +361,8 @@ class _ProfilePageState extends State<ProfilePage>
                                 leading: Icon(Icons.vibration,
                                     color: Theme.of(context).primaryColor),
                                 title: Text('Vibration',
-                                    style: TextStyle(fontWeight: FontWeight.w500)),
+                                    style:
+                                        TextStyle(fontWeight: FontWeight.w500)),
                                 trailing: Switch(
                                   value: _vibrationEnabled,
                                   onChanged: (bool value) {
