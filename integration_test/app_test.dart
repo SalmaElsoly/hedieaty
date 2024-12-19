@@ -241,9 +241,14 @@ void main() {
 
       await tester.tap(find.text('${username}'));
       await pumpUntilFound(tester, find.text('Upcoming'));
+      await tester.pump(Duration(seconds: 5));
+      await tester.pump(Duration(seconds: 5));
+
+
 
       await tester.tap(find.text('Current'));
       await pumpUntilFound(tester, find.text('${eventName}'));
+      await tester.pump(Duration(seconds: 5));
 
       await tester.tap(find.text('${eventName}'));
       await pumpUntilFound(tester, find.text('${giftName}'));
