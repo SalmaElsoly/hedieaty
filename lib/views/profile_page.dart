@@ -6,6 +6,8 @@ import 'package:hedieaty/shared/components/tabs.dart';
 import 'package:hedieaty/shared/methods/image_picker.dart';
 import 'dart:io';
 
+import '../services/notification.dart';
+
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -25,7 +27,7 @@ class _ProfilePageState extends State<ProfilePage>
   File? _imageFile;
   String? _imagePath;
   String? _imageError;
-
+  NotificationService _notificationService = NotificationService();
   UserController _userController = UserController();
 
   bool _pushNotifications = true;
@@ -44,6 +46,14 @@ class _ProfilePageState extends State<ProfilePage>
     _usernameController = TextEditingController();
     _emailController = TextEditingController();
     _loadUserData();
+    _loadNotificationSettings();
+  }
+
+  Future<void> _loadNotificationSettings() async {
+    _pushNotifications = await _notificationService.areNotificationsEnabled();
+    _soundEnabled = await _notificationService.isSoundEnabled();
+    _vibrationEnabled = await _notificationService.isVibrationEnabled();
+    setState(() {});
   }
 
   Future<void> _loadUserData() async {
@@ -315,7 +325,8 @@ class _ProfilePageState extends State<ProfilePage>
                                         TextStyle(fontWeight: FontWeight.w500)),
                                 trailing: Switch(
                                   value: _pushNotifications,
-                                  onChanged: (bool value) {
+                                  onChanged: (bool value) async {
+                                      await _notificationService.setNotificationEnabled(value);
                                     setState(() {
                                       _pushNotifications = value;
                                     });
@@ -350,7 +361,8 @@ class _ProfilePageState extends State<ProfilePage>
                                         TextStyle(fontWeight: FontWeight.w500)),
                                 trailing: Switch(
                                   value: _soundEnabled,
-                                  onChanged: (bool value) {
+                                  onChanged: (bool value) async {
+                                    await _notificationService.setNotificationSettings(sound: value);
                                     setState(() {
                                       _soundEnabled = value;
                                     });
@@ -365,7 +377,8 @@ class _ProfilePageState extends State<ProfilePage>
                                         TextStyle(fontWeight: FontWeight.w500)),
                                 trailing: Switch(
                                   value: _vibrationEnabled,
-                                  onChanged: (bool value) {
+                                  onChanged: (bool value) async {
+                                    await _notificationService.setNotificationSettings(vibration: value);
                                     setState(() {
                                       _vibrationEnabled = value;
                                     });

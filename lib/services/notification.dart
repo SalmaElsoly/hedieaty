@@ -45,7 +45,8 @@ class NotificationService {
       return;
     }
 
-    await _messaging.requestPermission();
+    await _messaging.requestPermission(
+    );
 
     String? token = await _messaging.getToken();
     if (token != null) {
@@ -55,21 +56,56 @@ class NotificationService {
           .set({'fcmToken': token}, SetOptions(merge: true));
     }
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       print(
           'Message received in foreground: ${message.notification?.title} - ${message.notification?.body}');
-      showNotification(message);
+      if (await areNotificationsEnabled()) {
+        showNotification(message);
+      }
     });
 
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
       print(
           'Message opened from terminated state or background: ${message.notification?.title} - ${message.notification?.body}');
-      showNotification(message);
+      if (await areNotificationsEnabled()) {
+        showNotification(message);
+      }
     });
-
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
 
+  Future<void> setNotificationSettings({
+    bool sound = true,
+    bool vibration = true,
+    bool alert = true,
+  }) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('notification_sound', sound);
+    await prefs.setBool('notification_vibration', vibration);
+    await prefs.setBool('notification_alert', alert);
+
+    NotificationSettings settings = await _messaging.requestPermission(
+      sound: sound,
+      alert: alert,
+      badge: true,
+      provisional: false,
+      criticalAlert: false,
+      announcement: false,
+      carPlay: false,
+    );
+
+    print('Notification settings updated: Sound: $sound, Vibration: $vibration, Alert: $alert');
+    print('Authorization status: ${settings.authorizationStatus}');
+  }
+
+  Future<Map<String, bool>> getNotificationSettings() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return {
+      'sound': prefs.getBool('notification_sound') ?? true,
+      'vibration': prefs.getBool('notification_vibration') ?? true,
+      'alert': prefs.getBool('notification_alert') ?? true,
+    };
+  }
 
   Future<void> setNotificationEnabled(bool enabled) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -81,6 +117,20 @@ class NotificationService {
     }
   }
 
+  Future<bool>isSoundEnabled() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('notification_sound') ?? true;
+  }
+
+  Future<bool>isVibrationEnabled() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('notification_vibration') ?? true;
+  }
+
+  Future<bool>isAlertEnabled() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('notification_alert') ?? true;
+  }
   Future<bool> areNotificationsEnabled() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     final bool isEnabled = prefs.getBool('notifications_enabled') ?? true;
