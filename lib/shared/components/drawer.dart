@@ -3,9 +3,12 @@ import 'package:hedieaty/controllers/user.dart';
 import 'package:hedieaty/models/user.dart';
 import 'package:hedieaty/shared/components/error_component.dart';
 import 'package:hedieaty/shared/components/list.dart';
+import 'package:hedieaty/views/pledged_gift_page.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 import '../../views/event_list_page.dart';
+import '../../views/profile_page.dart';
 import '../theme.dart';
 
 Widget defaultDrawer(UserModel user, UserController userController,
@@ -64,27 +67,24 @@ Widget defaultDrawer(UserModel user, UserController userController,
             ListTile(
               title: const Text('Profile'),
               onTap: () {
-                Navigator.pushNamed(parentContext, '/profile');
+                Navigator.push(parentContext, PageTransition(child: ProfilePage(), type: PageTransitionType.leftToRight));
               },
               leading: const Icon(Icons.person),
             ),
             ListTile(
               title: const Text('My Event List'),
               onTap: () {
-                Navigator.of(parentContext).push(
-                  MaterialPageRoute(
-                    builder: (context) => EventListPage(
-                      user: user,
-                    ),
-                  ),
-                );
+                Navigator.push(parentContext,PageTransition(child: EventListPage(
+                  user: user,
+                ), type: PageTransitionType.leftToRight)
+                  );
               },
               leading: const Icon(Icons.event),
             ),
             ListTile(
               title: const Text('My Pledged Gifts'),
               onTap: () {
-                Navigator.pushNamed(parentContext, '/my_pledged_gifts');
+                Navigator.push(parentContext, PageTransition(child: PledgedGiftPage(), type: PageTransitionType.leftToRight));
               },
               leading: const Icon(Icons.card_giftcard),
             ),

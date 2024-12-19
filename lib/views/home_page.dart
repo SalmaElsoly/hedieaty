@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:hedieaty/models/user.dart';
 import 'package:hedieaty/shared/components/buttons.dart';
 import 'package:hedieaty/controllers/user.dart';
+import 'package:hedieaty/views/event_creation_page.dart';
 import 'package:hedieaty/views/friend_event_list_page.dart';
 import 'package:hedieaty/views/notification_page.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 import '../shared/components/drawer.dart';
@@ -95,8 +97,7 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () async{
                   await Navigator.push(
                     context,
-                    MaterialPageRoute(
-                        builder: (context) => NotificationPage()));
+                    PageTransition(child: NotificationPage(), type: PageTransitionType.rightToLeft));
                   setState(() {});
                 },
                 icon: const Icon(Icons.notifications_active)),
@@ -145,9 +146,8 @@ class _HomePageState extends State<HomePage> {
                     onTap: () {
                       Navigator.push(
                           context,
-                          MaterialPageRoute(
-                              builder: (context) => FriendEventListPage(
-                                  friend: _friends[index])));
+                           PageTransition(child: FriendEventListPage(
+                               friend: _friends[index]), type: PageTransitionType.rightToLeft));
                     },
                     hoverColor: Theme.of(context).hoverColor,
                     enabled: true,
@@ -176,7 +176,7 @@ class _HomePageState extends State<HomePage> {
           },
         ),
         floatingActionButton: addEventButton(() {
-          Navigator.pushNamed(context, '/event_create');
+          Navigator.push(context, PageTransition(child: EventCreatePage(), type: PageTransitionType.bottomToTop));
         }, context));
   }
 }

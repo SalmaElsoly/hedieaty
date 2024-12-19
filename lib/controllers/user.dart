@@ -4,6 +4,8 @@ import 'package:hedieaty/repositories/user.dart';
 import 'package:hedieaty/services/auth.dart';
 import 'package:hedieaty/services/notification.dart';
 import 'package:hedieaty/models/user.dart';
+import 'package:hedieaty/views/home_page.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../models/notification.dart';
 import '../shared/components/error_component.dart';
@@ -41,7 +43,7 @@ class UserController {
     try {
       await _authService.signInWithEmailAndPassword(email, password);
       _notificationService.init(_authService.currentUser!.uid);
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacement(context, PageTransition(child: HomePage(), type: PageTransitionType.bottomToTop));
     } on FirebaseAuthException catch (e) {
       showError('Authentication Error', e.message ?? 'Sign in failed', context);
     } on FirebaseException catch (e) {
@@ -57,7 +59,8 @@ class UserController {
     try {
       await _authService.registerWithEmailAndPassword(email, password, name);
       _notificationService.init(_authService.currentUser!.uid);
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacement(context, PageTransition(child: HomePage(), type: PageTransitionType.bottomToTop));
+
     } on FirebaseAuthException catch (e) {
       showError('Authentication Error', e.message ?? 'Sign up failed', context);
     } on FirebaseException catch (e) {

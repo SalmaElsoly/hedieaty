@@ -3,6 +3,7 @@ import 'package:hedieaty/controllers/event.dart';
 import 'package:hedieaty/models/user.dart';
 import 'package:hedieaty/shared/components/buttons.dart';
 import 'package:hedieaty/views/gift_list_page.dart';
+import 'package:page_transition/page_transition.dart';
 import '../models/event.dart';
 import '../shared/components/list.dart';
 import '../shared/components/tabs.dart';
@@ -42,11 +43,13 @@ class _EventListPageState extends State<EventListPage>
   }
 
   void editEvent(int index, List<EventModel> eventList) async {
-    final result = await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => EventCreatePage(event: eventList[index]),
-      ),
-    );
+    final result = await Navigator.push(
+        context,
+        PageTransition(
+            child: EventCreatePage(
+              event: eventList[index],
+            ),
+            type: PageTransitionType.topToBottom));
     if (result != null) {
       setState(() {
         _eventsFuture = _eventController.getMyEvents(context);
@@ -55,8 +58,8 @@ class _EventListPageState extends State<EventListPage>
   }
 
   void onTab(int index, List<EventModel> eventList) async {
-    Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => GiftListPage(event: eventList[index])));
+    Navigator.push( context,
+    PageTransition(child: GiftListPage(event: eventList[index]), type: PageTransitionType.rightToLeftWithFade));
   }
 
   @override
@@ -173,11 +176,11 @@ class _EventListPageState extends State<EventListPage>
         },
       ),
       floatingActionButton: addEventButton(() async {
-        final result = await Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => EventCreatePage(),
-          ),
-        );
+        final result = await Navigator.push(
+            context,
+            PageTransition(
+                child: EventCreatePage(),
+                type: PageTransitionType.bottomToTop));
         if (result != null) {
           setState(() {
             _eventsFuture = _eventController.getMyEvents(context);
