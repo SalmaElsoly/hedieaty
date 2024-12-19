@@ -9,6 +9,27 @@ param (
     [string]$genHtmlPath = "C:\ProgramData\chocolatey\lib\lcov\tools\bin\genhtml"
 )
 
+# Wipe emulator data or uninstall app if installed
+Write-Host "Wiping emulator data or uninstalling app if installed..."
+try {
+    adb shell pm list packages | Select-String -Pattern "package:com.example.hedieaty" > $null
+    if ($?) {
+        Write-Host "App is installed. Uninstalling..."
+        adb uninstall com.example.hedieaty
+    } else {
+        Write-Host "App is not installed. Wiping emulator data..."
+        adb emu kill
+        Start-Sleep -Seconds 5
+        adb start-server
+    }
+} catch {
+    Write-Host "An error occurred while attempting to wipe the emulator data or uninstall the app."
+}
+
+# Create results directory if it does not exist
+if (-Not (Test-Path -Path $resultsDirectory)) {
+    New-Item -ItemType Directory -Path $resultsDirectory
+}
 
 if (-Not (Test-Path -Path $resultsDirectory)) {
     New-Item -ItemType Directory -Path $resultsDirectory
@@ -39,7 +60,7 @@ Start-Sleep -Seconds 5
 
 Write-Host "Running Flutter integration tests..."
 try {
-    flutter test --coverage integration_test/
+    flutter test --dart-define=FLUTTER_TEST=true --coverage integration_test/
 } catch {
     Write-Host "Tests encountered errors. Check the log file for details."
 }
