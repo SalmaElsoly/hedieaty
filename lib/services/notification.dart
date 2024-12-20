@@ -6,7 +6,6 @@ import 'package:hedieaty/models/notification.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import '../shared/components/notification_component.dart';
 
 
 Future<void> _firebaseMessagingBackgroundHandler(
@@ -164,28 +163,82 @@ class NotificationService {
         transitionDuration: Duration(milliseconds: 300),
         anchorPoint: const Offset(0, 0),
         pageBuilder: (context, animation, secondaryAnimation) {
-          return Align(
-            alignment: Alignment.topCenter, // Position it at the top
-            child: Padding(
-              padding: const EdgeInsets.only(top: 15), // Padding from the top
-              child: Dialog(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12.0)),
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: notification(message, context),
+          return SafeArea(
+            child: Container(
+              margin: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Theme.of(context).cardColor,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Theme.of(context).shadowColor.withOpacity(0.3),
+                    spreadRadius: 2,
+                    blurRadius: 5,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Theme.of(context).cardColor,
+                    Theme.of(context).primaryColor.withOpacity(0.8),
+                    Theme.of(context).cardColor,
+                  ],
                 ),
+                border: Border.all(
+                  color: Theme.of(context).primaryColor.withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.notifications,
+                    color: Theme.of(context).primaryColor,
+                    size: 24,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          message.notification?.title ?? 'New Notification',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).textTheme.titleLarge?.color,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          message.notification?.body ?? '',
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Theme.of(context).textTheme.bodyMedium?.color,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    Icons.chevron_right,
+                    color: Theme.of(context).primaryColor.withOpacity(0.5),
+                  ),
+                ],
               ),
             ),
           );
         },
         transitionBuilder: (context, animation, secondaryAnimation, child) {
-          const begin = Offset(0, -1); // Start from above the screen
-          const end = Offset.zero; // End at position 0
+          const begin = Offset(0, -1);
+          const end = Offset.zero;
           const curve = Curves.easeInOut;
 
-          var tween =
-              Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+          var tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
           var offsetAnimation = animation.drive(tween);
 
           return SlideTransition(
@@ -195,5 +248,4 @@ class NotificationService {
         },
       );
     }
-  }
-}
+  }}
