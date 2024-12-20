@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hedieaty/views/friend_gift_list_page.dart';
 import 'package:hedieaty/views/notification_page.dart';
 import 'package:hedieaty/views/pledged_gift_page.dart';
@@ -30,20 +31,21 @@ void main() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   final themeData = ThemeColorData(sharedPreferences);
   await themeData.loadThemeFromSharedPref();
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider<ThemeColorData>(
-          create: (BuildContext context) => themeData,
-        ),
-        StreamProvider<UserModel?>(
-          create: (BuildContext context) => UserController().getUserStream(),
-          initialData: null, // Provide initial data for the user
-        ),
-      ],
-      child: MyApp(),
-    ),
-  );
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((value) => runApp(
+            MultiProvider(
+              providers: [
+                ChangeNotifierProvider<ThemeColorData>(
+                  create: (BuildContext context) => themeData,
+                ),
+                StreamProvider<UserModel?>(
+                  create: (BuildContext context) => UserController().getUserStream(),
+                  initialData: null, // Provide initial data for the user
+                ),
+              ],
+              child: MyApp(),
+            ),
+          ));
 }
 
 class MyApp extends StatelessWidget {

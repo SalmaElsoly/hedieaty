@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hedieaty/views/friend_gift_list_page.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../controllers/event.dart';
 import '../models/event.dart';
@@ -34,13 +35,10 @@ class _FriendEventListPageState extends State<FriendEventListPage>
 
   void onTab(int index, List eventList) {
     Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => FriendGiftListPage(
-          event: eventList[index],
-        ),
-      ),
-    );
+        context,
+        PageTransition(
+            child: FriendGiftListPage(event: eventList[index]),
+            type: PageTransitionType.rightToLeft));
   }
 
   @override

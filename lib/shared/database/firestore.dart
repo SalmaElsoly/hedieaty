@@ -336,13 +336,19 @@ class FirestoreService {
 
   Stream<List<UserModel>> getFriends(String userId) {
     try {
-      return _firestore.collection('users').doc(userId).snapshots().asyncMap((userSnapshot) async {
+      return _firestore
+          .collection('users')
+          .doc(userId)
+          .snapshots()
+          .asyncMap((userSnapshot) async {
         if (!userSnapshot.exists) return [];
         List<dynamic> friendsPaths = userSnapshot.get('friends') ?? [];
         if (friendsPaths.isEmpty) return [];
 
-        List<DocumentReference> friendsRefs = friendsPaths.map((path) => _firestore.doc(path as String)).toList();
-        List<DocumentSnapshot> friendsSnapshots = await Future.wait(friendsRefs.map((ref) => ref.get()));
+        List<DocumentReference> friendsRefs =
+            friendsPaths.map((path) => _firestore.doc(path as String)).toList();
+        List<DocumentSnapshot> friendsSnapshots =
+            await Future.wait(friendsRefs.map((ref) => ref.get()));
         return friendsSnapshots
             .where((snapshot) => snapshot.exists)
             .map((snapshot) => UserModel.fromFirestore(snapshot))
@@ -353,6 +359,7 @@ class FirestoreService {
       rethrow;
     }
   }
+
   Future<UserModel> getUserByUsername(String username) async {
     try {
       QuerySnapshot querySnapshot = await _firestore
@@ -425,7 +432,7 @@ class FirestoreService {
     }
   }
 
-  Stream<UserModel?>getUserStream(String userId) {
+  Stream<UserModel?> getUserStream(String userId) {
     return _firestore
         .collection('users')
         .doc(userId)
@@ -439,7 +446,10 @@ class FirestoreService {
       userUpdate..remove("friends");
       userUpdate..remove("eventsCount");
       userUpdate..remove("events");
-      await _firestore.collection('users').doc(user.firestoreId).update(userUpdate);
+      await _firestore
+          .collection('users')
+          .doc(user.firestoreId)
+          .update(userUpdate);
     } catch (e) {
       rethrow;
     }

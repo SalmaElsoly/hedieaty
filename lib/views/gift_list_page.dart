@@ -5,6 +5,7 @@ import 'package:hedieaty/shared/components/list.dart';
 import 'package:hedieaty/shared/components/tabs.dart';
 import 'package:hedieaty/views/gift_create_page.dart';
 import 'package:hedieaty/views/gift_detail_page.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../models/event.dart';
 import '../models/gift.dart';
@@ -30,11 +31,14 @@ class _GiftListPageState extends State<GiftListPage>
   late TabController tabController;
 
   void onTap(int index, List<GiftModel> list) async {
-    await Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => GiftDetailPage(
+    await Navigator.push(
+        context,
+        PageTransition(
+            child: GiftDetailPage(
               gift: list[index],
               isOwner: true,
-            )));
+            ),
+            type: PageTransitionType.rightToLeftWithFade));
     refreshGifts();
   }
 
@@ -44,10 +48,15 @@ class _GiftListPageState extends State<GiftListPage>
   }
 
   void onEdit(int index, List<GiftModel> list) async {
-    final result = await Navigator.of(context).push(MaterialPageRoute(
-        builder: (context) => GiftCreatePage(
-              gift: list[index],
-            )));
+    final result = await Navigator.push(
+      context,
+      PageTransition(
+          child: GiftCreatePage(
+            event: widget.event,
+            gift: list[index],
+          ),
+          type: PageTransitionType.topToBottom),
+    );
     if (result != null) {
       refreshGifts();
     }
@@ -153,11 +162,15 @@ class _GiftListPageState extends State<GiftListPage>
                   padding: const EdgeInsets.symmetric(
                       horizontal: 16.0, vertical: 4.0),
                   child: InkWell(
+                    key: Key('addGiftButton'),
                     onTap: () async {
-                      final result = await Navigator.of(context).push(
-                        MaterialPageRoute(
-                            builder: (context) =>
-                                GiftCreatePage(event: widget.event)),
+                      final result = await Navigator.push(
+                        context,
+                        PageTransition(
+                            child: GiftCreatePage(
+                              event: widget.event,
+                            ),
+                            type: PageTransitionType.bottomToTop),
                       );
                       if (result != null) {
                         refreshGifts();

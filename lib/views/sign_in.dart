@@ -25,6 +25,7 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin {
   bool _mounted = true;
 
   final UserController _userController = UserController.instance;
+  bool isTestMode = const bool.fromEnvironment('FLUTTER_TEST', defaultValue: false);
 
   @override
   void initState() {
@@ -104,40 +105,42 @@ class _SignInState extends State<SignIn> with TickerProviderStateMixin {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  AnimatedBuilder(
-                    animation: _animation,
-                    builder: (context, child) {
-                      return SlideTransition(
-                        position: _animation,
-                        child: child,
-                      );
-                    },
-                    child: Image.asset(
-                      'assets/images/app_icon.png',
-                      width: 100,
-                      height: 100,
-                    ),
-                  ),
-                  const SizedBox(height: 30),
-                  AnimatedTextKit(
-                    animatedTexts: [
-                      TyperAnimatedText(
-                        'Hedieaty',
-                        textStyle: TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: "Pacifico",
-                          color: Theme.of(context).colorScheme.primary,
-                        ),
-                        speed: const Duration(milliseconds: 300),
+                  if (!isTestMode) ...[
+                    AnimatedBuilder(
+                      animation: _animation,
+                      builder: (context, child) {
+                        return SlideTransition(
+                          position: _animation,
+                          child: child,
+                        );
+                      },
+                      child: Image.asset(
+                        'assets/images/app_icon.png',
+                        width: 100,
+                        height: 100,
                       ),
-                    ],
-                    totalRepeatCount: 100,
-                    pause: const Duration(milliseconds: 3000),
-                    displayFullTextOnTap: true,
-                    stopPauseOnTap: true,
-                    key: const ValueKey('animated_text'),
-                  ),
+                    ),
+                    const SizedBox(height: 30),
+                    AnimatedTextKit(
+                      animatedTexts: [
+                        TyperAnimatedText(
+                          'Hedieaty',
+                          textStyle: TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: "Pacifico",
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
+                          speed: const Duration(milliseconds: 300),
+                        ),
+                      ],
+                      totalRepeatCount: 100,
+                      pause: const Duration(milliseconds: 3000),
+                      displayFullTextOnTap: true,
+                      stopPauseOnTap: true,
+                      key: const ValueKey('animated_text'),
+                    ),
+                  ],
                   const SizedBox(height: 20),
                   Text(
                     _isSignUp ? 'Create Account' : 'Welcome Back',

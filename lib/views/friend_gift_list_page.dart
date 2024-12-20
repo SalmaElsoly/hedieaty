@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hedieaty/models/event.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../controllers/gifts.dart';
 
@@ -227,11 +228,10 @@ class _FriendGiftListPageState extends State<FriendGiftListPage> {
                     ),
                     onTap: () {
                       Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => GiftDetailPage(gift: gift),
-                        ),
-                      );
+                          context,
+                          PageTransition(
+                              child: GiftDetailPage(gift: gift),
+                              type: PageTransitionType.rightToLeftWithFade));
                     },
                     trailing: gift.status == GiftStatus.unpledged
                         ? Container(

@@ -38,29 +38,27 @@ Widget notification(RemoteMessage msg, BuildContext context) {
           size: 24,
         ),
         const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                msg.notification?.title ?? 'New Notification',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).textTheme.titleLarge?.color,
-                ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              msg.notification?.title ?? 'New Notification',
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).textTheme.titleLarge?.color,
               ),
-              const SizedBox(height: 8),
-              Text(
-                msg.notification?.body ?? '',
-                style: TextStyle(
-                  fontSize: 14,
-                  color: Theme.of(context).textTheme.bodyMedium?.color,
-                ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              msg.notification?.body ?? '',
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).textTheme.bodyMedium?.color,
               ),
-            ],
-          ),
+            ),
+          ],
         ),
         Icon(
           Icons.chevron_right,

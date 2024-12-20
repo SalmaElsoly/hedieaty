@@ -48,7 +48,8 @@ class NotificationPage extends StatelessWidget {
               return Center(child: Text('Something went wrong'));
             }
 
-            if (snapshot.connectionState == ConnectionState.waiting && !snapshot.hasData) {
+            if (snapshot.connectionState == ConnectionState.waiting &&
+                !snapshot.hasData) {
               return Center(child: CircularProgressIndicator());
             }
 
@@ -80,7 +81,8 @@ class NotificationPage extends StatelessWidget {
               itemBuilder: (context, index) {
                 final notification = snapshot.data![index];
                 return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   elevation: 1.5,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
@@ -98,7 +100,8 @@ class NotificationPage extends StatelessWidget {
                       ),
                     ),
                     child: ListTile(
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       leading: Container(
                         padding: EdgeInsets.all(8),
                         decoration: BoxDecoration(

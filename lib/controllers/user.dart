@@ -4,6 +4,8 @@ import 'package:hedieaty/repositories/user.dart';
 import 'package:hedieaty/services/auth.dart';
 import 'package:hedieaty/services/notification.dart';
 import 'package:hedieaty/models/user.dart';
+import 'package:hedieaty/views/home_page.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../models/notification.dart';
 import '../shared/components/error_component.dart';
@@ -20,6 +22,7 @@ class UserController {
   final UserRepository _userRepository = UserRepository();
   final NotificationService _notificationService = NotificationService();
   User? firebaseUser;
+  bool isTestMode = const bool.fromEnvironment('FLUTTER_TEST', defaultValue: false);
 
   UserController() {
     _init();
@@ -40,8 +43,13 @@ class UserController {
       String email, String password, BuildContext context) async {
     try {
       await _authService.signInWithEmailAndPassword(email, password);
-      _notificationService.init(_authService.currentUser!.uid);
-      Navigator.pushReplacementNamed(context, '/home');
+      if (!isTestMode) {
+        _notificationService.init(_authService.currentUser!.uid);
+      }
+      Navigator.pushReplacement(
+          context,
+          PageTransition(
+              child: HomePage(), type: PageTransitionType.bottomToTop));
     } on FirebaseAuthException catch (e) {
       showError('Authentication Error', e.message ?? 'Sign in failed', context);
     } on FirebaseException catch (e) {
@@ -56,8 +64,13 @@ class UserController {
       String email, String password, String name, BuildContext context) async {
     try {
       await _authService.registerWithEmailAndPassword(email, password, name);
-      _notificationService.init(_authService.currentUser!.uid);
-      Navigator.pushReplacementNamed(context, '/home');
+      if (!isTestMode) {
+        _notificationService.init(_authService.currentUser!.uid);
+      }
+      Navigator.pushReplacement(
+          context,
+          PageTransition(
+              child: HomePage(), type: PageTransitionType.bottomToTop));
     } on FirebaseAuthException catch (e) {
       showError('Authentication Error', e.message ?? 'Sign up failed', context);
     } on FirebaseException catch (e) {
@@ -82,13 +95,13 @@ class UserController {
     }
   }
 
-  Stream<List<UserModel>> getFriends(BuildContext context)  {
+  Stream<List<UserModel>> getFriends(BuildContext context) {
     try {
       return _userRepository.getFriends(_authService.currentUser!.uid);
     } on FirebaseAuthException catch (e) {
       showError('Authentication Error', e.message ?? 'Failed to get friends',
           context);
-     return Stream.value([]);
+      return Stream.value([]);
     } on FirebaseException catch (e) {
       showError(
           'Database Error', e.message ?? 'Database operation failed', context);
@@ -142,7 +155,7 @@ class UserController {
     return _notificationService.getNotifications(_authService.currentUser!.uid);
   }
 
-  Stream<UserModel?> getUserStream(){
+  Stream<UserModel?> getUserStream() {
     return _userRepository.getUserStream(_authService.currentUser!.uid);
   }
 
@@ -152,13 +165,12 @@ class UserController {
     } on FirebaseAuthException catch (e) {
       showError('Authentication Error', e.message ?? 'Update failed', context);
     } on FirebaseException catch (e) {
-      showError('Database Error', e.message ?? 'Database operation failed', context);
+      showError(
+          'Database Error', e.message ?? 'Database operation failed', context);
     } catch (e) {
       showError('Error', e.toString(), context);
     }
   }
-
-
 
 // Future<void> updateUserProfile({String? name, String? email, BuildContext context}) async {
 //   try {
