@@ -38,10 +38,6 @@ void main() async {
                 ChangeNotifierProvider<ThemeColorData>(
                   create: (BuildContext context) => themeData,
                 ),
-                StreamProvider<UserModel?>(
-                  create: (BuildContext context) => UserController().getUserStream(),
-                  initialData: null, // Provide initial data for the user
-                ),
               ],
               child: MyApp(),
             ),

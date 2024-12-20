@@ -23,13 +23,22 @@ class _HomePageState extends State<HomePage> {
   late TextEditingController _searchController;
   final UserController _userController = UserController();
   late Stream<List<UserModel>> _userStream;
+  late Stream<UserModel?> _userProfileStream;
+  late UserModel? _userProfile;
 
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
     _userStream = _userController.getFriends(context);
-    //loadCurrentUser();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+        _userProfileStream = UserController().getUserStream(); // Cache the stream only once
+        _userProfileStream.listen((user) {
+          setState(() {
+            _userProfile = user;
+          });
+        });
+    });
   }
 
   // Future<void> loadCurrentUser()async{
@@ -109,14 +118,7 @@ class _HomePageState extends State<HomePage> {
         ),
         // drawer: defaultDrawer(_user),
         //use Future builder ti load drawer
-        drawer: Consumer<UserModel?>(
-          builder: (context, user, child) {
-            if (user == null) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            return defaultDrawer(user, _userController, context);
-          },
-        ),
+        drawer: defaultDrawer(_userProfile!, _userController, context),
         body: StreamBuilder<List<UserModel>>(
           stream: _userStream,
           builder: (context, snapshot) {
