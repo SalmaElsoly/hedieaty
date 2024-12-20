@@ -134,18 +134,18 @@ class _HomePageState extends State<HomePage> {
             return ListView.separated(
                 itemBuilder: (BuildContext context, int index) {
                   return ListTile(
-                    leading: CircleAvatar(
-                      radius: 24,
-                      child: FadeInImage.assetNetwork(
-                        placeholder: 'assets/images/avater.png',
-                        image: _friends[index].profileImage ?? '',
-                        fit: BoxFit.cover,
-                        imageErrorBuilder: (context, error, stackTrace) {
-                          return Image.asset('assets/images/avater.png',
-                              fit: BoxFit.cover);
+                      leading: CircleAvatar(
+                        radius: 24,
+                        backgroundImage: _friends[index].profileImage != null && _friends[index].profileImage!.isNotEmpty
+                            ? NetworkImage(_friends[index].profileImage!)
+                            : AssetImage('assets/images/avater.png') as ImageProvider,
+                        onBackgroundImageError: (error, stackTrace) {
+                          debugPrint('Image load error: $error');
                         },
+                        child: _friends[index].profileImage == null || _friends[index].profileImage!.isEmpty
+                            ? Image.asset('assets/images/avater.png', fit: BoxFit.cover)
+                            : null,
                       ),
-                    ),
                     title: Text(_friends[index].username),
                     onTap: () {
                       Navigator.push(
