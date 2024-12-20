@@ -194,6 +194,7 @@ void main() {
 
       expect(find.text('Welcome Back'), findsOneWidget);
     });
+
     testWidgets('Signup a new user, Add friend and pledge a gift', (WidgetTester tester) async {
       app.main();
       await tester.pump(Duration(seconds: 5));
@@ -257,7 +258,7 @@ void main() {
       await pumpUntilFound(tester, find.byType(Switch));
       await pumpUntilFound(tester, find.byType(DraggableScrollableSheet));
 
-      await tester.drag(find.byType(DraggableScrollableSheet), Offset(0,-60));
+      await tester.drag(find.byType(DraggableScrollableSheet), Offset(0,-65));
       await pumpUntilFound(tester, find.text('Pledge this gift:'));
 
       await tester.tap(find.byType(Switch));

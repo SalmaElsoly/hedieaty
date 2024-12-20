@@ -10,20 +10,15 @@ param (
 )
 
 # Wipe emulator data or uninstall app if installed
-Write-Host "Wiping emulator data or uninstalling app if installed..."
+Write-Host "uninstalling app if installed..."
 try {
     adb shell pm list packages | Select-String -Pattern "package:com.example.hedieaty" > $null
     if ($?) {
         Write-Host "App is installed. Uninstalling..."
         adb uninstall com.example.hedieaty
-    } else {
-        Write-Host "App is not installed. Wiping emulator data..."
-        adb emu kill
-        Start-Sleep -Seconds 5
-        adb start-server
     }
 } catch {
-    Write-Host "An error occurred while attempting to wipe the emulator data or uninstall the app."
+    Write-Host "An error occurred while attempting to uninstall the app."
 }
 
 # Create results directory if it does not exist

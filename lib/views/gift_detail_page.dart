@@ -34,10 +34,12 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
       _user = _userController
           .getUser(widget.gift!.pledgedBy!, context)
           .then((value) {
-        setState(() {
-          isPledged = true;
-          pledgedUsername = value?.username;
-        });
+        if (mounted) {
+          setState(() {
+            isPledged = true;
+            pledgedUsername = value?.username;
+          });
+        }
         return value;
       });
     }
@@ -279,10 +281,12 @@ class _GiftDetailPageState extends State<GiftDetailPage> {
                                     _user = _userController
                                         .getCurrentUser(context)
                                         .then((value) {
-                                      setState(() {
-                                        isPledged = true;
-                                        pledgedUsername = value?.username;
-                                      });
+                                      if (mounted) {
+                                        setState(() {
+                                          isPledged = true;
+                                          pledgedUsername = value?.username;
+                                        });
+                                      }
                                       return null;
                                     });
                                   },
