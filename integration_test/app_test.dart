@@ -132,6 +132,12 @@ void main() {
       await tester.enterText(find.byType(TextFormField).at(2), eventDescription);
       await tester.pump(Duration(seconds: 5));
 
+      FocusScopeNode currentFocus = FocusScope.of(tester.element(find.byType(TextFormField).at(2)));
+      currentFocus.unfocus();
+      await tester.pump(Duration(seconds: 5));
+
+      await pumpUntilFound(tester, find.byType(TextFormField).at(3));
+
       await tester.tap(find.byType(TextFormField).at(3));
       await pumpUntilFound(tester, find.byType(DatePickerDialog));
       await tester.tap(find.text('OK'));

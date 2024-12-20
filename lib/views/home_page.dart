@@ -6,7 +6,6 @@ import 'package:hedieaty/views/event_creation_page.dart';
 import 'package:hedieaty/views/friend_event_list_page.dart';
 import 'package:hedieaty/views/notification_page.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:provider/provider.dart';
 
 import '../shared/components/drawer.dart';
 
@@ -24,7 +23,7 @@ class _HomePageState extends State<HomePage> {
   final UserController _userController = UserController();
   late Stream<List<UserModel>> _userStream;
   late Stream<UserModel?> _userProfileStream;
-  late UserModel? _userProfile;
+  UserModel? _userProfile = UserModel(username: "", email: "");
 
   @override
   void initState() {
@@ -40,13 +39,6 @@ class _HomePageState extends State<HomePage> {
         });
     });
   }
-
-  // Future<void> loadCurrentUser()async{
-  //   final user = await _userController.getCurrentUser(context);
-  //   setState(() {
-  //     _user = user!;
-  //   });
-  // }
 
   @override
   Widget build(BuildContext context) {
